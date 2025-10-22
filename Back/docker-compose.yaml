@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 200274
+      POSTGRES_DB: course2
+
+    ports:
+        - "5432:5432"
+
+  # --- Nosso novo serviço da API Spring Boot ---
+  app:
+    # "build: ." diz ao Docker Compose para procurar um Dockerfile no diretório atual e construí-lo
+    build: ./olimpo
+    ports:
+      # Expõe a porta 8080 da API para a sua máquina local
+      - "8080:8080"
+    # "depends_on" faz o Spring esperar o banco de dados (db) estar pronto antes de iniciar
+    depends_on:
+      - db
+    # "environment" é a parte CRUCIAL. Isso sobrescreve o application.properties
+    # para que a API possa encontrar o banco DENTRO da rede do Docker.
+    environment:
+      # O host não é "localhost", é o NOME DO SERVIÇO do banco: "db"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/course2
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 200274
+      # Esta linha é boa para garantir que o Hibernate crie/atualize as tabelas
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+volumes:
+  postgres_data:
