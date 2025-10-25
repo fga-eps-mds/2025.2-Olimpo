@@ -1,0 +1,45 @@
+# =========================
+# IntelliJ / IDE
+# =========================
+# Ignora a pasta .idea em qualquer nível do projeto
+**/.idea/
+
+# Ignora arquivos .iml em qualquer nível do projeto
+**/*.iml
+
+
+# =========================
+# Back-end (Spring Boot / Maven)
+# =========================
+# Ignora a pasta 'target' do seu projeto Spring Boot.
+# Ajuste o caminho se o seu pom.xml não estiver em /Back/olimpo/
+/Back/olimpo/target/
+# Adiciona /Back/target/ por segurança
+/Back/target/
+
+# Ignora arquivos de log
+*.log
+
+
+# =========================
+# Front-end (React / Node)
+# =========================
+# Ignora a pasta de dependências do Node (que tem gigabytes)
+/Front/node_modules/
+
+# Ignora pastas de build do React
+/Front/build/
+/Front/dist/
+
+# Logs e arquivos de cache do Node/npm
+/Front/npm-debug.log*
+/Front/yarn-debug.log*
+/Front/yarn-error.log*
+.DS_Store
+
+
+# =========================
+# Sistema Operacional
+# =========================
+# Arquivos do Windows
+Thumbs.db
