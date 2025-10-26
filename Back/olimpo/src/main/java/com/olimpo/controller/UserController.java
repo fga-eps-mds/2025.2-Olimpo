@@ -1,22 +1,23 @@
 package com.olimpo.controller;
 
-import com.olimpo.models.User;
+import com.olimpo.models.Account;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.olimpo.service.UserService;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.create(user.getUsername(), user.getPassword());
-        return ResponseEntity.ok(createdUser);
+    public ResponseEntity<Account> createUser(@RequestBody Account usuario) {
+        Account criarUsuario = userService.cadastrarUsuario(usuario);
+        return ResponseEntity.ok(criarUsuario);
     }
 
     @GetMapping("/confirm")
