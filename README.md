@@ -1,23 +1,17 @@
-# template-repository - Branch Developer
+# Lume
+Lume é um sistema web que conecta estudantes universitários que buscam empreender a investidores que buscam ideias inovadoras.
+Está sendo desenvolvido para a disciplina de Métodos de Desenvolvimento de Software, 2025.2 - Universidade de Brasília (UnB).
 
-Template de Repositório para a matéria de Métodos de Desenvolvimento de Software lecionado pelo professor Ricardo Ajax.
-
-Essa Branch deve ser usada exclusivamente para a versão de desenvolvimento do software antes de ir para produção.
-
-## Especificações Técnicas do Repositório
-
-Este repositório é planejado e estruturado para que seja realizado documentações de software. Caso haja outra necessidades, deve-se consultar a professora.
-
-Atualmente se usa a ferramenta MkDocs para gerar sua documentação baseado nos seus arquivos markdowns, vocês podem achar mais instruções sobre o MkDocs através do link da documentação da ferramenta: [https://www.mkdocs.org/](https://www.mkdocs.org/).
-
-Também é usado uma "sub-ferramenta" do MkDocs para sua estilização, o Material Theme, que pode ser consultado através do link: [https://squidfunk.github.io/mkdocs-material/](https://squidfunk.github.io/mkdocs-material/).
-
-Este repositório também conta com uma pipeline de automatização de deploy do seu conteúdo MkDocs, para que a cada commit feito na main, a pipeline gere uma versão atualizada da sua documentação em minutos. Vale ressaltar que é importante realizar uma configuração para que tudo funcione da forma correta, as instruções são as seguintes:
-
-* Acesse as configurações do repositório;
-* Procure a aba de "Pages"
-* Em "Source" escolha a opção "Deploy from a branch";
-* Em "Branch" escolha "gh-pages";
-* Clique em salvar e pronto;
-
-Após essas etapas de configuração, o seu GitPages deve funcionar normalmente.
+## Equipe Olimpo
+| Nome | Github | Discord | Email | Matrícula |
+|:----:|:------:|:-------:|:-----:|:---------:|
+| Arthur Martins | [@thetrulyvoid](https://github.com/thetrulyvoid) | thevoidcruz | 241038174@aluno.unb.br | 241038174 |
+| Eduardo Lobo | [@EduLoboM](https://github.com/EduLoboM) | Eduzão | 241011027@aluno.unb.br | 241011027 |
+| Enzo Costa | [@enzocostaj](https://github.com/enzocostaj) | tyfoon77 | 232001999@aluno.unb.br | 232001999 |
+| Gustavo Lima | [@gustavolima973](https://github.com/gustavolima973) | thegusttt | 211062938@aluno.unb.br | 211062938 |
+| Nicole Jovita  | [@nicolejovita](https://github.com/nicolejovita) | nicolejovita_32722 | nicolejovitafernandes@gmail.com | 241012347 |
+| Pedro Augusto Ribeiro | [@pedrorfb](https://github.com/pedrorfb) | .pedro2 | pedrufb@gmail.com | 241040323 |
+| Thaíza Weert | [@ThaizaWeert](https://github.com/ThaizaWeert) | thaizaweert | 211062508@aluno.unb.br | 211062508 |
+| Vinícius Araújo   | [@Vini-Araujoo](https://github.com/Vini-Araujoos) | vini_cz | viniciustrabalhosunb@gmail.com | 241025425 |
+| Vitor Lacerda | [@vitorldslds](https://github.com/vitorldslds) | vitorldslds | 232014217@aluno.unb.br  | 232014217 |
+| Yasmim de Souza | [@eii-yahs](https://github.com/eii-yahs) | eii.yahs | yasmimdesouzasantos200612@gmail.com | 241040860 |
