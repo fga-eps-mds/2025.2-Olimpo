@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +24,10 @@ public class User {
 
     @Column(unique = true)
     private String password;
+
+    @Column(nullable = false)
+    private boolean emailVerified = false;
+
+    private String verificationCode;
+    private LocalDateTime verificationExpiry;
 }
