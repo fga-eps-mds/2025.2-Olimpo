@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.olimpo.repository.UserRepository;
 import jakarta.mail.MessagingException;
-import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -39,7 +39,8 @@ public class UserService {
                     + "Atenciosamente,\n"
                     + "Equipe Lume.";
             emailService.sendEmail(username, subject, body);
-        } catch (MessagingException e) {
+        } catch (MessagingException | MailException e) {
+            // Evita derrubar a requisição caso o envio de e-mail falhe (ex.: credenciais SMTP ausentes no Docker)
             e.printStackTrace();
         }
 

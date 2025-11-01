@@ -39,8 +39,15 @@ public class UserController {
     }
     @PostMapping("/resend-code")
     public ResponseEntity<String> resendCode(@RequestParam String username) {
-        boolean sucess = userService.resendVerificationCode(username);
-        if(sucess){
+        var opt = userRepository.findByUsername(username);
+        if (opt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Usuário não encontrado.");
+        }
+        if (opt.get().isEmailVerified()) {
+            return ResponseEntity.badRequest().body("Usuário já verificado.");
+        }
+        boolean success = userService.resendVerificationCode(username);
+        if (success) {
             return ResponseEntity.ok("Código reenviado com sucesso!");
         } else {
             return ResponseEntity.badRequest().body("Usuário não encontrado ou já verificado.");

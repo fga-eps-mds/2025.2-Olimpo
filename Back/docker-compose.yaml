@@ -34,6 +34,16 @@ services:
       SPRING_DATASOURCE_PASSWORD: 200274
       # Esta linha é boa para garantir que o Hibernate crie/atualize as tabelas
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # Credenciais de e-mail (usadas pelo application.properties via ${MAIL_USER}/${MAIL_PASS})
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      # sobrescrever diretamente as propriedades Spring Mail
+      SPRING_MAIL_USERNAME: ${MAIL_USER}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASS}
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
 
 volumes:
   postgres_data:

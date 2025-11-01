@@ -20,6 +20,13 @@
 # Ignora arquivos de log
 *.log
 
+# Ignora arquivos .env com credenciais sensíveis
+/Back/.env
+**/.env
+
+/Back/.env.example
+**/.env.example
+
 
 # =========================
 # Front-end (React / Node)
