@@ -1,3 +1,4 @@
+// olimpo/models/PasswordResetToken.java
 package com.olimpo.models;
 
 import jakarta.persistence.*;
@@ -22,9 +23,9 @@ public class PasswordResetToken {
     @Column(nullable = false, unique = true)
     private String token;
     
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = Account.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
-    private User user;
+    private Account user;
     
     @Column(nullable = false)
     private LocalDateTime expiryDate;

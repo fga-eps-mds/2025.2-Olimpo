@@ -1,7 +1,7 @@
 package com.olimpo.service;
 
 import com.olimpo.models.PasswordResetToken;
-import com.olimpo.models.User;
+import com.olimpo.models.Account;
 import com.olimpo.repository.PasswordResetTokenRepository;
 import com.olimpo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +34,13 @@ public class PasswordResetService {
     private static final int TOKEN_EXPIRY_HOURS = 1;
 
     public boolean requestPasswordReset(String email) {
-        Optional<User> userOptional = userRepository.findByUsername(email);
+        Optional<Account> userOptional = userRepository.findByEmail(email);
         
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
+            Account user = userOptional.get();
             
-            // Remove tokens existentes para este usuário
             tokenRepository.deleteByUser(user);
             
-            // Cria novo token
             String token = UUID.randomUUID().toString();
             PasswordResetToken resetToken = new PasswordResetToken();
             resetToken.setToken(token);
@@ -51,7 +49,6 @@ public class PasswordResetService {
             
             tokenRepository.save(resetToken);
             
-            // Envia email
             emailService.sendPasswordResetEmail(email, token, frontendUrl);
             
             return true;
@@ -74,11 +71,10 @@ public class PasswordResetService {
                 return false;
             }
             
-            User user = resetToken.getUser();
+            Account user = resetToken.getUser();
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
             
-            // Remove o token usado
             tokenRepository.delete(resetToken);
             
             return true;

@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/password")
 public class PasswordResetController {
 
     @Autowired
@@ -33,14 +34,12 @@ public class PasswordResetController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetDto resetDto) {
-        // Valida se as senhas coincidem
         if (!resetDto.getNewPassword().equals(resetDto.getConfirmPassword())) {
             Map<String, String> response = new HashMap<>();
             response.put("message", "As senhas não coincidem");
             return ResponseEntity.badRequest().body(response);
         }
 
-        // Verifica se a senha tem 6 caracteres
         if (resetDto.getNewPassword().length() < 6) {
             Map<String, String> response = new HashMap<>();
             response.put("message", "A senha deve ter pelo menos 6 caracteres");

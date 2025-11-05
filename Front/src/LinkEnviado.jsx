@@ -23,7 +23,6 @@ function LinkEnviado() {
   return (
     <div className="container">
       <div className="card">
-        {/* Mobile/tablet: logo + elipse no topo */}
         {(isMobile || isTablet) && (
           <>
             <div className="elipse-logo">
@@ -33,7 +32,6 @@ function LinkEnviado() {
           </>
         )}
 
-        {/* Desktop: painel esquerdo com logo + mensagem */}
         {isDesktop && (
           <div className="card-esquerdo">
             <div className="elipse-logo">
@@ -48,14 +46,12 @@ function LinkEnviado() {
           </div>
         )}
 
-        {/* Painel direito: conteúdo centralizado (sempre exibido) */}
         <div className="card-direito">
           <a href="#" className="voltar">&larr; Voltar</a>
           <div className="conteudo-card-direito">
             <div className="link-recuperacao">Link de recuperação enviado!</div>
             <p>
               Enviamos um link para recuperação de senha para o seu email<br />
-              <span className="email">seu.email@gmail.com</span>
             </p>
             <div>
               Não recebeu o e-mail?
