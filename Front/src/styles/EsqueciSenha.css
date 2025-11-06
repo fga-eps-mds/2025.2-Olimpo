@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-  background: #1c1c34;
+  background: #1f1f32;
   min-height: 100vh;
   min-width: 100vw;
   overflow-x: hidden;
@@ -24,7 +24,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1c1c34;
+  background: #1f1f32;
   padding: 0;
   box-sizing: border-box;
 }
@@ -42,7 +42,7 @@ body {
 
 .card-esquerdo {
   flex: 1;
-  background: #c9cfde;
+  background: #BDC5D5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,7 +53,7 @@ body {
 .logo-elipse {
   width: 140px;
   height: 140px;
-  background: radial-gradient(circle at 62% 31%, #383850 80%, #e5e6e8 0%);
+  background-color: rgba(31, 31, 50, 0.82);
   border-radius: 50%;
   position: relative;
   margin-bottom: 20px;
@@ -100,7 +100,7 @@ body {
 
 .card-direito {
   flex: 1;
-  background: #282841;
+  background: #3f3f50;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -111,8 +111,11 @@ body {
 }
 
 .voltar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.95rem;
-  color: #c9cfde;
+  color: #fff;
   position: absolute;
   top: 22px;
   left: 28px;
@@ -198,14 +201,14 @@ body {
   text-decoration: underline;
 }
 
-/* ----------- NOTEBOOK/DESKTOP (acima de 1512px) ----------- */
+/* ----------- NOTEBOOK/DESKTOP ----------- */
 @media (min-width: 1201px) {
   .container {
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #1c1c34;
+    background: #1F1F32;
     width: 100vw;
     height: 100vh;
   }
@@ -229,7 +232,7 @@ body {
   .card-esquerdo {
     display: flex;
     flex: 1;
-    background: #c9cfde;
+    background: #BDC5D5;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -242,7 +245,7 @@ body {
 
   .card-direito {
     flex: 1;
-    background: #45455d;
+    background: #3F3F50;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -277,13 +280,13 @@ body {
   }
 }
 
-/* ----------- TABLET (apenas 800px a 1512px) ----------- */
+/* ----------- TABLET ----------- */
 @media (min-width: 800px) and (max-width: 1200px) {
   .container {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #1c1c34;
+    background: #1f1f32;
     width: 100vw;
     height: 100vh;
     padding: 0;
@@ -294,7 +297,7 @@ body {
     width: 600px;
     max-width: 95vw;
     height: 750px;
-    background: #45455d;
+    background: #3F3F50;
     border-radius: 24px;
     box-shadow: 0 8px 24px rgba(20,20,40,0.18);
     display: flex;
@@ -316,9 +319,9 @@ body {
   }
 
   .logo-elipse {
-    width: 160px;
-    height: 160px;
-    background: radial-gradient(circle at 60% 30%, #d2d6e2 0%, #9298ad 75%);
+    width: 145px;
+    height: 145px;
+    background-color: rgba(189, 197, 213, 0.58);
     border-radius: 50%;
     box-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
     display: flex;
@@ -432,7 +435,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #1c1c34;
+    background: #1f1f32;
     width: 100vw;
     height: 100vh;
     min-width: 100vw;
@@ -468,7 +471,7 @@ body {
     margin: 0;
   }
   .logo-elipse {
-    background: #BDC5D575;
+    background: rgba(189, 197, 213, 0.46);
     width: 130px;
     height: 130px;
     border-radius: 50%;

@@ -4,7 +4,7 @@ html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background: #17182b;
+  background: #1F1F32;
   overflow-x: hidden;
 }
 
@@ -14,10 +14,12 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #17182b;
+  background: #1F1F32;
 }
 
 .card {
@@ -32,7 +34,7 @@ html, body {
 
 .card-esquerdo {
   flex: 1;
-  background: #c3cad4;
+  background: #BDC5D5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -43,7 +45,7 @@ html, body {
 .elipse-logo {
   width: 140px;
   height: 140px;
-  background: #383850;
+  background: rgba(31, 31, 50, 0.82);
   border-radius: 50%;
   position: relative;
   margin-bottom: 20px;
@@ -85,7 +87,7 @@ html, body {
 
 .card-direito {
   flex: 1;
-  background: #37364a;
+  background: #3F3F50;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -95,8 +97,11 @@ html, body {
 }
 
 .voltar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.95rem;
-  color: #c3cad4;
+  color: #FFFFFF;
   position: absolute;
   top: 22px;
   left: 28px;
@@ -146,9 +151,9 @@ html, body {
     justify-content: center;
     width: 420px;
     max-width: 90vw;
-    height: auto;
+    height: 500px;
     border-radius: 12px;
-    background: #37364a;
+    background: #3F3F50;
     box-shadow: 0 8px 24px rgba(20, 20, 40, 0.18);
     padding: 110px 45px 110px 45px;
     margin: auto;
@@ -160,9 +165,9 @@ html, body {
   }
 
   .elipse-logo {
-    width: 112px;
-    height: 112px;
-    background: #BDC5D5;
+    width: 130px;
+    height: 130px;
+    background: rgba(189, 197, 213, 0.58);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -171,15 +176,15 @@ html, body {
   }
 
   .logo {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
   }
 
   .lume {
     font-family: 'Arial Rounded MT', sans-serif;
     display: block;
-    font-size: 1.3rem;
+    font-size: 1.83rem;
     font-weight: 700;
     color: #fff;
     text-align: center;
@@ -187,20 +192,20 @@ html, body {
   }
 
   .bem-vindo {
-  font-family: 'Arial Rounded MT', sans-serif;
-  font-size: 1.18rem;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 9px;
-  color: #222238;
+    font-family: 'Arial Rounded MT', sans-serif;
+    font-size: 1.18rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 9px;
+    color: #222238;
   }
 
   .link-recuperacao {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 10px;
-}
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+  }
 
   .card-direito {
     flex: none;
@@ -211,21 +216,24 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: static;
+  }
+
+  .voltar {
+    font-size: 0.95rem;
+    color: #FFFFFF;
+    position: absolute;
+    top: 22px;
+    left: 28px;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .voltar:hover {
+    color: #FDC700;
   }
 }
 
-.voltar {
-  font-size: 0.95rem;
-  color: #c3cad4;
-  position: absolute;
-  top: 0;
-  left: 0;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.voltar:hover {
-  color: #FDC700;
-}
+
 
 /* MOBILE */
 @media (max-width: 799px) {
@@ -249,7 +257,7 @@ html, body {
   .elipse-logo {
     width: 140px;
     height: 140px;
-    background: #383850;
+    background: rgba(189, 197, 213, 0.46);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -264,11 +272,11 @@ html, body {
   }
 
   .link-recuperacao {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 10px;
-}
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+  }
 
   .lume {
     font-family: 'Arial Rounded MT', sans-serif;
@@ -289,5 +297,22 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+  }
+
+  .voltar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.95rem;
+    color: #FFFFFF;
+    position: fixed;
+    top: 22px;
+    left: 28px;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .voltar:hover {
+    color: #FDC700;
   }
 }

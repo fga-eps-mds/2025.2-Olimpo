@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './styles/EsqueciSenha.css';
 import logo from './assets/logo.png';
+import { VscArrowLeft } from "react-icons/vsc";
 
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
@@ -60,7 +61,6 @@ function EsqueciSenha() {
         )}
         <div className="card-direito">
           <Link to="/" className="voltar">&larr; Voltar</Link>
-          
           {(isTablet || isMobile) && (
             <>
               <div className="logo-elipse">

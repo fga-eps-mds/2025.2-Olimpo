@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles/LinkEnviado.css';
 import logo from './assets/logo.png';
+import { VscArrowLeft } from "react-icons/vsc";
 
 function useWindowSize() {
   const [width, setWidth] = React.useState(window.innerWidth);
@@ -47,7 +48,7 @@ function LinkEnviado() {
         )}
 
         <div className="card-direito">
-          <a href="#" className="voltar">&larr; Voltar</a>
+          <a href="#" className="voltar"><VscArrowLeft /> Voltar</a>
           <div className="conteudo-card-direito">
             <div className="link-recuperacao">Link de recuperação enviado!</div>
             <p>
