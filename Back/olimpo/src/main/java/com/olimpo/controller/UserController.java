@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @GetMapping("/confirm")
-    public String getString(){
+    String getString(){
         return "confirm";
     }
 }
