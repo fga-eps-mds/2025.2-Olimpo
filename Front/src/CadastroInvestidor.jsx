@@ -1,4 +1,3 @@
-// src/CadastroInvestidor.jsx
 import React, { useState, useEffect } from 'react';
 import './styles/CadastroInvestidor.css';
 import logo from './assets/logo.png';

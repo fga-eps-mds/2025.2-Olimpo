@@ -1,11 +1,9 @@
-// src/CadastroEstudante.jsx
 import React, { useState, useEffect } from 'react';
 import './styles/CadastroEstudante.css';
 import logo from './assets/logo.png';
 import { VscArrowLeft } from "react-icons/vsc";
 import { CiCircleRemove, CiCircleCheck } from "react-icons/ci";
 
-// 1. Importe axios e hooks de navegação
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 

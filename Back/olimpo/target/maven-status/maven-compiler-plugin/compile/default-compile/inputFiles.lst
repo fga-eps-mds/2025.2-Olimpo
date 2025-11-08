@@ -5,9 +5,12 @@
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/dto/PasswordResetDto.java
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/dto/PasswordResetRequest.java
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/models/Account.java
+/home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/models/Idea.java
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/models/PasswordResetToken.java
+/home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/repository/IdeaRepository.java
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/repository/PasswordResetTokenRepository.java
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/repository/UserRepository.java
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/service/EmailService.java
+/home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/service/IdeaService.java
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/service/PasswordResetService.java
 /home/eduardolm/Documents/2025.2-Olimpo/Back/olimpo/src/main/java/com/olimpo/service/UserService.java
