@@ -60,7 +60,7 @@ function EsqueciSenha() {
           </div>
         )}
         <div className="card-direito">
-          <Link to="/" className="voltar">&larr; Voltar</Link>
+          <Link to="/" className="voltar"><VscArrowLeft /> Voltar</Link>
           {(isTablet || isMobile) && (
             <>
               <div className="logo-elipse">

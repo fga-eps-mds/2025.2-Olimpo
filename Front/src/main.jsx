@@ -12,7 +12,6 @@ import EsqueciSenha from './EsqueciSenha.jsx'
 import LinkEnviado from './LinkEnviado.jsx'
 import CadastroEstudante from './CadastroEstudante.jsx'
 import CadastroInvestidor from './CadastroInvestidor.jsx'
-import ResetPassword from './ResetPassword.jsx'
 
 const router = createBrowserRouter([
   {
@@ -34,11 +33,7 @@ const router = createBrowserRouter([
   {
     path: "/cadastro-investidor",
     element: <CadastroInvestidor />,
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPassword />,
-  },
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
