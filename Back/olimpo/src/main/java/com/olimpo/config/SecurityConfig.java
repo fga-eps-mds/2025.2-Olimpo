@@ -29,12 +29,25 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                // Permitir Cadastro
                                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/user").permitAll() 
                                 
-                                .requestMatchers(HttpMethod.GET, "/user/confirm").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/user/confirm").permitAll()
+                                // Permitir Login
+                                .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/user/login").permitAll() 
+
+                                // Permitir Verificação de Email (NOVO)
+                                .requestMatchers(HttpMethod.GET, "/user/verify-email").permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/user/verify-email").permitAll()
+
+                                // Permitir Reenvio de Código (NOVO)
+                                .requestMatchers(HttpMethod.POST, "/user/resend-code").permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/user/resend-code").permitAll()
                                 
+                                // REMOVIDO: .requestMatchers(HttpMethod.GET, "/user/confirm").permitAll()
+                                
+                                // Permitir Recuperação de Senha
                                 .requestMatchers("/api/password/**").permitAll()
                                 
                                 .anyRequest().authenticated()

@@ -3,6 +3,7 @@ package com.olimpo.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+// REMOVE import java.time.LocalDateTime; (não é mais necessário aqui)
 import java.time.OffsetDateTime;
 
 @Entity
@@ -16,7 +17,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Integer id;
-
+    
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -31,7 +32,7 @@ public class Account {
 
     @Column(name = "pfp", length = 512)
     private String pfp;
-
+    
     @Column(name = "role", nullable = false)
     private String role;
 
@@ -59,10 +60,8 @@ public class Account {
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
 
-
     @PrePersist
     protected void onCreate() {
         createdAt = OffsetDateTime.now();
     }
-
 }
