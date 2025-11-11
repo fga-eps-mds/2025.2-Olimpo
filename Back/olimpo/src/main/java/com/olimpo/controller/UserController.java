@@ -1,18 +1,22 @@
 package com.olimpo.controller;
 
 import com.olimpo.models.Account;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.olimpo.service.UserService;
 
-@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
     public ResponseEntity<Account> createUser(@RequestBody Account usuario) {

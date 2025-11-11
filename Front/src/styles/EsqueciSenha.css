@@ -1,0 +1,550 @@
+html, body {
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #1f1f32;
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow-x: hidden;
+}
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1f1f32;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.card {
+  display: flex;
+  width: 1000px;
+  height: 600px;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 32px;
+  overflow: hidden;
+  background: none;
+}
+
+.card-esquerdo {
+  flex: 1;
+  background: #BDC5D5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 42px 28px;
+}
+
+.logo-elipse {
+  width: 140px;
+  height: 140px;
+  background-color: rgba(31, 31, 50, 0.82);
+  border-radius: 50%;
+  position: relative;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  width: 86px;
+  height: 86px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.lume {
+  font-family: 'Arial Rounded MT', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+  color: #222238;
+  font-weight: 600;
+}
+
+.bem-vindo {
+  font-family: 'Arial Rounded MT', sans-serif;
+  font-size: 1.18rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 9px;
+  color: #222238;
+}
+
+.texto {
+  font-size: 0.97rem;
+  color: #444457;
+  text-align: center;
+  line-height: 1.3;
+  max-width: 320px;
+}
+
+.card-direito {
+  flex: 1;
+  background: #3f3f50;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 30px;
+  position: relative;
+  min-width: 0;
+}
+
+.voltar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.95rem;
+  color: #fff;
+  position: absolute;
+  top: 22px;
+  left: 28px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.voltar:hover {
+  color: #FDC700;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 340px;
+}
+
+.esqueci-senha {
+  font-family: 'Arial Rounded MT', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.-labelreset {
+  color: #c9cfde;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.input {
+  position: relative;
+  background: #D9D9D91A;
+  border: 2px solid #c9cfde;
+  border-radius: 7px;
+  padding: 11px;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #fff;
+  outline: none;
+  transition: border-color .2s;
+}
+
+.input:focus {
+  border-color: #FDC700;
+}
+
+.botao-enviar {
+  background: #e5e6e8;
+  color: #222238;
+  border: none;
+  border-radius: 7px;
+  padding: 12px 0;
+  font-size: 1.07rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.botao-enviar:hover {
+  background: #FDC700;
+  color: #222238;
+}
+
+.rodape {
+  color: #c9cfde;
+  font-size: 0.97rem;
+  text-align: center;
+}
+
+.link {
+  color: #FDC700;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* ----------- NOTEBOOK/DESKTOP ----------- */
+@media (min-width: 1201px) {
+  .container {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1F1F32;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .card {
+    flex-direction: row;
+    width: 1200px;
+    min-width: 800px;
+    max-width: 85vw;
+    height: 700px;
+    max-height: 90vh;
+    background: none;
+    border-radius: 22px;
+    box-shadow: 0 8px 24px rgba(20,20,40,0.18);
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .card-esquerdo {
+    display: flex;
+    flex: 1;
+    background: #BDC5D5;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 38px 16px;
+    border-top-left-radius: 22px;
+    border-bottom-left-radius: 22px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .card-direito {
+    flex: 1;
+    background: #3F3F50;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 38px 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    position: relative;
+    min-width: 0;
+  }
+
+  .formulario {
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .esqueci-senha {
+    color: #fff;
+    font-size: 1.8rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .voltar {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    color: #fff;
+    font-size: 1.03rem;
+  }
+}
+
+/* ----------- TABLET ----------- */
+@media (min-width: 800px) and (max-width: 1200px) {
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1f1f32;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+  }
+
+  .card {
+    flex-direction: column;
+    width: 600px;
+    max-width: 95vw;
+    height: 750px;
+    background: #3F3F50;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(20,20,40,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-esquerdo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    padding-top: 60px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+
+  .logo-elipse {
+    width: 145px;
+    height: 145px;
+    background-color: rgba(189, 197, 213, 0.58);
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 24px;
+  }
+
+  .logo {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    position: static;
+    transform: none;
+    z-index: 2;
+  }
+
+  .logo-elipse::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  .lume {
+    color: #fff;
+    font-size: 2.1rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .welcome-message {
+    color: #fff;
+    font-size: 1.13rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .texto {
+    color: #c9cfde;
+    font-size: 1.08rem;
+    text-align: center;
+    margin-bottom: 35px;
+    max-width: 320px;
+  }
+
+  .card-direito {
+    background: none;
+    padding-bottom: 32px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .voltar {
+    position: absolute;
+    top: 26px;
+    left: 56px;
+    color: #fff;
+    font-size: 1.1rem;
+    text-decoration: none;
+    z-index: 10;
+  }
+
+  .voltar:hover {
+    color: #FDC700;
+  }
+
+  .formulario {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .esqueci-senha {
+    color: #fff;
+    font-size: 1.45rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .input, .reset-label {
+    font-size: 1.03rem;
+  }
+
+  .botao-enviar {
+    margin-top: 14px;
+    margin-bottom: 18px;
+    width: 100%;
+  }
+
+  .rodape {
+    color: #c9cfde;
+    font-size: 1rem;
+    text-align: center;
+  }
+}
+
+/* ----------- MOBILE ----------- */
+@media (max-width: 799px) {
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1f1f32;
+    width: 100vw;
+    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
+    padding: 0;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  .card {
+    width: 95vw;
+    min-width: 0;
+    height: auto;
+    max-width: 430px;
+    max-height: 95vh;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 30px 18px 14px 18px;
+    overflow: hidden;
+  }
+  .card-esquerdo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    padding: 0;
+    margin: 0;
+  }
+  .logo-elipse {
+    background: rgba(189, 197, 213, 0.46);
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    margin-bottom: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo {
+    width: 86px;
+    height: 86px;
+    position: static;
+    transform: none;
+  }
+  .welcome-title {
+    color: #fff;
+    font-size: 1.65rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 7px;
+  }
+  .lume {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .texto {
+    color: #c9cfde;
+    font-size: 1.05rem;
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 320px;
+  }
+  .card-direito {
+    background: none;
+    padding: 0;
+    width: 100%;
+    position: static;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .voltar {
+    position: absolute;
+    top: 22px;
+    left: 22px;
+    color: #fff;
+    font-size: 1rem;
+  }
+  .formulario {
+    width: 100%;
+    max-width: 350px;
+    margin-bottom: 7px;
+  }
+  .esqueci-senha {
+    color: #fff;
+    font-size: 1.35rem;
+    text-align: center;
+    font-weight: 600;
+  }
+  .input, .reset-label {
+    font-size: 1rem;
+  }
+  .botao-enviar {
+    margin-top: 12px;
+    margin-bottom: 17px;
+    width: 100%;
+  }
+  .rodape {
+    color: #c9cfde;
+    font-size: 1rem;
+  }
+}

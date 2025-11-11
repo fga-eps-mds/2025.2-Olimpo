@@ -5,11 +5,11 @@ import lombok.*;
 
 import java.time.OffsetDateTime;
 
-@Entity // 1. Diz ao JPA: esta classe representa uma tabela.
-@Table(name = "ACCOUNT") // 2. Liga explicitamente esta classe à tabela "ACCOUNT" do SQL.
-@Data // Lombok: Gera getters, setters, toString, equals, hashCode (Opcional)
-@NoArgsConstructor // Lombok: Gera o construtor vazio OBRIGATÓRIO para o JPA.
-@AllArgsConstructor // Lombok: Gera um construtor com todos os campos (útil para criar objetos).
+@Entity
+@Table(name = "ACCOUNT")
+@Data 
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account {
 
     @Id
@@ -66,4 +66,3 @@ public class Account {
     }
 
 }
-

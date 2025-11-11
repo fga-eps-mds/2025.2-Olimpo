@@ -15,11 +15,6 @@ public class UserService {
 
     public Account cadastrarUsuario(Account usuario){
         if(userRepository.findByEmail(usuario.getEmail()).isPresent()){
-            /*
-            Se o Optional retornado da função findByEmail não estiver vazio o isPresente será igual a true
-            E isso significa que já existe uma conta com este e-mail e é preciso lançar uma exception para
-            parar a execução
-             */
             throw new RuntimeException("E-mail já cadastrado");
         }
 
