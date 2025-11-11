@@ -3,7 +3,6 @@ package com.olimpo.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-// REMOVE import java.time.LocalDateTime; (não é mais necessário aqui)
 import java.time.OffsetDateTime;
 
 @Entity
