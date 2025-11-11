@@ -43,3 +43,11 @@
 # =========================
 # Arquivos do Windows
 Thumbs.db
+
+# Java / Maven
+target/
+*.class
+
+# Node
+node_modules/
+dist/
