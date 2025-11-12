@@ -1,0 +1,80 @@
+.container-status {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: #1f1f32;
+  font-family: 'Arial Rounded MT', sans-serif;
+}
+
+.card-status {
+  background: #3f3f50;
+  width: 90vw;
+  max-width: 500px;
+  padding: 40px 30px;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(20,20,40,0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.logo-elipse-status {
+  width: 130px;
+  height: 130px;
+  background-color: rgba(189, 197, 213, 0.46);
+  border-radius: 50%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-status {
+  width: 86px;
+  height: 86px;
+}
+
+.lume-status {
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 25px;
+}
+
+.titulo-status {
+  font-size: 1.35rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.titulo-status.sucesso {
+  color: #FDC700;
+}
+.titulo-status.erro {
+  color: #ff8a8a;
+}
+
+.texto-status {
+  font-size: 1rem;
+  color: #c9cfde;
+  margin-bottom: 30px;
+  max-width: 300px;
+}
+
+.botao-status {
+  background: #e5e6e8;
+  color: #222238;
+  border: none;
+  border-radius: 7px;
+  padding: 12px 30px;
+  font-size: 1.07rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.botao-status:hover {
+  background: #FDC700;
+}

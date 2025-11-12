@@ -50,7 +50,6 @@ public class IdeaTests {
         testAccount = accountRepository.save(account);
     }
 
-    // --- TESTE DE CRIAR (POSTAR) ---
     @Test
     void testCreateIdea_Success() {
         Idea newIdea = new Idea();
@@ -60,11 +59,11 @@ public class IdeaTests {
 
         Idea savedIdea = ideaService.createIdea(newIdea, testAccount.getId());
 
-        assertNotNull(savedIdea); // Não deve ser nulo
-        assertNotNull(savedIdea.getId()); // Deve ter um ID do banco
-        assertEquals("Minha Grande Ideia", savedIdea.getName()); // O nome deve bater
-        assertNotNull(savedIdea.getTime()); // O @PrePersist deve ter funcionado
-        assertEquals(testAccount.getId(), savedIdea.getAccount().getId()); // Deve estar ligado ao Account certo
+        assertNotNull(savedIdea); 
+        assertNotNull(savedIdea.getId());
+        assertEquals("Minha Grande Ideia", savedIdea.getName());
+        assertNotNull(savedIdea.getTime());
+        assertEquals(testAccount.getId(), savedIdea.getAccount().getId());
     }
 
     @Test
@@ -99,14 +98,13 @@ public class IdeaTests {
         Idea updatedIdea = ideaService.updateIdea(ideaId, ideaDetailsToUpdate);
 
         assertNotNull(updatedIdea);
-        assertEquals(ideaId, updatedIdea.getId()); // ID não deve mudar
-        assertEquals("Nome Atualizado", updatedIdea.getName()); // Nome foi atualizado
-        assertEquals("Descrição Nova", updatedIdea.getDescription()); // Descrição foi atualizada
-        assertEquals(500, updatedIdea.getPrice()); // Preço foi atualizado
-        assertEquals(testAccount.getId(), updatedIdea.getAccount().getId()); // Relação com Account se manteve
+        assertEquals(ideaId, updatedIdea.getId());
+        assertEquals("Nome Atualizado", updatedIdea.getName());
+        assertEquals("Descrição Nova", updatedIdea.getDescription()); 
+        assertEquals(500, updatedIdea.getPrice());
+        assertEquals(testAccount.getId(), updatedIdea.getAccount().getId());
     }
 
-    // --- TESTE DE DELETAR (REMOVER) ---
     @Test
     void testDeleteIdea_Success() {
 
@@ -120,7 +118,6 @@ public class IdeaTests {
 
         ideaService.deleteIdea(ideaId);
 
-        // Procura no repositório. Não deve achar nada.
         assertFalse(ideaRepository.existsById(ideaId));
     }
 }

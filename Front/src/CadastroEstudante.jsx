@@ -41,7 +41,7 @@ export default function CadastroEstudante() {
   
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -58,26 +58,24 @@ export default function CadastroEstudante() {
       name: nome,
       email: email,
       password: senha,
-      faculdade: instituicao,
-      curso: curso,
       docType: "CPF",
       docNumber: cpf,
-      role: "ESTUDANTE"
+      role: "ESTUDANTE",
+      faculdade: instituicao,
+      curso: curso
     };
 
     try {
-
-      await axios.post('http://localhost:8080/user', payload);
+      await axios.post('http://localhost:8080/auth/register', payload);
       
-
-      alert('Cadastro realizado com sucesso!');
+      alert('Cadastro realizado com sucesso! Por favor, verifique seu e-mail para ativar sua conta.');
       navigate('/');
 
     } catch (error) {
           console.error('Erro ao cadastrar:', error);
           if (error.response) {
             console.error('Dados do erro:', error.response.data);
-            setErrorMessage(`Erro do servidor: ${error.response.data.message || 'Verifique os dados.'}`);
+            setErrorMessage(error.response.data || 'Erro ao cadastrar. Verifique os dados.');
           } else if (error.request) {
             setErrorMessage('Não foi possível se conectar ao servidor. O back-end está no ar?');
           } else {

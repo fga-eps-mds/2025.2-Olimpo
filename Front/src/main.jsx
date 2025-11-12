@@ -12,6 +12,9 @@ import EsqueciSenha from './EsqueciSenha.jsx'
 import LinkEnviado from './LinkEnviado.jsx'
 import CadastroEstudante from './CadastroEstudante.jsx'
 import CadastroInvestidor from './CadastroInvestidor.jsx'
+// import VerificaEmail from './VerificaEmail.jsx' // <-- DELETAR/COMENTAR
+import StatusVerificacao from './StatusVerificacao.jsx' // <-- IMPORTAR
+import ResetarSenha from './ResetarSenha.jsx'
 
 const router = createBrowserRouter([
   {
@@ -33,6 +36,14 @@ const router = createBrowserRouter([
   {
     path: "/cadastro-investidor",
     element: <CadastroInvestidor />,
+  },
+  {
+    path: "/verificacao/:status",
+    element: <StatusVerificacao />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetarSenha />,
   }
 ]);
 

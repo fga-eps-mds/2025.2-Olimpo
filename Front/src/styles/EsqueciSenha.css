@@ -201,7 +201,6 @@ body {
   text-decoration: underline;
 }
 
-/* ----------- NOTEBOOK/DESKTOP ----------- */
 @media (min-width: 1201px) {
   .container {
     padding: 0;
@@ -280,7 +279,6 @@ body {
   }
 }
 
-/* ----------- TABLET ----------- */
 @media (min-width: 800px) and (max-width: 1200px) {
   .container {
     display: flex;
@@ -429,7 +427,6 @@ body {
   }
 }
 
-/* ----------- MOBILE ----------- */
 @media (max-width: 799px) {
   .container {
     display: flex;

@@ -3,6 +3,7 @@ package com.olimpo.service;
 import com.olimpo.models.Account;
 import com.olimpo.models.VerificationToken;
 import com.olimpo.repository.VerificationTokenRepository;
+import com.olimpo.dto.RegisterDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,7 +12,6 @@ import com.olimpo.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.mail.MailException;
 
-// REMOVE import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.Optional;
 
@@ -27,13 +27,22 @@ public class UserService {
     @Value("${app.frontend.url:http://localhost:5173}")
     private String frontendUrl;
 
-    public Account cadastrarUsuario(Account usuario) {
-        if (userRepository.findByEmail(usuario.getEmail()).isPresent()) {
+    public Account cadastrarUsuario(RegisterDTO data) {
+        if (userRepository.findByEmail(data.email()).isPresent()) {
             throw new RuntimeException("E-mail já cadastrado");
         }
 
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        Account usuario = new Account();
+        usuario.setName(data.name());
+        usuario.setEmail(data.email());
+        usuario.setPassword(passwordEncoder.encode(data.password()));
+        usuario.setDocType(data.docType());
+        usuario.setDocNumber(data.docNumber());
+        usuario.setRole(data.role().name());
         usuario.setEmailVerified(false);
+        usuario.setFaculdade(data.faculdade());
+        usuario.setCurso(data.curso());
+        
         Account usuarioSalvo = userRepository.save(usuario);
 
         sendVerificationEmail(usuarioSalvo);
@@ -51,7 +60,9 @@ public class UserService {
 
         try {
             String subject = "Confirmação de E-mail - Olimpo";
-            String verificationLink = frontendUrl + "/verify-email?token=" + token;
+            
+            String verificationLink = "http://localhost:8080/user/verify-email?token=" + token;
+
             String body = "Olá " + user.getName() + ",\n\n"
                     + "Clique no link abaixo para verificar seu e-mail:\n"
                     + verificationLink + "\n\n"

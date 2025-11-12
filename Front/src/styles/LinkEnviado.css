@@ -142,7 +142,6 @@ html, body {
   text-decoration: underline;
 }
 
-/* TABLET */
 @media (min-width: 800px) and (max-width: 1200px) {
   .card {
     display: flex;
@@ -233,9 +232,6 @@ html, body {
   }
 }
 
-
-
-/* MOBILE */
 @media (max-width: 799px) {
   .card {
     width: 95vw;

@@ -1,77 +1,113 @@
 package com.olimpo.service;
 
+import com.olimpo.dto.RegisterDTO;
 import com.olimpo.models.Account;
+import com.olimpo.models.Enums.Role;
 import com.olimpo.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach; // Opcional, para setup
+import com.olimpo.repository.VerificationTokenRepository;
+import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor; // Importante para capturar o objeto salvo
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.*; // Para as verificações (asserts)
-import static org.mockito.Mockito.*; // Para configurar e verificar mocks
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
-
-    @Mock// Cria um mock para o UserRepository
+    @Mock
     private UserRepository userRepository;
 
-    @Mock // Cria um mock para o PasswordEncoder
+    @Mock
     private PasswordEncoder passwordEncoder;
 
-    @InjectMocks // Cria uma instância real do UserService e injeta os @Mocks nele
+    @Mock
+    private EmailService emailService;
+
+    @Mock
+    private VerificationTokenRepository tokenRepository;
+
+    @InjectMocks
     private UserService userService;
 
     @Test
-    void cadastrarUsuario_DeveHashearSenhaESalvarUsuario_QuandoDadosValidos(){
-        // Criando um objeto Account de entrada (com senha pura)
-        Account usuario = new Account();
-        usuario.setName("Teste Unitario");
-        usuario.setPassword("123456");
-        usuario.setEmail("teste@123.com");
+    void cadastrarUsuario_DeveHashearSenhaESalvarUsuario_QuandoDadosValidos() throws MessagingException {
+    
+        RegisterDTO registerDTO = new RegisterDTO(
+                "teste@123.com",
+                "123456",
+                "Teste Unitario",
+                "CPF",
+                "12345678900",
+                Role.ESTUDANTE,
+                null,
+                null
+        );
 
-        // Definindo o comportamento esperado dos mocks
         String senhaHasheadaEsperada = "$2a$10$algumHashSimulado";
+        
+        when(userRepository.findByEmail("teste@123.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("123456")).thenReturn(senhaHasheadaEsperada);
 
-        // Quando o save for chamado com QUALQUER Account, retorne o próprio objeto
-        // (Simulando o save do banco que retorna o objeto salvo)
-
         when(userRepository.save(any(Account.class))).thenAnswer(invocation -> {
-            Account accountSalvo = invocation.getArgument(0); // Pega o argumento passado para save
+            Account accountSalvo = invocation.getArgument(0);
             accountSalvo.setId(1);
             return accountSalvo;
         });
+        
+        doNothing().when(tokenRepository).deleteByUser(any(Account.class));
+        when(tokenRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString());
 
-        // 3. Crie um "captor" para verificar o objeto que foi passado para o save
         ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class);
 
-        // Act (Execução)
-        Account usuarioSalvo = userService.cadastrarUsuario(usuario);
+        Account usuarioSalvo = userService.cadastrarUsuario(registerDTO);
 
-        // Assert (Verificação)
-
-        // 1. Verifique se o encode foi chamado com a senha pura
+        verify(userRepository).findByEmail("teste@123.com");
         verify(passwordEncoder).encode("123456");
-
-        // 2. Verifique se o save foi chamado e capture o argumento
         verify(userRepository).save(accountCaptor.capture());
         Account usuarioPassadoParaSave = accountCaptor.getValue();
 
-        // 3. Verifique se a senha no objeto PASSADO PARA O SAVE estava hasheada
         assertNotNull(usuarioPassadoParaSave);
         assertEquals(senhaHasheadaEsperada, usuarioPassadoParaSave.getPassword());
-        assertEquals("Teste Unitario", usuarioPassadoParaSave.getName()); // Verifique outros campos se quiser
+        assertEquals("Teste Unitario", usuarioPassadoParaSave.getName());
+        assertEquals("teste@123.com", usuarioPassadoParaSave.getEmail());
+        assertEquals("ESTUDANTE", usuarioPassadoParaSave.getRole());
+        assertFalse(usuarioPassadoParaSave.isEmailVerified());
+        assertNull(usuarioPassadoParaSave.getFaculdade());
+        assertNull(usuarioPassadoParaSave.getCurso());
 
-        // 4. Verifique se o objeto RETORNADO pelo método está correto
+        verify(tokenRepository).deleteByUser(any(Account.class));
+        verify(tokenRepository).save(any());
+        verify(emailService).sendEmail(eq("teste@123.com"), anyString(), anyString());
+
         assertNotNull(usuarioSalvo);
-        assertEquals(1, usuarioSalvo.getId()); // Verifica o ID simulado
+        assertEquals(1, usuarioSalvo.getId());
         assertEquals(senhaHasheadaEsperada, usuarioSalvo.getPassword());
+    }
+
+    @Test
+    void cadastrarUsuario_DeveLancarExcecao_QuandoEmailJaExiste() {
+        
+        RegisterDTO registerDTO = new RegisterDTO(
+            "existente@123.com", "123", "User", "CPF", "111", Role.ESTUDANTE, null, null
+        );
+
+        when(userRepository.findByEmail("existente@123.com")).thenReturn(Optional.of(new Account()));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.cadastrarUsuario(registerDTO);
+        });
+
+        assertEquals("E-mail já cadastrado", exception.getMessage());
+        verify(passwordEncoder, never()).encode(anyString());
+        verify(userRepository, never()).save(any(Account.class));
     }
 }
