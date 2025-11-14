@@ -7,33 +7,35 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 200274
       POSTGRES_DB: course2
-
     ports:
-        - "5432:5432"
-
+      - "5432:5432"
     volumes:
-      - ./postgres_init:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
 
-  # --- Nosso novo serviço da API Spring Boot ---
   app:
-    # "build: ." diz ao Docker Compose para procurar um Dockerfile no diretório atual e construí-lo
     build: ./olimpo
     ports:
-      # Expõe a porta 8080 da API para a sua máquina local
       - "8080:8080"
-    # "depends_on" faz o Spring esperar o banco de dados (db) estar pronto antes de iniciar
     depends_on:
       - db
-    # "environment" é a parte CRUCIAL. Isso sobrescreve o application.properties
-    # para que a API possa encontrar o banco DENTRO da rede do Docker.
     environment:
-      # O host não é "localhost", é o NOME DO SERVIÇO do banco: "db"
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/course2
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 200274
-      # Esta linha é boa para garantir que o Hibernate crie/atualize as tabelas
+      
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # Credenciais de e-mail (usadas pelo application.properties via ${MAIL_USER}/${MAIL_PASS})
+      MAIL_USER: projetoextensaounbgpeq25.2@gmail.com
+      MAIL_PASS: nnmd jfbi lnyx ryvu
+      # sobrescrever diretamente as propriedades Spring Mail
+      SPRING_MAIL_USERNAME: projetoextensaounbgpeq25.2@gmail.com
+      SPRING_MAIL_PASSWORD: nnmd jfbi lnyx ryvu
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      
+      APP_FRONTEND_URL: http://localhost:5173
 
 volumes:
   postgres_data:
