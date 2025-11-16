@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "IDEA")
@@ -34,6 +36,14 @@ public class Idea {
 
     @Column(name = "price", nullable = false)
     private Integer price = 0;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "KEYWORD_IDEA",
+            joinColumns = @JoinColumn(name = "idea_id"),
+            inverseJoinColumns = @JoinColumn(name = "keyword_id")
+    )
+    private Set<Keyword> keywords = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {
