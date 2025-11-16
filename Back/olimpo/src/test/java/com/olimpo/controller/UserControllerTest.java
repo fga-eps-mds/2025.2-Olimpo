@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
@@ -41,27 +42,27 @@ public class UserControllerTest {
     private AuthorizationService authorizationService;
 
     @Test
-    void verifyEmail_DeveRetornarOk_QuandoTokenValido() throws Exception {
+    void verifyEmail_DeveRetornarFound_QuandoTokenValido() throws Exception {
         String validToken = "token-valido";
         
         when(userService.verifyEmail(validToken)).thenReturn(true);
 
         mockMvc.perform(get("/user/verify-email")
                         .param("token", validToken))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Email verificado com sucesso!"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost:5173/verificacao/sucesso"));
     }
 
     @Test
-    void verifyEmail_DeveRetornarBadRequest_QuandoTokenInvalido() throws Exception {
+    void verifyEmail_DeveRetornarFound_QuandoTokenInvalido() throws Exception {
         String invalidToken = "token-invalido";
 
         when(userService.verifyEmail(invalidToken)).thenReturn(false);
 
         mockMvc.perform(get("/user/verify-email")
                         .param("token", invalidToken))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Token inválido ou expirado."));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost:5173/verificacao/falha"));
     }
 
     @Test

@@ -1,25 +1,24 @@
 package com.olimpo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.olimpo.controller.PasswordResetController;
 import com.olimpo.dto.PasswordResetDto;
 import com.olimpo.dto.PasswordResetRequest;
 import com.olimpo.service.PasswordResetService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import com.olimpo.controller.PasswordResetController;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = PasswordResetController.class, 
-            excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(controllers = PasswordResetController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class PasswordResetControllerTest {
 
     @Autowired
