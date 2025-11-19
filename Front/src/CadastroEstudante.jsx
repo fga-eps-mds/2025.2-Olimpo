@@ -65,7 +65,7 @@ export default function CadastroEstudante() {
     };
 
     try {
-      await axios.post('http://localhost:8080/user', payload);
+        await axios.post('http://localhost:8080/auth/register', payload);
       alert('Cadastro realizado com sucesso!');
       navigate('/');
     } catch (error) {
