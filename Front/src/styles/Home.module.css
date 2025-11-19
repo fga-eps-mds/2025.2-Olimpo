@@ -1,0 +1,578 @@
+/* ===== PAGE (fundo geral) ===== */
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #eef0f4;
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  color: #222;
+  display: block;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 110px;
+  background-color: #c9d0db;
+  transition: width 260ms ease, background-color 260ms ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 0;
+  box-sizing: border-box;
+  z-index: 40;
+  align-items: center;
+}
+
+.sidebar:hover {
+  width: 250px;
+  background-color: #3f3b47;
+  align-items: flex-start;
+  transition: width 260ms ease, background-color 260ms ease;
+}
+
+/* ===== MENU ICONS ===== */
+.menu-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar:hover .menu-icons {
+  align-items: flex-start;
+  padding-left: 25px; /* ADICIONADO: mesma distância da esquerda */
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 12px;
+  color: inherit;
+  box-sizing: border-box;
+  width: 60px;
+  height: 60px;
+  justify-content: center;
+}
+
+.sidebar:hover .icon-btn {
+  width: calc(100% - 50px); /* AJUSTADO: compensar o padding */
+  height: auto;
+  justify-content: flex-start; /* ALTERADO: para flex-start */
+  padding: 20px 15px; /* AJUSTADO: padding mais equilibrado */
+}
+
+.icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-btn img {
+  width: 24px;
+  height: 24px;
+  display: block;
+  flex-shrink: 0;
+  filter: brightness( #3f3b47);
+  margin: 0;
+}
+
+.sidebar:hover .icon-btn img {
+  filter: brightness(0) invert(1);
+  margin-right: 12px;
+  margin-left: 0; /* ADICIONADO: garantir alinhamento */
+}
+
+.icon-btn span {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 240ms ease-in-out, width 240ms ease-in-out;
+  color: #fff;
+  font-weight: 600;
+  padding: 0px;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.sidebar:hover .icon-btn span {
+  opacity: 1;
+  width: auto;
+  padding: 0 10px;
+}
+
+/* ===== PERFIL (rodapé) ===== */
+.profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar:hover .profile {
+  justify-content: flex-start;
+  padding-left: 25px; /* ADICIONADO: mesma distância dos ícones */
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 15px;
+  border-radius: 12px;
+  transition: all 260ms ease;
+  width: 60px; /* ALTERADO: mesma largura dos ícones */
+  height: 60px;
+  box-sizing: border-box;
+}
+
+.sidebar:hover .profile-btn {
+  justify-content: flex-start;
+  width: calc(100% - 50px); /* ADICIONADO: mesma lógica dos ícones */
+  padding: 12px 15px; /* ADICIONADO: padding consistente */
+}
+
+.profile-btn img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #eef2f6;
+  padding: 6px;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.sidebar:hover .profile-btn img {
+  margin-right: 12px;
+  margin-left: 0; /* ADICIONADO: garantir alinhamento */
+}
+
+.profile-btn span {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 240ms ease, width 240ms ease;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sidebar:hover .profile-btn span {
+  opacity: 1;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 8px;
+}
+
+/* ===== FEED (ocupa a tela toda e centraliza) ===== */
+.feed-container {
+  margin-left: 110px;
+  width: calc(100% - 110px);
+  padding: 2rem;
+  max-width: none;
+  min-height: 100vh;          /* ocupa a altura da tela */
+  display: flex;              /* vira flex */
+  justify-content: center;    /* centraliza horizontal */
+  align-items: center;        /* centraliza vertical */
+}
+
+.feed-inner {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== CARD (post) ===== */
+.card {
+  background-color: #d5dbe5;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(12,14,22,0.06);
+  border: 1px solid rgba(0,0,0,0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.userBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #eef2f8;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-weight: 700;
+  font-size: 14px;
+  color: #222;
+}
+
+.date {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.segmentBadge {
+  background: #22212b;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.moreDots {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.mediaBox {
+  background: #eef1f6;
+  height: 200px;
+  border-radius: 8px;
+  margin-top: 6px;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1f2b36;
+  margin: 0;
+}
+
+.cardText {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.invest {
+  font-weight: 700;
+  font-size: 13px;
+  color: #222;
+}
+
+/* ===== MENSAGENS DE ESTADO (CORRIGIDO PARA CENTRALIZAR) ===== */
+.noPosts {
+  background-color: #d5dbe5;
+  border-radius: 16px;
+
+  width: 350px;
+  height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centraliza vertical */
+  align-items: center;     /* centraliza horizontal */
+
+  text-align: center;
+  padding: 20px;
+}
+
+.noPosts h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #4b5563;
+}
+
+.noPosts p {
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.loading {
+  text-align: center;
+  color: #6b7280;
+  padding: 30px 0;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.sentinel {
+  height: 1px;
+}
+
+.endText {
+  text-align: center;
+  color: #6b7280;
+  padding: 40px 0;
+  font-weight: 600;
+  font-size: 14px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 20px;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 1100px) {
+  .feed-inner {
+    max-width: 620px;
+  }
+  .sidebar {
+    width: 96px;
+  }
+  .sidebar:hover {
+    width: 230px;
+  }
+
+  .feed-container {
+    margin-left: 116px;
+    width: 100%;
+  }
+  
+  .icon-btn, .profile-btn {
+    width: 50px;
+    height: 50px;
+  }
+
+  .sidebar:hover .menu-icons {
+    padding-left: 23px;
+  }
+
+  .sidebar:hover .profile {
+    padding-left: 23px;
+  }
+
+  .sidebar:hover .icon-btn,
+  .sidebar:hover .profile-btn {
+    width: calc(100% - 23px);
+  }
+}
+
+/* ===== TABLET E MOBILE - BOTTOMBAR ===== */
+@media (max-width: 820px) {
+  .page {
+    flex-direction: column;
+    padding-bottom: 80px;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    height: auto;
+    width: 100%;
+    background-color: #3f3b47;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 12px 16px;
+    align-items: center;
+    transition: none;
+  }
+
+  .sidebar:hover {
+    width: 100%;
+    padding: 12px 16px;
+    align-items: center;
+    background-color: #3f3b47;
+  }
+
+  .menu-icons {
+    flex-direction: row;
+    gap: 0;
+    justify-content: space-around;
+    width: 100%;
+    padding: 0;
+    align-items: center;
+  }
+
+  .sidebar:hover .menu-icons {
+    align-items: center;
+    padding-left: 0;
+  }
+
+  .icon-btn {
+    width: 54px;
+    height: 54px;
+    flex-direction: column;
+    padding: 8px;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  .sidebar:hover .icon-btn {
+    width: 54px;
+    height: 54px;
+    justify-content: center;
+    padding: 8px;
+  }
+
+  .icon-btn:hover {
+    transform: none;
+    background-color: transparent;
+  }
+
+  .icon-btn img {
+    width: 22px;
+    height: 22px;
+    filter: brightness(0) invert(1);
+    margin: 0 !important;
+  }
+
+  .sidebar:hover .icon-btn img {
+    filter: brightness(0) invert(1);
+    margin: 0 !important;
+  }
+
+  .icon-btn span {
+    display: none !important;
+  }
+
+  .profile {
+    display: none;
+  }
+
+  .feed-container {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: calc(100vh - 80px);
+    flex: 1;
+
+    justify-content: center;
+    align-items: center;
+  }
+
+  .sidebar:hover ~ .feed-container {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .feed-inner {
+    width: 100%;
+    max-width: none;
+    padding: 20px 16px 20px;
+    min-height: 100%;
+  }
+
+  .noPosts {
+    margin-top: 0;
+    padding: 40px 20px;
+  }
+
+  .noPosts h3 {
+    font-size: 18px;
+  }
+
+  .noPosts p {
+    font-size: 13px;
+  }
+
+  .profile-btn span {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    padding: 10px 12px;
+  }
+
+  .icon-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .icon-btn img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .feed-inner {
+    padding: 16px 12px 16px;
+    gap: 24px;
+  }
+  
+  .card {
+    padding: 16px;
+  }
+  
+  .feed-container {
+    height: calc(100vh - 68px);
+  }
+
+  .noPosts {
+    padding: 30px 16px;
+  }
+
+  .noPosts h3 {
+    font-size: 16px;
+  }
+
+  .noPosts p {
+    font-size: 12px;
+  }
+
+  .loading {
+    padding: 20px 0;
+    font-size: 13px;
+  }
+
+  .endText {
+    padding: 30px 0;
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .feed-inner {
+    max-width: 800px;
+  }
+}
