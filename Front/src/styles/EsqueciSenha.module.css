@@ -144,10 +144,11 @@ body {
   margin-bottom: 18px;
 }
 
-.-labelreset {
+.email {
   color: #c9cfde;
   font-size: 1rem;
   margin-bottom: 6px;
+  margin-right: 280px;
 }
 
 .input {
@@ -201,6 +202,7 @@ body {
   text-decoration: underline;
 }
 
+/* ----------- NOTEBOOK/DESKTOP ----------- */
 @media (min-width: 1201px) {
   .container {
     padding: 0;
@@ -279,6 +281,7 @@ body {
   }
 }
 
+/* ----------- TABLET ----------- */
 @media (min-width: 800px) and (max-width: 1200px) {
   .container {
     display: flex;
@@ -410,7 +413,7 @@ body {
     font-weight: 600;
   }
 
-  .input, .reset-label {
+  .input, .email {
     font-size: 1.03rem;
   }
 
@@ -427,6 +430,7 @@ body {
   }
 }
 
+/* ----------- MOBILE ----------- */
 @media (max-width: 799px) {
   .container {
     display: flex;
@@ -532,7 +536,7 @@ body {
     text-align: center;
     font-weight: 600;
   }
-  .input, .reset-label {
+  .input, .email {
     font-size: 1rem;
   }
   .botao-enviar {

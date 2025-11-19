@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/LinkEnviado.css';
+import styles from './styles/LinkEnviado.module.css';
 import logo from './assets/logo.png';
 import { VscArrowLeft } from "react-icons/vsc";
 
@@ -22,41 +22,41 @@ function LinkEnviado() {
   const isMobile = width < 800;
 
   return (
-    <div className="container">
-      <div className="card">
+    <div className={styles.container}>
+      <div className={styles.card}>
         {(isMobile || isTablet) && (
           <>
-            <div className="elipse-logo">
-              <img src={logo} alt="LUME Logo" className="logo" />
+            <div className={styles["elipse-logo"]}>
+              <img src={logo} alt="LUME Logo" className={styles.logo} />
             </div>
-            <div className="lume">LUME</div>
+            <div className={styles.lume}>LUME</div>
           </>
         )}
 
         {isDesktop && (
-          <div className="card-esquerdo">
-            <div className="elipse-logo">
-              <img src={logo} alt="LUME Logo" className="logo" />
+          <div className={styles["card-esquerdo"]}>
+            <div className={styles["elipse-logo"]}>
+              <img src={logo} alt="LUME Logo" className={styles.logo} />
             </div>
-            <div className="lume">LUME</div>
-            <div className="bem-vindo">Bem-vindo de volta!</div>
-            <div className="texto-inicial">
+            <div className={styles.lume}>LUME</div>
+            <div className={styles["bem-vindo"]}>Bem-vindo de volta!</div>
+            <div className={styles["texto-inicial"]}>
               Conectando ideias inovadoras a investidores<br />
               que acreditam no divotencial universitário
             </div>
           </div>
         )}
 
-        <div className="card-direito">
-          <a href="#" className="voltar"><VscArrowLeft /> Voltar</a>
-          <div className="conteudo-card-direito">
-            <div className="link-recuperacao">Link de recuperação enviado!</div>
-            <p>
-              Enviamos um link para recuperação de senha para o seu email<br />
-            </p>
+        <div className={styles["card-direito"]}>
+          <a href="#" className={styles.voltar}><VscArrowLeft /> Voltar</a>
+          <div className={styles["conteudo-card-direito"]}>
+            <div className={styles["link-recuperacao"]}>Link de recuperação enviado!</div>
+            <div className={styles['texto']}>Enviamos um link para recuperação de senha para o seu email<br />
+              <span className={styles.email}>seu.email@gmail.com</span>       
+            </div>
             <div>
               Não recebeu o e-mail?
-              <a href="#" className="link-reenviar"> Clique aqui para reenviar</a>
+              <a href="#" className={styles["link-reenviar"]}> Clique aqui para reenviar</a>
             </div>
           </div>
         </div>

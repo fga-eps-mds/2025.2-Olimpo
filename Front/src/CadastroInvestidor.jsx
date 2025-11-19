@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './styles/CadastroInvestidor.css';
+import styles from './styles/CadastroInvestidor.module.css';
 import logo from './assets/logo.png';
 import { VscArrowLeft } from "react-icons/vsc";
 import { CiCircleRemove, CiCircleCheck } from "react-icons/ci";
-
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -38,10 +37,9 @@ export default function CadastroInvestidor() {
   const [cnpj, setCnpj] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmaSenha, setConfirmaSenha] = useState('');
-  
   const [errorMessage, setErrorMessage] = useState('');
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -68,84 +66,75 @@ const handleSubmit = async (e) => {
     };
 
     try {
-      await axios.post('http://localhost:8080/auth/register', payload);
-      
-      alert('Cadastro de investidor realizado com sucesso! Por favor, verifique seu e-mail para ativar sua conta.');
+      await axios.post('http://localhost:8080/user', payload);
+      alert('Cadastro de investidor realizado com sucesso!');
       navigate('/');
-
     } catch (error) {
-          console.error('Erro ao cadastrar:', error);
-          if (error.response) {
-            console.error('Dados do erro:', error.response.data);
-            setErrorMessage(error.response.data || 'Erro ao cadastrar. Verifique os dados.');
-          } else if (error.request) {
-            setErrorMessage('Não foi possível se conectar ao servidor. O back-end está no ar?');
-          } else {
-            setErrorMessage(`Erro no front-end: ${error.message}`);
-          }
-        }
+      console.error('Erro ao cadastrar:', error);
+      if (error.response) {
+        console.error('Dados do erro:', error.response.data);
+        setErrorMessage(`Erro do servidor: ${error.response.data.message || 'Verifique os dados.'}`);
+      } else if (error.request) {
+        setErrorMessage('Não foi possível se conectar ao servidor. O back-end está no ar?');
+      } else {
+        setErrorMessage(`Erro no front-end: ${error.message}`);
+      }
+    }
   };
 
   return (
-    <div className="container">
-      <div className="card">
-
-        <div className="card-esquerdo">
-          <Link to="/" className="voltar"><VscArrowLeft />{' Voltar'}</Link>
-          <div className="cadastro-titulo">Cadastro Investidor</div>
-          
-          <form className="formulario formulario-scroll" onSubmit={handleSubmit}>
-            
-            <label className="cadastro-label">Nome completo</label>
-            <input type="text" className="input" placeholder="Digite seu nome" autoComplete="name" 
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <div className={styles["card-esquerdo"]}>
+          <Link to="/" className={styles.voltar}><VscArrowLeft />{' Voltar'}</Link>
+          <div className={styles["cadastro-titulo"]}>Cadastro Investidor</div>
+          <form className={`${styles.formulario} ${styles["formulario-scroll"]}`} onSubmit={handleSubmit}>
+            <label className={styles["cadastro-label"]}>Nome completo</label>
+            <input type="text" className={styles.input} placeholder="Digite seu nome" autoComplete="name"
               value={nome} onChange={e => setNome(e.target.value)} required />
-            
-            <label className="cadastro-label">E-mail</label>
-            <input type="email" className="input" placeholder="Digite seu e-mail" autoComplete="email"
+            <label className={styles["cadastro-label"]}>E-mail</label>
+            <input type="email" className={styles.input} placeholder="Digite seu e-mail" autoComplete="email"
               value={email} onChange={e => setEmail(e.target.value)} required />
-            
-            <label className="cadastro-label">CPF</label>
-            <input type="text" className="input" placeholder="Digite seu CPF" autoComplete="cpf"
+            <label className={styles["cadastro-label"]}>CPF</label>
+            <input type="text" className={styles.input} placeholder="Digite seu CPF" autoComplete="cpf"
               value={cpf} onChange={e => setCpf(e.target.value)} required />
-            
-            <label className="cadastro-label">Telefone</label>
-            <input type="text" className="input" placeholder="Digite seu telefone" autoComplete="tel"
+            <label className={styles["cadastro-label"]}>Telefone</label>
+            <input type="text" className={styles.input} placeholder="Digite seu telefone" autoComplete="tel"
               value={telefone} onChange={e => setTelefone(e.target.value)} required />
 
-            <label className="cadastro-label">Faz parte de uma empresa?</label>
-            <div className="empresa-radio-group">
+            <label className={styles["cadastro-label"]}>Faz parte de uma empresa?</label>
+            <div className={styles["empresa-radio-group"]}>
               <button
                 type="button"
-                className={empresa === true ? "input-radio selected" : "input-radio"}
+                className={empresa === true ? `${styles["input-radio"]} ${styles.selected}` : styles["input-radio"]}
                 onClick={() => setEmpresa(true)}
               >Sim</button>
               <button
                 type="button"
-                className={empresa === false ? "input-radio selected" : "input-radio"}
+                className={empresa === false ? `${styles["input-radio"]} ${styles.selected}` : styles["input-radio"]}
                 onClick={() => setEmpresa(false)}
               >Não</button>
             </div>
 
             {empresa === true && (
               <>
-                <label className="cadastro-label">CNPJ</label>
-                <input type="text" className="input" placeholder="Digite o CNPJ" autoComplete="cnpj" 
+                <label className={styles["cadastro-label"]}>CNPJ</label>
+                <input type="text" className={styles.input} placeholder="Digite o CNPJ" autoComplete="cnpj"
                   value={cnpj} onChange={e => setCnpj(e.target.value)} required />
               </>
             )}
-            
-            <label className="cadastro-label">Senha</label>
+
+            <label className={styles["cadastro-label"]}>Senha</label>
             <input
               type="password"
-              className="input"
+              className={styles.input}
               placeholder="Senha"
               autoComplete="new-password"
               value={senha}
               onChange={e => setSenha(e.target.value)}
               required
             />
-
-            <div className="senha-requisitos" style={{marginBottom: 15}}>
+            <div className={styles["senha-requisitos"]} style={{marginBottom: 15}}>
               {rules.map(rule => {
                 const passed = rule.check(senha);
                 return (
@@ -162,10 +151,10 @@ const handleSubmit = async (e) => {
               })}
             </div>
 
-            <label className="cadastro-label">Confirmar senha</label>
+            <label className={styles["cadastro-label"]}>Confirmar senha</label>
             <input
               type="password"
-              className="input"
+              className={styles.input}
               placeholder="Confirmar senha"
               autoComplete="new-password"
               value={confirmaSenha}
@@ -188,23 +177,22 @@ const handleSubmit = async (e) => {
                 {errorMessage}
               </p>
             )}
-            
-            <button type="submit" className="botao-enviar">Criar conta</button>
+            <button type="submit" className={styles["botao-enviar"]}>Criar conta</button>
           </form>
         </div>
 
-        <div className="card-direito">
+        <div className={styles["card-direito"]}>
           {isDesktop && (
             <>
-            <div className="logo-elipse">
-                <img src={logo} alt="Logo" className="logo" />
-            </div>
-            <div className="lume">LUME</div>
-            <div className="texto">
-              Conectando ideias inovadoras a investidores que acreditam no potencial universitário
-              <br/><br/>
-              Transforme sua ideia em realidade ou invista no futuro
-            </div>
+              <div className={styles["logo-elipse"]}>
+                <img src={logo} alt="Logo" className={styles.logo} />
+              </div>
+              <div className={styles.lume}>LUME</div>
+              <div className={styles.texto}>
+                Conectando ideias inovadoras a investidores que acreditam no potencial universitário
+                <br /><br />
+                Transforme sua ideia em realidade ou invista no futuro
+              </div>
             </>
           )}
         </div>

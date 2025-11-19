@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './styles/CadastroEstudante.css';
+import styles from './styles/CadastroEstudante.module.css';
 import logo from './assets/logo.png';
 import { VscArrowLeft } from "react-icons/vsc";
 import { CiCircleRemove, CiCircleCheck } from "react-icons/ci";
@@ -38,10 +38,9 @@ export default function CadastroEstudante() {
   const [curso, setCurso] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmaSenha, setConfirmaSenha] = useState('');
-  
   const [errorMessage, setErrorMessage] = useState('');
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -58,76 +57,67 @@ const handleSubmit = async (e) => {
       name: nome,
       email: email,
       password: senha,
+      faculdade: instituicao,
+      curso: curso,
       docType: "CPF",
       docNumber: cpf,
-      role: "ESTUDANTE",
-      faculdade: instituicao,
-      curso: curso
+      role: "ESTUDANTE"
     };
 
     try {
-      await axios.post('http://localhost:8080/auth/register', payload);
-      
-      alert('Cadastro realizado com sucesso! Por favor, verifique seu e-mail para ativar sua conta.');
+      await axios.post('http://localhost:8080/user', payload);
+      alert('Cadastro realizado com sucesso!');
       navigate('/');
-
     } catch (error) {
-          console.error('Erro ao cadastrar:', error);
-          if (error.response) {
-            console.error('Dados do erro:', error.response.data);
-            setErrorMessage(error.response.data || 'Erro ao cadastrar. Verifique os dados.');
-          } else if (error.request) {
-            setErrorMessage('Não foi possível se conectar ao servidor. O back-end está no ar?');
-          } else {
-            setErrorMessage(`Erro no front-end: ${error.message}`);
-          }
-        }
+      console.error('Erro ao cadastrar:', error);
+      if (error.response) {
+        console.error('Dados do erro:', error.response.data);
+        setErrorMessage(`Erro do servidor: ${error.response.data.message || 'Verifique os dados.'}`);
+      } else if (error.request) {
+        setErrorMessage('Não foi possível se conectar ao servidor. O back-end está no ar?');
+      } else {
+        setErrorMessage(`Erro no front-end: ${error.message}`);
+      }
+    }
   };
 
   return (
-    <div className="container">
-      <div className="card">
-        <div className="card-esquerdo">
-          <Link to="/" className="voltar"><VscArrowLeft />{' Voltar'}</Link>
-          <div className="cadastro-titulo">Cadastro Estudante</div>
-          
-          <form className="formulario formulario-scroll" onSubmit={handleSubmit}>
-            
-            <label className="cadastro-label">Nome completo</label>
-            <input type="text" className="input" placeholder="Digite seu nome" autoComplete="name" 
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <div className={styles["card-esquerdo"]}>
+          <Link to="/" className={styles.voltar}><VscArrowLeft />{' Voltar'}</Link>
+          <div className={styles["cadastro-titulo"]}>Cadastro Estudante</div>
+          <form className={`${styles.formulario} ${styles["formulario-scroll"]}`} onSubmit={handleSubmit}>
+            <label className={styles["cadastro-label"]}>Nome completo</label>
+            <input type="text" className={styles.input} placeholder="Digite seu nome" autoComplete="name"
               value={nome} onChange={e => setNome(e.target.value)} required />
-            
-            <label className="cadastro-label">E-mail</label>
-            <input type="email" className="input" placeholder="Digite seu e-mail" autoComplete="email"
+            <label className={styles["cadastro-label2"]}>E-mail</label>
+            <input type="email" className={styles.input} placeholder="Digite seu e-mail" autoComplete="email"
               value={email} onChange={e => setEmail(e.target.value)} required />
-            
-            <label className="cadastro-label">CPF</label>
-            <input type="text" className="input" placeholder="Digite seu CPF" autoComplete="cpf"
+            <label className={styles["cadastro-label2"]}>CPF</label>
+            <input type="text" className={styles.input} placeholder="Digite seu CPF" autoComplete="cpf"
               value={cpf} onChange={e => setCpf(e.target.value)} required />
-            
-            <label className="cadastro-label">Telefone</label>
-            <input type="text" className="input" placeholder="Digite seu telefone" autoComplete="tel"
+            <label className={styles["cadastro-label2"]}>Telefone</label>
+            <input type="text" className={styles.input} placeholder="Digite seu telefone" autoComplete="tel"
               value={telefone} onChange={e => setTelefone(e.target.value)} required />
-            
-            <label className="cadastro-label">Instituição de ensino</label>
-            <input type="text" className="input" placeholder="Digite sua instituição de ensino"
+            <label className={styles["cadastro-label3"]}>Instituição de ensino</label>
+            <input type="text" className={styles.input} placeholder="Digite sua instituição de ensino"
               value={instituicao} onChange={e => setInstituicao(e.target.value)} required />
-            
-            <label className="cadastro-label">Curso</label>
-            <input type="text" className="input" placeholder="Digite seu curso"
+            <label className={styles["cadastro-label2"]}>Curso</label>
+            <input type="text" className={styles.input} placeholder="Digite seu curso"
               value={curso} onChange={e => setCurso(e.target.value)} required />
 
-            <label className="cadastro-label">Senha</label>
-            <input 
-              type="password" 
-              className="input" 
+            <label className={styles["cadastro-label2"]}>Senha</label>
+            <input
+              type="password"
+              className={styles.input}
               placeholder="Senha"
               autoComplete="new-password"
               value={senha}
               onChange={e => setSenha(e.target.value)}
-              required 
+              required
             />
-            <div className="senha-requisitos" style={{marginBottom: 10, marginLeft: 16}}>
+            <div className={styles["senha-requisitos"]} style={{marginBottom: 10, marginLeft: 16}}>
               {rules.map(rule => {
                 const passed = rule.check(senha);
                 return (
@@ -141,15 +131,15 @@ const handleSubmit = async (e) => {
               })}
             </div>
 
-            <label className="cadastro-label">Confirmar senha</label>
-            <input 
-              type="password" 
-              className="input" 
+            <label className={styles["cadastro-label"]}>Confirmar senha</label>
+            <input
+              type="password"
+              className={styles.input}
               placeholder="Confirmar senha"
               autoComplete="new-password"
               value={confirmaSenha}
               onChange={e => setConfirmaSenha(e.target.value)}
-              required 
+              required
             />
             <div style={{display: 'flex', alignItems: 'center', marginBottom: 15, marginLeft: 16}}>
               {senha && confirmaSenha && senha === confirmaSenha ? <CiCircleCheck size={18} color="#FDC700" /> : <CiCircleRemove size={18} color="#fff" />}
@@ -163,20 +153,20 @@ const handleSubmit = async (e) => {
                 {errorMessage}
               </p>
             )}
-            <button type="submit" className="botao-enviar">Criar conta</button>
+            <button type="submit" className={styles["botao-enviar"]}>Criar conta</button>
           </form>
         </div>
 
-        <div className="card-direito">
+        <div className={styles["card-direito"]}>
           {isDesktop && (
             <>
-              <div className="logo-elipse">
-                <img src={logo} alt="Logo" className="logo" />
+              <div className={styles["logo-elipse"]}>
+                <img src={logo} alt="Logo" className={styles.logo} />
               </div>
-              <div className="lume">LUME</div>
-              <div className="texto">
+              <div className={styles.lume}>LUME</div>
+              <div className={styles.texto}>
                 Conectando ideias inovadoras a investidores que acreditam no potencial universitário
-                <br/><br/>
+                <br /><br />
                 Transforme sua ideia em realidade ou invista no futuro
               </div>
             </>

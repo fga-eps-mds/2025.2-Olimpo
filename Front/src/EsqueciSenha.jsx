@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './styles/EsqueciSenha.css';
+import styles from './styles/EsqueciSenha.module.css'
 import logo from './assets/logo.png';
 import { VscArrowLeft } from "react-icons/vsc";
 
@@ -45,45 +45,45 @@ function EsqueciSenha() {
   };
 
   return (
-    <div className="container">
-      <div className="card">
+    <div className={styles.container}>
+      <div className={styles.card}>
         {isDesktop && (
-          <div className="card-esquerdo">
-            <div className="logo-elipse">
-              <img src={logo} alt="Logo" className="logo" />
+          <div className={styles['card-esquerdo']}>
+            <div className={styles['logo-elipse']}>
+              <img src={logo} alt="Logo" className={styles.logo} />
             </div>
-            <div className="lume">LUME</div>
-            <div className="bem-vindo">Bem-vindo de volta!</div>
-            <div className="texto">
+            <div className={styles.lume}>LUME</div>
+            <div className={styles['bem-vindo']}>Bem-vindo de volta!</div>
+            <div className={styles.texto}>
               Insira seu e-mail para o envio do link de recuperação de senha
             </div>
           </div>
         )}
-        <div className="card-direito">
-          <Link to="/" className="voltar"><VscArrowLeft /> Voltar</Link>
+        <div className={styles['card-direito']}>
+          <Link to="/" className={styles.voltar}><VscArrowLeft /> Voltar</Link>
           {(isTablet || isMobile) && (
             <>
-              <div className="logo-elipse">
-                <img src={logo} alt="Logo" className="logo" />
+              <div className={styles['logo-elipse']}>
+                <img src={logo} alt="Logo" className={styles.logo} />
               </div>
-              <div className="lume">LUME</div>
+              <div className={styles.lume}>LUME</div>
             </>
           )}
-          <div className="esqueci-senha">Esqueci minha senha</div>
+          <div className={styles['esqueci-senha']}>Esqueci minha senha</div>
           {(isTablet || isMobile) && (
-            <div className="texto">
+            <div className={styles.texto}>
               Insira seu e-mail para o envio do link de recuperação de senha
             </div>
           )}
           
-          <form className="formulario" onSubmit={handleSubmit}>
-            <label htmlFor="email" className="reset-label">
+          <form className={styles.formulario} onSubmit={handleSubmit}>
+            <label htmlFor="email" className={styles.email}>
               E-mail
             </label>
             <input
               type="email"
               id="email"
-              className="input"
+              className={styles.input}
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -95,10 +95,10 @@ function EsqueciSenha() {
                 {errorMessage}
               </p>
             )}
-            <button type="submit" className="botao-enviar">Enviar</button>
+            <button type="submit" className={styles['botao-enviar']}>Enviar</button>
           </form>
-          <div className="rodape">
-            Ainda não possui uma conta? <Link to="/cadastro-estudante" className="link">Crie aqui</Link>
+          <div className={styles.rodape}>
+            Ainda não possui uma conta? <Link to="/cadastro-estudante" className={styles.link}>Crie aqui</Link>
           </div>
         </div>
       </div>

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './styles/Login.css';
+import styles from './styles/Login.module.css';
 import logo from './assets/logo.png';
 import { VscArrowLeft } from "react-icons/vsc";
-
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -60,79 +59,72 @@ function Login() {
     };
 
     return (
-        <div className="container">
-            <div className="card">
+        <div className={styles.container}>
+            <div className={styles.card}>
                 {isDesktop && (
-                    <div className="card-esquerdo">
-                        <div className="logo-elipse">
-                            <img src={logo} alt="Logo" className="logo" />
+                    <div className={styles['card-esquerdo']}>
+                        <div className={styles['logo-elipse']}>
+                            <img src={logo} alt="Logo" className={styles.logo} />
                         </div>
-                        <div className="lume">LUME</div>
-                        <div className="bem-vindo">Bem-vindo de volta!</div>
-                        <div className="texto">
+                        <div className={styles.lume}>LUME</div>
+                        <div className={styles['bem-vindo']}>Bem-vindo de volta!</div>
+                        <div className={styles.texto}>
                             Conectando ideias inovadoras a investidores que acreditam no potencial universitário
                         </div>
                     </div>
                 )}
-                <div className="card-direito">
-
+                <div className={styles['card-direito']}>
                     {(isTablet || isMobile) && (
                         <>
-                            <div className="logo-elipse">
-                                <img src={logo} alt="Logo" className="logo" />
+                            <div className={styles['logo-elipse']}>
+                                <img src={logo} alt="Logo" className={styles.logo} />
                             </div>
-                            <div className="lume">LUME</div>
+                            <div className={styles.lume}>LUME</div>
                         </>
                     )}
-
-                    <div className="login-titulo">Login</div>
-
-                    <form className="formulario" onSubmit={handleSubmit}>
-                        <label htmlFor="email" className="login-label">
+                    <div className={styles['login-titulo']}>Login</div>
+                    <form className={styles.formulario} onSubmit={handleSubmit}>
+                        <label htmlFor="email" className={styles['login-label']}>
                             E-mail
                         </label>
                         <input
                             type="email"
                             id="email"
-                            className="input"
+                            className={styles.input}
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             required
                             autoComplete="email"
                             placeholder="Digite seu e-mail"
                         />
-
-                        <label htmlFor="password" style={{marginTop: 10}} className="login-label">
+                        <label htmlFor="password" style={{ marginTop: 10 }} className={styles['login-label']}>
                             Senha
                         </label>
                         <input
                             type="password"
                             id="password"
-                            className="input"
+                            className={styles.input}
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                             required
                             autoComplete="current-password"
                             placeholder="Digite sua senha"
                         />
-
-                        <div style={{width: '100%', textAlign: 'right', marginTop: -5, marginBottom: 15}}>
-                            <Link to="/esqueci-senha" className="link-esqueci">Esqueceu a senha?</Link>
+                        <div style={{ width: '100%', textAlign: 'right', marginTop: -5, marginBottom: 15 }}>
+                            <Link to="/esqueci-senha" className={styles['link-esqueci']}>Esqueceu a senha?</Link>
                         </div>
-
                         {errorMessage && (
                             <p style={{ color: '#FDC700', fontSize: '0.9rem', textAlign: 'center', marginTop: -10 }}>
                                 {errorMessage}
                             </p>
                         )}
-                        <button type="submit" className="botao-enviar">Entrar</button>
+                        <button type="submit" className={styles['botao-enviar']}>Entrar</button>
                     </form>
-
-                    <div className="rodape">
-                        Ainda não possui uma conta? <Link to="/cadastro-estudante" className="link">Crie aqui</Link>
+                    <div className={styles.rodape}>
+                        Ainda não possui uma conta? <Link to="/cadastro-estudante" className={styles.link}>Crie aqui</Link>
                     </div>
-                    <div className="rodape" style={{marginTop: 5}}>
-                        É um investidor? <Link to="/cadastro-investidor" className="link">Cadastre-se aqui</Link>
+                    <div className={styles.rodape} style={{ marginTop: 5 }}>
+                        É um investidor? <Link to="/cadastro-investidor" className={styles.link}>Cadastre-se aqui</Link>
                     </div>
                 </div>
             </div>
