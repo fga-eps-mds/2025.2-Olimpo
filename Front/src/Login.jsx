@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './styles/Login.module.css';
 import logo from './assets/logo.png';
-import { VscArrowLeft } from "react-icons/vsc";
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -69,7 +68,7 @@ function Login() {
                         <div className={styles.lume}>LUME</div>
                         <div className={styles['bem-vindo']}>Bem-vindo de volta!</div>
                         <div className={styles.texto}>
-                            Conectando ideias inovadoras a investidores que acreditam no potencial universitário
+                            Insira seus dados para entrar na sua conta
                         </div>
                     </div>
                 )}
@@ -82,7 +81,12 @@ function Login() {
                             <div className={styles.lume}>LUME</div>
                         </>
                     )}
-                    <div className={styles['login-titulo']}>Login</div>
+                    <div className={styles['login-titulo']}>Bem vindo de volta!</div>
+                    {(isTablet || isMobile) && (
+                        <div className={styles.texto}>
+                        Insira seus dados para entrar na sua conta
+                    </div>
+                    )}
                     <form className={styles.formulario} onSubmit={handleSubmit}>
                         <label htmlFor="email" className={styles['login-label']}>
                             E-mail
@@ -110,7 +114,7 @@ function Login() {
                             autoComplete="current-password"
                             placeholder="Digite sua senha"
                         />
-                        <div style={{ width: '100%', textAlign: 'right', marginTop: -5, marginBottom: 15 }}>
+                        <div style={{ width: '100%', textAlign: 'left', marginTop: -5, marginBottom: 15 }}>
                             <Link to="/esqueci-senha" className={styles['link-esqueci']}>Esqueceu a senha?</Link>
                         </div>
                         {errorMessage && (
@@ -122,9 +126,6 @@ function Login() {
                     </form>
                     <div className={styles.rodape}>
                         Ainda não possui uma conta? <Link to="/cadastro-estudante" className={styles.link}>Crie aqui</Link>
-                    </div>
-                    <div className={styles.rodape} style={{ marginTop: 5 }}>
-                        É um investidor? <Link to="/cadastro-investidor" className={styles.link}>Cadastre-se aqui</Link>
                     </div>
                 </div>
             </div>

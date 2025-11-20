@@ -34,7 +34,7 @@ body, #root, .container-root {
   align-items: flex-start;
   background: #BDC5D5;
   width: 130px;
-  height: 890px;
+  height: 100%;
   color: #ccc;
   padding: 20px 0;
   transition: background 0.2s, color 0.2s, width 0.3s;
