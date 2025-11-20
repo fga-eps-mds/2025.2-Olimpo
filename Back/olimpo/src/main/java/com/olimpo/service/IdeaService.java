@@ -9,6 +9,7 @@ import com.olimpo.repository.IdeaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,12 +21,17 @@ public class IdeaService {
     private final IdeaRepository ideaRepository;
     private final UserRepository accountRepository;
     private final KeywordRepository keywordRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-public IdeaService(IdeaRepository ideaRepository, UserRepository accountRepository, KeywordRepository keywordRepository) {
+    public IdeaService(IdeaRepository ideaRepository, 
+                       UserRepository accountRepository, 
+                       KeywordRepository keywordRepository,
+                       CloudinaryService cloudinaryService) {
         this.ideaRepository = ideaRepository;
         this.accountRepository = accountRepository;
         this.keywordRepository = keywordRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public Idea createIdea(Idea idea, Integer accountId) {
@@ -73,9 +79,16 @@ public IdeaService(IdeaRepository ideaRepository, UserRepository accountReposito
     }
 
     public void deleteIdea(Integer id) {
-        if (!ideaRepository.existsById(id)) {
-            throw new RuntimeException("Idea não encontrada com id: " + id);
+        Idea idea = getIdeaById(id);
+        if (idea.getIdeaFiles() != null) {
+            for (var file : idea.getIdeaFiles()) {
+                try {
+                    cloudinaryService.deleteFile(file.getFileUrl());
+                } catch (IOException e) {
+                    System.err.println("Erro ao deletar arquivo do Cloudinary: " + file.getFileUrl());
+                }
+            }
         }
-        ideaRepository.deleteById(id);
+        ideaRepository.delete(idea);
     }
 }

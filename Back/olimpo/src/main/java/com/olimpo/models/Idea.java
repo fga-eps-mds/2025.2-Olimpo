@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "IDEA")
@@ -44,6 +46,14 @@ public class Idea {
             inverseJoinColumns = @JoinColumn(name = "keyword_id")
     )
     private Set<Keyword> keywords = new HashSet<>();
+
+    @OneToMany(
+        mappedBy = "idea", 
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    private List<IdeaFile> ideaFiles = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

@@ -89,10 +89,10 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.OPTIONS, "/user/resend-code").permitAll()
 
                                 .requestMatchers("/api/password/**").permitAll()
+                                .requestMatchers("/api/ideas/**").authenticated()
 
                                 .anyRequest().authenticated()
                 )
-                // Adiciona o filtro do Token ANTES do filtro padrão de autenticação
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
