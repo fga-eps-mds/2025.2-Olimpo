@@ -10,6 +10,7 @@ import StatusVerificacao from './StatusVerificacao.jsx';
 import ResetarSenha from './ResetarSenha.jsx';
 import PostarIdeia from './PostarIdeia.jsx';
 import Home from './Home.jsx'
+import EditarIdeia from './EditarIdeia.jsx';
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
         <Route path="/reset-password" element={<ResetarSenha />} />
         <Route path="/postar-ideia" element={<PostarIdeia />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/editar-ideia" element={<EditarIdeia />} />
+
 
         <Route path="*" element={
           <div>

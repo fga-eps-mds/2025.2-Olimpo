@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
+// ... (mantenha seus imports de imagens e CSS aqui)
 import home from './assets/home.png';
 import home_hover from './assets/home_hover.png';
 import coracao from './assets/coracao.png';
@@ -18,7 +19,14 @@ export default function PostarIdeia() {
 
   const [hovered, setHovered] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selected, setSelected] = useState("");
+  
+  // Estados para os dados do formulário
+  const [selected, setSelected] = useState(""); // Segmento (Keyword)
+  const [titulo, setTitulo] = useState("");
+  const [investimento, setInvestimento] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [imagem, setImagem] = useState(null);
+
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -34,6 +42,67 @@ export default function PostarIdeia() {
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen]);
+
+  // Função para enviar os dados para o Backend
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // 1. Validar dados básicos
+    if (!titulo || !selected || !investimento) {
+      alert("Por favor, preencha os campos obrigatórios.");
+      return;
+    }
+
+    // 2. Criar o objeto FormData para envio de arquivos + dados
+    const formData = new FormData();
+    
+    // Estrutura do objeto Idea (baseado no seu IdeaTests.java)
+    const ideaData = {
+      name: titulo,
+      description: descricao,
+      price: parseFloat(investimento), // Backend espera um número
+      keywords: [selected] // Envia o segmento como uma lista de keywords
+    };
+
+    // Adiciona o JSON da ideia. O Backend deve esperar um @RequestPart("data") ou similar
+    formData.append('data', new Blob([JSON.stringify(ideaData)], {
+        type: 'application/json'
+    }));
+
+    // Adiciona o arquivo se existir
+    if (imagem) {
+      formData.append('file', imagem);
+    }
+
+    try {
+      // Recupera o token salvo no login
+      const token = localStorage.getItem('token'); 
+
+      const response = await fetch('http://localhost:8080/api/ideas', { 
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}` 
+          },
+          body: formData
+        });
+
+      if (response.ok) {
+        alert("Ideia postada com sucesso!");
+        // Limpar formulário ou redirecionar
+        setTitulo("");
+        setDescricao("");
+        setInvestimento("");
+        setImagem(null);
+        setSelected("");
+      } else {
+        const errorText = await response.text();
+        alert("Erro ao postar ideia: " + errorText);
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+      alert("Erro de conexão com o servidor.");
+    }
+  };
 
   return (
     <div className={styles['container-root']}>
@@ -54,18 +123,27 @@ export default function PostarIdeia() {
       </aside>
       <main className={styles['main-content']}>
         <div className={styles['form-container']}>
-          <form className={styles['post-form']}>
+          
+          {/* Adicionado onSubmit */}
+          <form className={styles['post-form']} onSubmit={handleSubmit}>
+            
             <label className={styles.label}>Imagem</label>
             <input
               className={styles['input-imagem']}
               type="file"
+              accept="image/*" // Restringe para imagens
+              onChange={(e) => setImagem(e.target.files[0])} // Captura o arquivo
             />
+
             <label className={styles.label}>Título</label>
             <input
               className={styles.input}
               type="text"
               placeholder="Título"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)} // Captura o título
             />
+
             <div className={styles['input-row']}>
               <div>
                 <label className={styles.label}>Segmento</label>
@@ -84,6 +162,7 @@ export default function PostarIdeia() {
                 </button>
                 {dropdownOpen && (
                   <div className={styles['lista-selecionar']}>
+                    {/* As strings aqui devem bater com o nome das Keywords no Banco de Dados */}
                     <div className={styles['lista-itens']} onClick={() => {setSelected("Educação"); setDropdownOpen(false)}}>Educação</div>
                     <div className={styles['lista-itens']} onClick={() => {setSelected("Tecnologia"); setDropdownOpen(false)}}>Tecnologia</div>
                     <div className={styles['lista-itens']} onClick={() => {setSelected("Indústria alimentícia"); setDropdownOpen(false)}}>Indústria alimentícia</div>
@@ -98,8 +177,10 @@ export default function PostarIdeia() {
                 <label className={styles.label}>Investimento</label>
                 <input
                   className={styles.input}
-                  type="text"
+                  type="number" // Mudado para number para facilitar
                   placeholder="Investimento"
+                  value={investimento}
+                  onChange={(e) => setInvestimento(e.target.value)} // Captura investimento
                 />
               </div>
             </div>
@@ -107,6 +188,8 @@ export default function PostarIdeia() {
             <textarea
               className={styles.textarea}
               placeholder="Descrição"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)} // Captura descrição
             />
             <button className={styles['btn-postar']} type="submit">
               Postar

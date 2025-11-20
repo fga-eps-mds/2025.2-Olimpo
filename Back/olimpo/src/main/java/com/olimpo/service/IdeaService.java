@@ -8,6 +8,7 @@ import com.olimpo.repository.UserRepository;
 import com.olimpo.repository.IdeaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ public class IdeaService {
         this.cloudinaryService = cloudinaryService;
     }
 
+    @Transactional
     public Idea createIdea(Idea idea, Integer accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account não encontrado com id: " + accountId));

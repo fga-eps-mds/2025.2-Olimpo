@@ -32,14 +32,18 @@ function Login() {
         setErrorMessage('');
 
         try {
-            await axios.post('http://localhost:8080/auth/login', {
-                email: email,
-                password: password
-            });
+                const response = await axios.post('http://localhost:8080/auth/login', {
+                    email: email,
+                    password: password
+                });
 
-            alert('Login realizado com sucesso!');
-            navigate('/esqueci-senha');
+                const token = response.data.token; 
 
+                localStorage.setItem('token', token);
+
+                alert('Login realizado com sucesso!');
+                
+                navigate('/home');
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             if (error.response) {

@@ -1,21 +1,24 @@
 package com.olimpo.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "IDEA")
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class Idea {
 
     @Id
@@ -45,6 +48,7 @@ public class Idea {
             joinColumns = @JoinColumn(name = "idea_id"),
             inverseJoinColumns = @JoinColumn(name = "keyword_id")
     )
+    @ToString.Exclude // Excluir do toString para evitar LazyInitializationException
     private Set<Keyword> keywords = new HashSet<>();
 
     @OneToMany(
@@ -53,10 +57,24 @@ public class Idea {
         orphanRemoval = true,
         fetch = FetchType.LAZY
     )
+    @ToString.Exclude // Excluir também
     private List<IdeaFile> ideaFiles = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
         time = OffsetDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Idea idea = (Idea) o;
+        return Objects.equals(id, idea.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
