@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Importação necessária para redirecionar
 import styles from "./styles/Home.module.css";
 
 import home from "./assets/home.png";
@@ -14,200 +15,205 @@ import mais_hover from "./assets/mais_hover.png";
 import usuario from "./assets/usuario.png";
 
 function PostCard({ data }) {
-  return (
-    <article className={styles.card}>
-      <header className={styles.cardHeader}>
-        <div className={styles.userBlock}>
-          <div className={styles.avatar}>
-            {data.avatarUrl ? (
-              <img 
-                src={data.avatarUrl} 
-                alt={data.userName}
-                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-              />
-            ) : (
-              <div style={{ 
-                width: '100%', 
-                height: '100%', 
-                borderRadius: '50%', 
-                backgroundColor: '#f5f6fa',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '16px',
-                color: '#363940',
-                fontWeight: 'bold'
-              }}>
-                {data.userName.charAt(0)}
-              </div>
+    return (
+        <article className={styles.card}>
+            <header className={styles.cardHeader}>
+                <div className={styles.userBlock}>
+                    <div className={styles.avatar}>
+                        {data.avatarUrl ? (
+                            <img
+                                src={data.avatarUrl}
+                                alt={data.userName}
+                                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                            />
+                        ) : (
+                            <div style={{
+                                width: '100%',
+                                height: '100%',
+                                borderRadius: '50%',
+                                backgroundColor: '#f5f6fa',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '16px',
+                                color: '#363940',
+                                fontWeight: 'bold'
+                            }}>
+                                {data.userName ? data.userName.charAt(0).toUpperCase() : '?'}
+                            </div>
+                        )}
+                    </div>
+                    <div className={styles.userInfo}>
+                        <span className={styles.name}>{data.userName}</span>
+                        <span className={styles.date}>{data.date}</span>
+                    </div>
+                </div>
+
+                <div className={styles.headerActions}>
+                    <div className={styles.segmentBadge}>{data.segment}</div>
+                    <button className={styles.moreDots}>⋮</button>
+                </div>
+            </header>
+
+            {data.mediaUrl && (
+                <div className={styles.mediaBox}>
+                    <img
+                        src={data.mediaUrl}
+                        alt="Mídia do post"
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain', // Alterado para contain para não cortar imagens inteiras
+                            borderRadius: '7px'
+                        }}
+                    />
+                </div>
             )}
-          </div>
-          <div className={styles.userInfo}>
-            <span className={styles.name}>{data.userName}</span>
-            <span className={styles.date}>{data.date}</span>
-          </div>
-        </div>
 
-        <div className={styles.headerActions}>
-          <div className={styles.segmentBadge}>{data.segment}</div>
-          <button className={styles.moreDots}>⋮</button>
-        </div>
-      </header>
+            <h3 className={styles.cardTitle}>{data.title}</h3>
+            <p className={styles.cardText}>{data.description}</p>
 
-      {data.mediaUrl && (
-        <div className={styles.mediaBox}>
-          <img 
-            src={data.mediaUrl} 
-            alt="Mídia do post"
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover',
-              borderRadius: '7px'
-            }}
-          />
-        </div>
-      )}
-
-      <h3 className={styles.cardTitle}>{data.title}</h3>
-      <p className={styles.cardText}>{data.description}</p>
-
-      <div style={{ marginTop: "8px" }}>
-        <span className={styles.invest}>Investimento: </span>
-        <span>{data.investment}</span>
-      </div>
-    </article>
-  );
+            <div style={{ marginTop: "8px" }}>
+                <span className={styles.invest}>Investimento: </span>
+                <span>{data.investment}</span>
+            </div>
+        </article>
+    );
 }
 
 export default function Home() {
-  const [hovered, setHovered] = useState(false);
-  const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+    const [hovered, setHovered] = useState(false);
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
-  const sentinelRef = useRef(null);
+    useEffect(() => {
+        const fetchIdeas = async () => {
+            const token = localStorage.getItem('token');
 
-  // Função para carregar posts da API
-  const loadPosts = async () => {
-    if (loading || !hasMore) return;
-    
-    setLoading(true);
+            if (!token) {
+                // Se não tiver token, manda pro login
+                navigate('/');
+                return;
+            }
 
-    try {
-      const response = await fetch(`/api/posts?page=${page}&limit=5`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (data.posts && data.posts.length > 0) {
-          setPosts((prevPosts) => [...prevPosts, ...data.posts]);
-          setHasMore(data.pagination.hasMore);
-        } else {
-          setHasMore(false);
-        }
-      }
-      // Se houver erro, simplesmente não carrega mais posts
-    } catch (err) {
-      console.error('Erro ao carregar posts:', err);
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+            try {
+                const response = await fetch('http://localhost:8080/api/ideas', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // O segredo: enviar o token!
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-  // Carrega posts quando a página muda
-  useEffect(() => {
-    loadPosts();
-  }, [page]);
+                if (response.status === 403) {
+                    alert("Sessão expirada. Faça login novamente.");
+                    localStorage.removeItem('token');
+                    navigate('/');
+                    return;
+                }
 
-  // IntersectionObserver para infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loading && hasMore) {
-          setPage((prev) => prev + 1);
-        }
-      },
-      { root: null, rootMargin: "100px", threshold: 0.1 }
-    );
+                if (response.ok) {
+                    const ideas = await response.json();
 
-    const el = sentinelRef.current;
-    if (el && hasMore) observer.observe(el);
+                    // Mapeia os dados do Java para o formato do seu Card
+                    const mappedPosts = ideas.map(idea => ({
+                        id: idea.id,
+                        userName: idea.account.name,
+                        avatarUrl: idea.account.pfp,
+                        // Formata a data
+                        date: new Date(idea.time).toLocaleDateString('pt-BR', {
+                            day: '2-digit', month: 'long', year: 'numeric'
+                        }),
+                        // Pega a primeira keyword ou define 'Geral'
+                        segment: idea.keywords && idea.keywords.length > 0 ? idea.keywords[0].name : 'Geral',
+                        title: idea.name,
+                        description: idea.description,
+                        // Formata o dinheiro
+                        investment: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(idea.price),
+                        // Pega a primeira imagem se houver
+                        mediaUrl: idea.ideaFiles && idea.ideaFiles.length > 0 ? idea.ideaFiles[0].fileUrl : null
+                    }));
 
-    return () => {
-      if (el) observer.unobserve(el);
-      observer.disconnect();
-    };
-  }, [loading, hasMore]);
+                    // Como o backend retorna a lista invertida (mais antigos primeiro), vamos inverter aqui para mostrar os novos no topo
+                    setPosts(mappedPosts.reverse());
+                } else {
+                    console.error('Erro ao buscar ideias:', response.statusText);
+                }
+            } catch (err) {
+                console.error('Erro de conexão:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  return (
-    <div className={styles.page}>
-      <aside
-        className={styles.sidebar}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        <nav className={styles["menu-icons"]}>
-          <button className={styles["icon-btn"]}>
-            <img src={hovered ? home_hover : home} alt="home" />
-            <span>Início</span>
-          </button>
+        fetchIdeas();
+    }, [navigate]);
 
-          <button className={styles["icon-btn"]}>
-            <img src={hovered ? coracao_hover : coracao} alt="not" />
-            <span>Notificações</span>
-          </button>
+    return (
+        <div className={styles.page}>
+            <aside
+                className={styles.sidebar}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+            >
+                <nav className={styles["menu-icons"]}>
+                    <button className={styles["icon-btn"]}>
+                        <img src={hovered ? home_hover : home} alt="home" />
+                        <span>Início</span>
+                    </button>
 
-          <button className={styles["icon-btn"]}>
-            <img src={hovered ? seta_hover : seta} alt="msg" />
-            <span>Mensagens</span>
-          </button>
+                    <button className={styles["icon-btn"]}>
+                        <img src={hovered ? coracao_hover : coracao} alt="not" />
+                        <span>Notificações</span>
+                    </button>
 
-          <button className={styles["icon-btn"]}>
-            <img src={hovered ? lupa_hover : lupa} alt="search" />
-            <span>Pesquisar</span>
-          </button>
+                    <button className={styles["icon-btn"]}>
+                        <img src={hovered ? seta_hover : seta} alt="msg" />
+                        <span>Mensagens</span>
+                    </button>
 
-          <button className={styles["icon-btn"]}>
-            <img src={hovered ? mais_hover : mais} alt="post" />
-            <span>Postar</span>
-          </button>
-        </nav>
+                    <button className={styles["icon-btn"]}>
+                        <img src={hovered ? lupa_hover : lupa} alt="search" />
+                        <span>Pesquisar</span>
+                    </button>
 
-        <div className={styles.profile}>
-          <button className={styles["profile-btn"]}>
-            <img src={usuario} alt="usu" />
-            <span>Perfil</span>
-          </button>
+                    <button onClick={() => navigate('/postar-ideia')} className={styles["icon-btn"]}>
+                        <img src={hovered ? mais_hover : mais} alt="post" />
+                        <span>Postar</span>
+                    </button>
+                </nav>
+
+                <div className={styles.profile}>
+                    <button className={styles["profile-btn"]}>
+                        <img src={usuario} alt="usu" />
+                        <span>Perfil</span>
+                    </button>
+                </div>
+            </aside>
+
+            <main className={styles["feed-container"]}>
+                <div className={styles["feed-inner"]}>
+                    {loading ? (
+                        <div className={styles.loading}>Carregando publicações...</div>
+                    ) : posts.length === 0 ? (
+                        <div className={styles.noPosts}>
+                            <h3>Nenhuma publicação encontrada</h3>
+                            <p>Seja o primeiro a compartilhar uma ideia!</p>
+                        </div>
+                    ) : (
+                        <>
+                            {posts.map((p) => (
+                                <PostCard key={p.id} data={p} />
+                            ))}
+
+                            <div className={styles.endText}>
+                                Você viu todas as publicações recentes
+                            </div>
+                        </>
+                    )}
+                </div>
+            </main>
         </div>
-      </aside>
-
-        <main className={styles["feed-container"]}>
-            <div className={styles["feed-inner"]}>
-          {posts.length === 0 && !loading && !hasMore ? (
-            <div className={styles.noPosts}>
-              <h3>Nenhuma publicação recente</h3>
-              <p>Quando houver novas publicações, elas aparecerão aqui.</p>
-            </div>
-          ) : (
-            <>
-              {posts.map((p) => (
-                <PostCard key={p.id} data={p} />
-              ))}
-
-              <div ref={sentinelRef} className={styles.sentinel}>
-                {loading && <div className={styles.loading}>Carregando mais publicações...</div>}
-              </div>
-
-              {!hasMore && posts.length > 0 && (
-                <div className={styles.endText}>Você viu todas as publicações recentes</div>
-              )}
-            </>
-          )}
-          </div>
-        </main>
-    </div>
-  );
+    );
 }
