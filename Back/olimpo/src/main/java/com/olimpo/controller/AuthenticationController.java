@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import com.olimpo.service.TokenService;
+import com.olimpo.dto.LoginResponseDTO;
+import com.olimpo.models.Account;
 
 @RestController
 @RequestMapping("auth")
@@ -21,13 +24,17 @@ public class AuthenticationController {
     private UserService userService;
 
 
+    @Autowired
+    private TokenService tokenService; // Injete o service
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationDTO data) {
-        
+    public ResponseEntity login(@RequestBody AuthenticationDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
-        
-        return ResponseEntity.ok().build();
+
+        var token = tokenService.generateToken((Account) auth.getPrincipal());
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")
