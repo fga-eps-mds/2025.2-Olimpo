@@ -8,7 +8,7 @@ import CadastroEstudante from './CadastroEstudante.jsx';
 import CadastroInvestidor from './CadastroInvestidor.jsx';
 import StatusVerificacao from './StatusVerificacao.jsx';
 import ResetarSenha from './ResetarSenha.jsx';
-
+import PostarIdeia from './PostarIdeia.jsx';
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
         <Route path="/cadastro-investidor" element={<CadastroInvestidor />} />
         <Route path="/verificacao/:status" element={<StatusVerificacao />} />
         <Route path="/reset-password" element={<ResetarSenha />} />
+        <Route path="/postar-ideia" element={<PostarIdeia />} />
 
         <Route path="*" element={
           <div>
