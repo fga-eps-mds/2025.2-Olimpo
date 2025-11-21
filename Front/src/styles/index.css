@@ -4,10 +4,10 @@
   font-weight: 400;
   color-scheme: light;
   color: #213547;
-  background-color: #eef0f4; /* mesmo tom do Home */
+  background-color: #eef0f4;
 }
 
-/* garante que não haja faixa escura em volta do app */
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -17,5 +17,5 @@ html, body, #root {
 }
 
 body {
-  display: block;      /* remove o flex + place-items do template */
+  display: block;
 }

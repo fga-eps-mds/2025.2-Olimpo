@@ -177,25 +177,22 @@
   padding: 8px;
 }
 
-/* ===== FEED (ocupa a tela toda e centraliza) ===== */
 .feed-container {
-  margin-left: 110px;
-  width: calc(100% - 110px);
-  padding: 2rem;
-  max-width: none;
-  min-height: 100vh;          /* ocupa a altura da tela */
-  display: flex;              /* vira flex */
-  justify-content: center;    /* centraliza horizontal */
-  align-items: center;        /* centraliza vertical */
+    margin-left: 110px;
+    width: calc(100% - 110px);
+    min-height: 100vh;
+    padding: 40px 20px; 
+    box-sizing: border-box;
 }
 
 .feed-inner {
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 60px;
 }
 
 /* ===== CARD (post) ===== */
