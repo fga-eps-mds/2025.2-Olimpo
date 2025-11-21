@@ -1,3 +1,5 @@
+
+/* ===== DESKTOP PADRÃO ===== */
 .sidebar {
     position: fixed;
     top: 0;
@@ -47,6 +49,7 @@
     color: inherit;
     width: 60px;
     height: 60px;
+    box-sizing: border-box;
 }
 
 .sidebar:hover .icon-btn {
@@ -63,12 +66,14 @@
 .icon-btn img {
     width: 24px;
     height: 24px;
+    display: block;
     flex-shrink: 0;
-    filter: brightness(0.2); /* Escuro no fundo claro */
+    filter: brightness(0.2);
+    margin: 0;
 }
 
 .sidebar:hover .icon-btn img {
-    filter: brightness(0) invert(1); /* Branco no fundo escuro */
+    filter: brightness(0) invert(1);
     margin-right: 12px;
 }
 
@@ -76,7 +81,7 @@
     opacity: 0;
     width: 0;
     overflow: hidden;
-    transition: opacity 240ms, width 240ms;
+    transition: opacity 240ms ease-in-out, width 240ms ease-in-out;
     color: #fff;
     font-weight: 600;
     font-size: 15px;
@@ -88,12 +93,13 @@
     width: auto;
 }
 
-/* Perfil */
+/* PERFIL */
 .profile {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
+    padding: 0;
 }
 
 .sidebar:hover .profile {
@@ -108,6 +114,8 @@
     background: transparent;
     border: none;
     cursor: pointer;
+    padding: 8px;
+    border-radius: 12px;
     width: 60px;
     height: 60px;
 }
@@ -124,6 +132,8 @@
     border-radius: 50%;
     background: #eef2f6;
     padding: 6px;
+    flex-shrink: 0;
+    margin: 0;
 }
 
 .sidebar:hover .profile-btn img {
@@ -134,13 +144,113 @@
     opacity: 0;
     width: 0;
     overflow: hidden;
+    transition: opacity 240ms ease, width 240ms ease;
     color: #fff;
     font-weight: 600;
     white-space: nowrap;
-    transition: 0.2s;
 }
 
 .sidebar:hover .profile-btn span {
     opacity: 1;
     width: auto;
+}
+
+/* ===== RESPONSIVIDADE (TABLET PEQUENO) ===== */
+@media (max-width: 1100px) {
+    .sidebar {
+        width: 96px;
+    }
+    .sidebar:hover {
+        width: 230px;
+    }
+
+    .icon-btn, .profile-btn {
+        width: 50px;
+        height: 50px;
+    }
+
+    .sidebar:hover .menu-icons,
+    .sidebar:hover .profile {
+        padding-left: 23px;
+    }
+
+    .sidebar:hover .icon-btn,
+    .sidebar:hover .profile-btn {
+        width: calc(100% - 23px);
+    }
+}
+
+/* ===== TABLET E MOBILE (BARRA EM BAIXO) ===== */
+@media (max-width: 820px) {
+    .sidebar {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        height: 70px;
+        width: 100%;
+        background-color: #3f3b47;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0 10px;
+        align-items: center;
+        transition: none;
+        z-index: 100;
+    }
+
+    .sidebar:hover {
+        width: 100%;
+        background-color: #3f3b47;
+        align-items: center;
+    }
+
+    .menu-icons {
+        flex-direction: row;
+        gap: 0;
+        justify-content: space-around;
+        width: 100%;
+        align-items: center;
+    }
+
+    .sidebar:hover .menu-icons {
+        padding-left: 0;
+    }
+
+    .icon-btn {
+        width: auto;
+        height: 100%;
+        flex-direction: column;
+        padding: 10px;
+        gap: 4px;
+        justify-content: center;
+    }
+
+    .sidebar:hover .icon-btn {
+        width: auto;
+        height: 100%;
+        padding: 10px;
+        justify-content: flex-start; /* Reset */
+        justify-content: center;
+    }
+
+    .icon-btn:hover {
+        background-color: transparent;
+    }
+
+    .icon-btn img {
+        width: 22px;
+        height: 22px;
+        filter: brightness(0) invert(1);
+        margin: 0 !important;
+    }
+
+    .sidebar:hover .icon-btn img {
+        margin: 0 !important;
+    }
+
+    .icon-btn span,
+    .profile,
+    .profile-btn {
+        display: none !important;
+    }
 }
