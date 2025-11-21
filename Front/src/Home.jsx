@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Importação necessária para redirecionar
+import { useNavigate } from "react-router-dom";
 import styles from "./styles/Home.module.css";
 
+// ... Mantenha suas importações de imagem ...
 import home from "./assets/home.png";
 import home_hover from "./assets/home_hover.png";
 import coracao from "./assets/coracao.png";
@@ -28,16 +29,9 @@ function PostCard({ data }) {
                             />
                         ) : (
                             <div style={{
-                                width: '100%',
-                                height: '100%',
-                                borderRadius: '50%',
-                                backgroundColor: '#f5f6fa',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '16px',
-                                color: '#363940',
-                                fontWeight: 'bold'
+                                width: '100%', height: '100%', borderRadius: '50%',
+                                backgroundColor: '#f5f6fa', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '16px', color: '#363940', fontWeight: 'bold'
                             }}>
                                 {data.userName ? data.userName.charAt(0).toUpperCase() : '?'}
                             </div>
@@ -57,16 +51,7 @@ function PostCard({ data }) {
 
             {data.mediaUrl && (
                 <div className={styles.mediaBox}>
-                    <img
-                        src={data.mediaUrl}
-                        alt="Mídia do post"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'contain', // Alterado para contain para não cortar imagens inteiras
-                            borderRadius: '7px'
-                        }}
-                    />
+                    <img src={data.mediaUrl} alt="Mídia" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '7px' }} />
                 </div>
             )}
 
@@ -91,8 +76,8 @@ export default function Home() {
         const fetchIdeas = async () => {
             const token = localStorage.getItem('token');
 
+            // Se não tem token, nem tenta buscar, já manda pro login
             if (!token) {
-                // Se não tiver token, manda pro login
                 navigate('/');
                 return;
             }
@@ -101,44 +86,36 @@ export default function Home() {
                 const response = await fetch('http://localhost:8080/api/ideas', {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`, // O segredo: enviar o token!
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 });
 
+                // TRATAMENTO DE SESSÃO EXPIRADA (403)
                 if (response.status === 403) {
-                    alert("Sessão expirada. Faça login novamente.");
-                    localStorage.removeItem('token');
-                    navigate('/');
+                    console.warn("Sessão inválida. Redirecionando para login...");
+                    localStorage.removeItem('token'); // Limpa o token inválido
+                    navigate('/'); // Redireciona
                     return;
                 }
 
                 if (response.ok) {
                     const ideas = await response.json();
 
-                    // Mapeia os dados do Java para o formato do seu Card
                     const mappedPosts = ideas.map(idea => ({
                         id: idea.id,
                         userName: idea.account.name,
                         avatarUrl: idea.account.pfp,
-                        // Formata a data
-                        date: new Date(idea.time).toLocaleDateString('pt-BR', {
-                            day: '2-digit', month: 'long', year: 'numeric'
-                        }),
-                        // Pega a primeira keyword ou define 'Geral'
+                        date: new Date(idea.time).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
                         segment: idea.keywords && idea.keywords.length > 0 ? idea.keywords[0].name : 'Geral',
                         title: idea.name,
                         description: idea.description,
-                        // Formata o dinheiro
                         investment: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(idea.price),
-                        // Pega a primeira imagem se houver
                         mediaUrl: idea.ideaFiles && idea.ideaFiles.length > 0 ? idea.ideaFiles[0].fileUrl : null
                     }));
 
-                    // Como o backend retorna a lista invertida (mais antigos primeiro), vamos inverter aqui para mostrar os novos no topo
+                    // Inverte para mostrar os mais novos primeiro
                     setPosts(mappedPosts.reverse());
-                } else {
-                    console.error('Erro ao buscar ideias:', response.statusText);
                 }
             } catch (err) {
                 console.error('Erro de conexão:', err);
@@ -152,43 +129,16 @@ export default function Home() {
 
     return (
         <div className={styles.page}>
-            <aside
-                className={styles.sidebar}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
-            >
+            <aside className={styles.sidebar} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
                 <nav className={styles["menu-icons"]}>
-                    <button className={styles["icon-btn"]}>
-                        <img src={hovered ? home_hover : home} alt="home" />
-                        <span>Início</span>
-                    </button>
-
-                    <button className={styles["icon-btn"]}>
-                        <img src={hovered ? coracao_hover : coracao} alt="not" />
-                        <span>Notificações</span>
-                    </button>
-
-                    <button className={styles["icon-btn"]}>
-                        <img src={hovered ? seta_hover : seta} alt="msg" />
-                        <span>Mensagens</span>
-                    </button>
-
-                    <button className={styles["icon-btn"]}>
-                        <img src={hovered ? lupa_hover : lupa} alt="search" />
-                        <span>Pesquisar</span>
-                    </button>
-
-                    <button onClick={() => navigate('/postar-ideia')} className={styles["icon-btn"]}>
-                        <img src={hovered ? mais_hover : mais} alt="post" />
-                        <span>Postar</span>
-                    </button>
+                    <button onClick={() => navigate('/home')} className={styles["icon-btn"]}><img src={hovered ? home_hover : home} alt="home" /><span>Início</span></button>
+                    <button className={styles["icon-btn"]}><img src={hovered ? coracao_hover : coracao} alt="not" /><span>Notificações</span></button>
+                    <button className={styles["icon-btn"]}><img src={hovered ? seta_hover : seta} alt="msg" /><span>Mensagens</span></button>
+                    <button className={styles["icon-btn"]}><img src={hovered ? lupa_hover : lupa} alt="search" /><span>Pesquisar</span></button>
+                    <button onClick={() => navigate('/postar-ideia')} className={styles["icon-btn"]}><img src={hovered ? mais_hover : mais} alt="post" /><span>Postar</span></button>
                 </nav>
-
                 <div className={styles.profile}>
-                    <button className={styles["profile-btn"]}>
-                        <img src={usuario} alt="usu" />
-                        <span>Perfil</span>
-                    </button>
+                    <button className={styles["profile-btn"]}><img src={usuario} alt="usu" /><span>Perfil</span></button>
                 </div>
             </aside>
 
@@ -203,13 +153,8 @@ export default function Home() {
                         </div>
                     ) : (
                         <>
-                            {posts.map((p) => (
-                                <PostCard key={p.id} data={p} />
-                            ))}
-
-                            <div className={styles.endText}>
-                                Você viu todas as publicações recentes
-                            </div>
+                            {posts.map((p) => <PostCard key={p.id} data={p} />)}
+                            <div className={styles.endText}>Você viu todas as publicações recentes</div>
                         </>
                     )}
                 </div>

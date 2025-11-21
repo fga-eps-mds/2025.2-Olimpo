@@ -32,32 +32,44 @@ function Login() {
         setErrorMessage('');
 
         try {
-                const response = await axios.post('http://localhost:8080/auth/login', {
-                    email: email,
-                    password: password
-                });
+            console.log("Enviando requisição de login...");
+            const response = await axios.post('http://localhost:8080/auth/login', {
+                email: email,
+                password: password
+            });
 
-                const token = response.data.token; 
+            console.log("Resposta do servidor:", response);
+            console.log("Dados da resposta:", response.data);
 
-                localStorage.setItem('token', token);
+            const token = response.data.token;
+            console.log("Token extraído:", token);
 
-                alert('Login realizado com sucesso!');
-                
-                navigate('/home');
+            if (!token) {
+                console.error("ERRO: O token veio vazio ou undefined!");
+                setErrorMessage("Erro no sistema: Token não recebido.");
+                return;
+            }
+
+            localStorage.setItem('token', token);
+            console.log("Token salvo no localStorage!");
+
+            alert('Login realizado com sucesso!');
+            navigate('/home');
+
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             if (error.response) {
                 if (error.response.status === 401) {
                     setErrorMessage('Email ou senha inválidos.');
                 } else if (error.response.status === 403) {
-                    setErrorMessage('Email não verificado. Por favor, verifique sua caixa de entrada.');
+                    setErrorMessage('Email não verificado ou bloqueado.');
                 } else {
                     setErrorMessage('Erro ao tentar fazer login. Tente novamente.');
                 }
             } else if (error.request) {
                 setErrorMessage('Não foi possível se conectar ao servidor. O back-end está no ar?');
             } else {
-                setErrorMessage('Ocorreu um erro. Tente novamente.');
+                setErrorMessage('Ocorreu um erro inesperado.');
             }
         }
     };

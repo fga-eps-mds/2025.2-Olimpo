@@ -76,17 +76,14 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/auth/register").permitAll()
+                                // LIBERA O OPTIONS GLOBALMENTE (Correção do erro 403)
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/auth/login").permitAll()
 
                                 .requestMatchers(HttpMethod.GET, "/user/verify-email").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/user/verify-email").permitAll()
-
                                 .requestMatchers(HttpMethod.POST, "/user/resend-code").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/user/resend-code").permitAll()
 
                                 .requestMatchers("/api/password/**").permitAll()
                                 .requestMatchers("/api/ideas/**").authenticated()
@@ -96,5 +93,4 @@ public class SecurityConfig {
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-}
+    }}

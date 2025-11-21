@@ -25,8 +25,8 @@ public class IdeaService {
     private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public IdeaService(IdeaRepository ideaRepository, 
-                       UserRepository accountRepository, 
+    public IdeaService(IdeaRepository ideaRepository,
+                       UserRepository accountRepository,
                        KeywordRepository keywordRepository,
                        CloudinaryService cloudinaryService) {
         this.ideaRepository = ideaRepository;
@@ -49,11 +49,20 @@ public class IdeaService {
             idea.setKeywords(managedKeywords);
         }
 
-        return ideaRepository.save(idea);
+        Idea savedIdea = ideaRepository.save(idea);
+
+        // TRUQUE: Acessamos o tamanho da lista para forçar o Hibernate a carregar os dados
+        // antes da transação fechar. Isso evita o erro de LazyInitialization no retorno do Controller.
+        if(savedIdea.getKeywords() != null) {
+            savedIdea.getKeywords().size();
+        }
+
+        return savedIdea;
     }
 
+    // Usa o novo método que traz tudo junto
     public List<Idea> getAllIdeas() {
-        return ideaRepository.findAll();
+        return ideaRepository.findAllWithDetails();
     }
 
     public Idea getIdeaById(Integer id) {

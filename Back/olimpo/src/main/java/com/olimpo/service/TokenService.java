@@ -21,11 +21,12 @@ public class TokenService {
     public String generateToken(Account user){
         try{
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.create()
+            String token = JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getEmail())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
+            return token;
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Erro ao gerar token", exception);
         }
@@ -40,11 +41,14 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception){
+            // Imprime o erro exato no terminal do Backend
+            System.out.println("[TokenService] Erro na validação: " + exception.getMessage());
             return "";
         }
     }
 
     private Instant genExpirationDate(){
+        // Ajuste simples para evitar problemas de fuso horário em Docker: usa UTC
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }
