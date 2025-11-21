@@ -1,0 +1,146 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 110px;
+    background-color: #c9d0db;
+    transition: width 260ms ease, background-color 260ms ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18px 0;
+    box-sizing: border-box;
+    z-index: 40;
+    align-items: center;
+}
+
+.sidebar:hover {
+    width: 250px;
+    background-color: #3f3b47;
+    align-items: flex-start;
+}
+
+.menu-icons {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    align-items: center;
+    padding: 0;
+}
+
+.sidebar:hover .menu-icons {
+    align-items: flex-start;
+    padding-left: 25px;
+}
+
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 12px;
+    color: inherit;
+    width: 60px;
+    height: 60px;
+}
+
+.sidebar:hover .icon-btn {
+    width: calc(100% - 50px);
+    height: auto;
+    justify-content: flex-start;
+    padding: 20px 15px;
+}
+
+.icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-btn img {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    filter: brightness(0.2); /* Escuro no fundo claro */
+}
+
+.sidebar:hover .icon-btn img {
+    filter: brightness(0) invert(1); /* Branco no fundo escuro */
+    margin-right: 12px;
+}
+
+.icon-btn span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    transition: opacity 240ms, width 240ms;
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+.sidebar:hover .icon-btn span {
+    opacity: 1;
+    width: auto;
+}
+
+/* Perfil */
+.profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.sidebar:hover .profile {
+    justify-content: flex-start;
+    padding-left: 25px;
+}
+
+.profile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+}
+
+.sidebar:hover .profile-btn {
+    justify-content: flex-start;
+    width: calc(100% - 50px);
+    padding: 12px 15px;
+}
+
+.profile-btn img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #eef2f6;
+    padding: 6px;
+}
+
+.sidebar:hover .profile-btn img {
+    margin-right: 12px;
+}
+
+.profile-btn span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+
+.sidebar:hover .profile-btn span {
+    opacity: 1;
+    width: auto;
+}
