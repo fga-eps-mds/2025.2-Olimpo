@@ -10,6 +10,7 @@ import StatusVerificacao from './StatusVerificacao.jsx';
 import ResetarSenha from './ResetarSenha.jsx';
 import PostarIdeia from './PostarIdeia.jsx';
 import PesquisarIdeia from './PesquisarIdeia.jsx'
+import SelecionarPerfil from './SelecionarPerfil.jsx'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/reset-password" element={<ResetarSenha />} />
         <Route path="/postar-ideia" element={<PostarIdeia />} />
         <Route path="/pesquisar-ideia" element={<PesquisarIdeia />} />
+        <Route path="/selecionar-perfil" element={<SelecionarPerfil />} />
 
         <Route path="*" element={
           <div>
