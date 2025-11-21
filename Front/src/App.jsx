@@ -9,33 +9,38 @@ import CadastroInvestidor from './CadastroInvestidor.jsx';
 import StatusVerificacao from './StatusVerificacao.jsx';
 import ResetarSenha from './ResetarSenha.jsx';
 import PostarIdeia from './PostarIdeia.jsx';
-import Home from './Home.jsx'
+import Home from './Home.jsx';
 import EditarIdeia from './EditarIdeia.jsx';
+import SelecionarPerfil from './SelecionarPerfil.jsx';
 
 function App() {
-  return (
-      <Routes>
+    return (
+        <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+            <Route path="/link-enviado" element={<LinkEnviado />} />
 
-        <Route path="/" element={<Login />} />
-        <Route path="/esqueci-senha" element={<EsqueciSenha />} />
-        <Route path="/link-enviado" element={<LinkEnviado />} />
-        <Route path="/cadastro-estudante" element={<CadastroEstudante />} />
-        <Route path="/cadastro-investidor" element={<CadastroInvestidor />} />
-        <Route path="/verificacao/:status" element={<StatusVerificacao />} />
-        <Route path="/reset-password" element={<ResetarSenha />} />
-        <Route path="/postar-ideia" element={<PostarIdeia />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/editar-ideia" element={<EditarIdeia />} />
+            {/* Fluxo de Cadastro */}
+            <Route path="/selecionar-perfil" element={<SelecionarPerfil />} />
+            <Route path="/cadastro-estudante" element={<CadastroEstudante />} />
+            <Route path="/cadastro-investidor" element={<CadastroInvestidor />} />
 
+            <Route path="/verificacao/:status" element={<StatusVerificacao />} />
+            <Route path="/reset-password" element={<ResetarSenha />} />
 
-        <Route path="*" element={
-          <div>
-            <h1>404 - Página Não Encontrada</h1>
-            <Link to="/">Voltar para o Login</Link>
-          </div>
-        } />
-      </Routes>
-  );
+            {/* Rotas Principais */}
+            <Route path="/postar-ideia" element={<PostarIdeia />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/editar-ideia" element={<EditarIdeia />} />
+
+            <Route path="*" element={
+                <div>
+                    <h1>404 - Página Não Encontrada</h1>
+                    <Link to="/">Voltar para o Login</Link>
+                </div>
+            } />
+        </Routes>
+    );
 }
 
 export default App;
