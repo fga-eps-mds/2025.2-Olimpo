@@ -76,4 +76,47 @@ public class IdeaController {
     public ResponseEntity<?> getAllIdeas() {
         return ResponseEntity.ok(ideaService.getAllIdeas());
     }
+
+    @PutMapping(value = "/{id}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> updateIdea(
+            @PathVariable Integer id,
+            @RequestPart("data") String ideaJson,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            IdeaRequestDTO dto = mapper.readValue(ideaJson, IdeaRequestDTO.class);
+
+            Idea ideaDetails = new Idea();
+            ideaDetails.setName(dto.name());
+            ideaDetails.setDescription(dto.description());
+            ideaDetails.setPrice(dto.price());
+
+            if (dto.keywords() != null) {
+                Set<Keyword> keywords = new HashSet<>();
+                for (String k : dto.keywords()) {
+                    keywordRepository.findByName(k).ifPresent(keywords::add);
+                }
+                ideaDetails.setKeywords(keywords);
+            }
+
+            Idea updatedIdea = ideaService.updateIdea(id, ideaDetails, file);
+            return ResponseEntity.ok(updatedIdea);
+
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body("Erro ao processar JSON: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro interno: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteIdea(@PathVariable Integer id) {
+        try {
+            ideaService.deleteIdea(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

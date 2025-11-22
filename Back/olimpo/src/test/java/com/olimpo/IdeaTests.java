@@ -29,10 +29,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 
 @SpringBootTest(properties = {
-    "CLOUDINARY_CLOUD_NAME=teste-cloud",
-    "CLOUDINARY_API_KEY=123456",
-    "CLOUDINARY_API_SECRET=abcdef",
-    "api.security.token.secret=segredo-teste"
+        "CLOUDINARY_CLOUD_NAME=teste-cloud",
+        "CLOUDINARY_API_KEY=123456",
+        "CLOUDINARY_API_SECRET=abcdef",
+        "api.security.token.secret=segredo-teste"
 })
 @Transactional
 public class IdeaTests {
@@ -88,7 +88,7 @@ public class IdeaTests {
         newIdea.setName("Ideia Inovadora");
         newIdea.setDescription("Descrição teste");
         newIdea.setPrice(1000);
-        
+
         newIdea.setKeywords(Set.of(kwTech));
 
         Idea savedIdea = ideaService.createIdea(newIdea, testAccount.getId());
@@ -96,7 +96,7 @@ public class IdeaTests {
         assertNotNull(savedIdea.getId());
         assertEquals("Ideia Inovadora", savedIdea.getName());
         assertEquals(testAccount.getId(), savedIdea.getAccount().getId());
-        
+
         assertEquals(1, savedIdea.getKeywords().size());
         assertTrue(savedIdea.getKeywords().contains(kwTech));
     }
@@ -105,14 +105,14 @@ public class IdeaTests {
     void testCreateIdea_Fail_InvalidAccountId() {
         Idea newIdea = new Idea();
         newIdea.setName("Ideia Fantasma");
-        
+
         assertThrows(RuntimeException.class, () -> {
             ideaService.createIdea(newIdea, 99999);
         });
     }
 
     @Test
-    void testUpdateIdea_UpdatesDetails_And_SwapsKeywords() {
+    void testUpdateIdea_UpdatesDetails_And_SwapsKeywords() throws IOException {
         Idea idea = new Idea();
         idea.setName("Ideia Antiga");
         idea.setPrice(100);
@@ -126,11 +126,11 @@ public class IdeaTests {
         updateDetails.setPrice(200);
         updateDetails.setKeywords(Set.of(kwSaude));
 
-        Idea updatedIdea = ideaService.updateIdea(idea.getId(), updateDetails);
+        Idea updatedIdea = ideaService.updateIdea(idea.getId(), updateDetails, null);
 
         assertEquals("Ideia Nova", updatedIdea.getName());
         assertEquals(200, updatedIdea.getPrice());
-        
+
         assertTrue(updatedIdea.getKeywords().contains(kwSaude));
         assertFalse(updatedIdea.getKeywords().contains(kwTech));
     }
@@ -140,7 +140,7 @@ public class IdeaTests {
         Idea idea = new Idea();
         idea.setName("Ideia com Arquivos");
         idea.setAccount(testAccount);
-        
+
         IdeaFile file1 = new IdeaFile(idea, "img1.jpg", "image/jpeg", "url1");
         idea.setIdeaFiles(List.of(file1));
 
@@ -158,10 +158,10 @@ public class IdeaTests {
         Idea idea = new Idea();
         idea.setName("Ideia para Deletar");
         idea.setAccount(testAccount);
-        
+
         IdeaFile file1 = new IdeaFile(idea, "f1.jpg", "image/jpeg", "url_cloudinary_1");
         IdeaFile file2 = new IdeaFile(idea, "f2.jpg", "image/jpeg", "url_cloudinary_2");
-        
+
         List<IdeaFile> files = new ArrayList<>();
         files.add(file1);
         files.add(file2);
@@ -175,9 +175,9 @@ public class IdeaTests {
         ideaService.deleteIdea(ideaId);
 
         assertFalse(ideaRepository.existsById(ideaId));
-        
+
         verify(cloudinaryService, times(2)).deleteFile(anyString());
-        
+
         verify(cloudinaryService).deleteFile("url_cloudinary_1");
         verify(cloudinaryService).deleteFile("url_cloudinary_2");
     }
@@ -193,7 +193,7 @@ public class IdeaTests {
         ideaService.deleteIdea(idea.getId());
 
         assertFalse(ideaRepository.existsById(idea.getId()));
-        
+
         verify(cloudinaryService, never()).deleteFile(anyString());
     }
 }

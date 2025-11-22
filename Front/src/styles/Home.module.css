@@ -271,3 +271,30 @@
         justify-content: space-between;
     }
 }
+
+
+.dropdownMenuPost {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 120px;
+    z-index: 10;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.dropdownItemPost {
+    padding: 10px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: #333;
+    text-align: left;
+}
+
+.dropdownItemPost:hover {
+    background-color: #f5f6fa;
+}

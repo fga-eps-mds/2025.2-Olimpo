@@ -2,6 +2,7 @@ package com.olimpo.service;
 
 import com.olimpo.models.Account;
 import com.olimpo.models.Idea;
+import com.olimpo.models.IdeaFile; // <--- IMPORTAÇÃO NECESSÁRIA
 import com.olimpo.models.Keyword;
 import com.olimpo.repository.KeywordRepository;
 import com.olimpo.repository.UserRepository;
@@ -9,6 +10,7 @@ import com.olimpo.repository.IdeaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -51,16 +53,13 @@ public class IdeaService {
 
         Idea savedIdea = ideaRepository.save(idea);
 
-        // TRUQUE: Acessamos o tamanho da lista para forçar o Hibernate a carregar os dados
-        // antes da transação fechar. Isso evita o erro de LazyInitialization no retorno do Controller.
-        if(savedIdea.getKeywords() != null) {
-            savedIdea.getKeywords().size();
-        }
+        // Inicializa coleções para evitar erro no retorno JSON
+        if(savedIdea.getKeywords() != null) savedIdea.getKeywords().size();
+        if(savedIdea.getIdeaFiles() != null) savedIdea.getIdeaFiles().size();
 
         return savedIdea;
     }
 
-    // Usa o novo método que traz tudo junto
     public List<Idea> getAllIdeas() {
         return ideaRepository.findAllWithDetails();
     }
@@ -70,12 +69,16 @@ public class IdeaService {
                 .orElseThrow(() -> new RuntimeException("Idea não encontrada com id: " + id));
     }
 
-    public Idea updateIdea(Integer id, Idea ideaDetails) {
+    @Transactional
+    public Idea updateIdea(Integer id, Idea ideaDetails, MultipartFile newFile) throws IOException {
         Idea existingIdea = getIdeaById(id);
+
+        // Atualiza campos de texto
         existingIdea.setName(ideaDetails.getName());
         existingIdea.setDescription(ideaDetails.getDescription());
         existingIdea.setPrice(ideaDetails.getPrice());
 
+        // Atualiza Keywords
         if (ideaDetails.getKeywords() != null) {
             Set<Integer> keywordIds = ideaDetails.getKeywords().stream()
                     .map(Keyword::getId)
@@ -86,11 +89,34 @@ public class IdeaService {
             existingIdea.setKeywords(new HashSet<>());
         }
 
+        // Inicializa a lista de arquivos atual (Resolve o erro de "Lazy" ao editar só texto)
+        if (existingIdea.getIdeaFiles() != null) {
+            existingIdea.getIdeaFiles().size();
+        }
+
+        // Lógica de troca de imagem
+        if (newFile != null && !newFile.isEmpty()) {
+            // 1. Remove imagens antigas do Cloudinary e da lista
+            if (existingIdea.getIdeaFiles() != null && !existingIdea.getIdeaFiles().isEmpty()) {
+                for (var oldFile : existingIdea.getIdeaFiles()) {
+                    cloudinaryService.deleteFile(oldFile.getFileUrl());
+                }
+                existingIdea.getIdeaFiles().clear();
+            }
+
+            // 2. Upload da nova e ATUALIZAÇÃO DA LISTA em memória
+            // Isso garante que o Hibernate salve a relação corretamente
+            IdeaFile newIdeaFile = cloudinaryService.uploadFile(newFile, existingIdea);
+            existingIdea.getIdeaFiles().add(newIdeaFile);
+        }
+
         return ideaRepository.save(existingIdea);
     }
 
+    @Transactional
     public void deleteIdea(Integer id) {
         Idea idea = getIdeaById(id);
+
         if (idea.getIdeaFiles() != null) {
             for (var file : idea.getIdeaFiles()) {
                 try {

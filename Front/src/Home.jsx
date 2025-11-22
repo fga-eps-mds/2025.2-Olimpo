@@ -1,37 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./styles/Home.module.css";
-import Sidebar from "./components/Sidebar"; // Usando o componente Sidebar!
+import Sidebar from "./components/Sidebar";
 
-// Imagens e Ícones
+// Imagens
 import lupa from './assets/lupa.png';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
 
-// Função auxiliar para limpar valores monetários (R$ 10.000 -> 10000)
-const parseCurrency = (valueStr) => {
-    if (!valueStr) return 0;
-    return parseFloat(valueStr.replace(/[^\d,]/g, '').replace(',', '.'));
+// Função para decodificar o JWT e pegar o email do usuário logado
+const parseJwt = (token) => {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        return null;
+    }
 };
 
-function PostCard({ data }) {
+function PostCard({ data, currentUserEmail, onDelete, onEdit }) {
+    const [menuOpen, setMenuOpen] = useState(false);
+    // Verifica se o usuário logado é o dono do post
+    const isOwner = data.userEmail === currentUserEmail;
+
     return (
         <article className={styles.card}>
             <header className={styles.cardHeader}>
                 <div className={styles.userBlock}>
                     <div className={styles.avatar}>
                         {data.avatarUrl ? (
-                            <img
-                                src={data.avatarUrl}
-                                alt={data.userName}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
+                            <img src={data.avatarUrl} alt={data.userName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                         ) : (
-                            <div style={{
-                                width: '100%', height: '100%',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '16px', color: '#363940', fontWeight: 'bold'
-                            }}>
+                            <div style={{ width: '100%', height: '100%', borderRadius: '50%', backgroundColor: '#f5f6fa', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', color: '#363940', fontWeight: 'bold' }}>
                                 {data.userName ? data.userName.charAt(0).toUpperCase() : '?'}
                             </div>
                         )}
@@ -44,17 +43,30 @@ function PostCard({ data }) {
 
                 <div className={styles.headerActions}>
                     <div className={styles.segmentBadge}>{data.segment}</div>
-                    <button className={styles.moreDots}>⋮</button>
+
+                    {/* SÓ MOSTRA O BOTÃO SE FOR O DONO */}
+                    {isOwner && (
+                        <div style={{ position: 'relative' }}>
+                            <button
+                                className={styles.moreDots}
+                                onClick={() => setMenuOpen(!menuOpen)}
+                            >
+                                ⋮
+                            </button>
+                            {menuOpen && (
+                                <div className={styles.dropdownMenuPost}> {/* CSS novo aqui */}
+                                    <div className={styles.dropdownItemPost} onClick={() => onEdit(data)}>Editar</div>
+                                    <div className={styles.dropdownItemPost} onClick={() => onDelete(data.id)} style={{ color: 'red' }}>Excluir</div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </header>
 
             {data.mediaUrl && (
                 <div className={styles.mediaBox}>
-                    <img
-                        src={data.mediaUrl}
-                        alt="Mídia"
-                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                    />
+                    <img src={data.mediaUrl} alt="Mídia" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
             )}
 
@@ -72,20 +84,44 @@ function PostCard({ data }) {
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentUserEmail, setCurrentUserEmail] = useState("");
     const navigate = useNavigate();
 
-    // ESTADOS DE FILTRO
+    // Estados de Filtro
     const [searchTerm, setSearchTerm] = useState("");
-
     const [segmentoOpen, setSegmentoOpen] = useState(false);
     const [selectedSegmento, setSelectedSegmento] = useState("");
-
     const [investimentoOpen, setInvestimentoOpen] = useState(false);
     const [selectedInvestimento, setSelectedInvestimento] = useState("");
-
     const dropdownRef = useRef(null);
 
-    // Fechar dropdowns ao clicar fora
+    // Função de Deletar
+    const handleDelete = async (ideaId) => {
+        if (!window.confirm("Tem certeza que deseja excluir esta ideia?")) return;
+
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`http://localhost:8080/api/ideas/${ideaId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                setPosts(posts.filter(p => p.id !== ideaId));
+                alert("Ideia excluída com sucesso!");
+            } else {
+                alert("Erro ao excluir ideia.");
+            }
+        } catch (error) {
+            console.error("Erro ao deletar:", error);
+        }
+    };
+
+    // Função de Editar (Redireciona com dados)
+    const handleEdit = (idea) => {
+        navigate('/editar-ideia', { state: { idea } });
+    };
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -97,7 +133,6 @@ export default function Home() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Buscar Ideias
     useEffect(() => {
         const fetchIdeas = async () => {
             const token = localStorage.getItem('token');
@@ -105,6 +140,10 @@ export default function Home() {
                 navigate('/');
                 return;
             }
+
+            // Pega o email do usuário logado
+            const userData = parseJwt(token);
+            if (userData) setCurrentUserEmail(userData.sub);
 
             try {
                 const response = await fetch('http://localhost:8080/api/ideas', {
@@ -126,13 +165,14 @@ export default function Home() {
 
                     const mappedPosts = ideas.map(idea => ({
                         id: idea.id,
+                        userEmail: idea.account.email, // CRUCIAL para identificar o dono
                         userName: idea.account.name,
                         avatarUrl: idea.account.pfp,
                         date: new Date(idea.time).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
                         segment: idea.keywords && idea.keywords.length > 0 ? idea.keywords[0].name : 'Geral',
                         title: idea.name,
                         description: idea.description,
-                        priceRaw: idea.price, // Guardamos o valor numérico para filtrar
+                        priceRaw: idea.price,
                         investment: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(idea.price),
                         mediaUrl: idea.ideaFiles && idea.ideaFiles.length > 0 ? idea.ideaFiles[0].fileUrl : null
                     }));
@@ -149,16 +189,12 @@ export default function Home() {
         fetchIdeas();
     }, [navigate]);
 
-    // LÓGICA DE FILTRAGEM
+    // Filtros
     const filteredPosts = posts.filter(post => {
-        // 1. Filtro de Texto (Título ou Descrição)
         const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             post.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-        // 2. Filtro de Segmento
         const matchesSegment = selectedSegmento ? post.segment === selectedSegmento : true;
 
-        // 3. Filtro de Investimento
         let matchesInvestment = true;
         if (selectedInvestimento) {
             const price = post.priceRaw;
@@ -173,13 +209,11 @@ export default function Home() {
 
     return (
         <div className={styles.page}>
-            {/* Sidebar Reutilizável */}
             <Sidebar />
-
             <main className={styles["feed-container"]}>
                 <div className={styles["feed-inner"]}>
 
-                    {/* === ÁREA DE PESQUISA E FILTROS === */}
+                    {/* BARRA DE BUSCA */}
                     <div className={styles["search-section"]} ref={dropdownRef}>
                         <div className={styles["search-input-container"]}>
                             <input
@@ -193,7 +227,6 @@ export default function Home() {
                         </div>
 
                         <div className={styles["filters-row"]}>
-                            {/* Dropdown Segmento */}
                             <div className={styles["filter-dropdown"]}>
                                 <button
                                     className={`${styles["filter-btn"]} ${selectedSegmento ? styles.active : ''}`}
@@ -202,7 +235,6 @@ export default function Home() {
                                     {selectedSegmento || "Segmento"}
                                     <img src={segmentoOpen ? setaCima : setaBaixo} alt="seta" />
                                 </button>
-
                                 {segmentoOpen && (
                                     <div className={styles["dropdown-menu"]}>
                                         <div className={styles["dropdown-item"]} onClick={() => { setSelectedSegmento(""); setSegmentoOpen(false); }}>Todos</div>
@@ -213,7 +245,6 @@ export default function Home() {
                                 )}
                             </div>
 
-                            {/* Dropdown Investimento */}
                             <div className={styles["filter-dropdown"]}>
                                 <button
                                     className={`${styles["filter-btn"]} ${selectedInvestimento ? styles.active : ''}`}
@@ -222,7 +253,6 @@ export default function Home() {
                                     {selectedInvestimento || "Faixa de Preço"}
                                     <img src={investimentoOpen ? setaCima : setaBaixo} alt="seta" />
                                 </button>
-
                                 {investimentoOpen && (
                                     <div className={styles["dropdown-menu"]}>
                                         <div className={styles["dropdown-item"]} onClick={() => { setSelectedInvestimento(""); setInvestimentoOpen(false); }}>Qualquer valor</div>
@@ -233,20 +263,19 @@ export default function Home() {
                                 )}
                             </div>
 
-                            {/* Botão Limpar Filtros (aparece se algo estiver selecionado) */}
                             {(selectedSegmento || selectedInvestimento || searchTerm) && (
                                 <button
                                     className={styles["filter-btn"]}
                                     style={{color: '#ff4b4b'}}
                                     onClick={() => { setSelectedSegmento(""); setSelectedInvestimento(""); setSearchTerm(""); }}
                                 >
-                                    Limpar Filtros ✕
+                                    Limpar ✕
                                 </button>
                             )}
                         </div>
                     </div>
 
-                    {/* === LISTA DE POSTS === */}
+                    {/* LISTA DE POSTS */}
                     {loading ? (
                         <div className={styles.loading}>Carregando publicações...</div>
                     ) : filteredPosts.length === 0 ? (
@@ -256,7 +285,15 @@ export default function Home() {
                         </div>
                     ) : (
                         <>
-                            {filteredPosts.map((p) => <PostCard key={p.id} data={p} />)}
+                            {filteredPosts.map((p) => (
+                                <PostCard
+                                    key={p.id}
+                                    data={p}
+                                    currentUserEmail={currentUserEmail} // Passamos o email para o card saber se é dono
+                                    onDelete={handleDelete}
+                                    onEdit={handleEdit}
+                                />
+                            ))}
                             <div className={styles.endText}>Você viu todas as publicações</div>
                         </>
                     )}
