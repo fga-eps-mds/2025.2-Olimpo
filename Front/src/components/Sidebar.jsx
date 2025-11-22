@@ -8,8 +8,6 @@ import coracao from '../assets/coracao.png';
 import coracao_hover from '../assets/coracao_hover.png';
 import seta from '../assets/seta.png';
 import seta_hover from '../assets/seta_hover.png';
-import lupa from '../assets/lupa.png';
-import lupa_hover from '../assets/lupa_hover.png';
 import mais from '../assets/mais.png';
 import mais_hover from '../assets/mais_hover.png';
 import usuario from '../assets/usuario.png';
@@ -38,11 +36,6 @@ export default function Sidebar() {
                 <button className={styles["icon-btn"]}>
                     <img src={hovered ? seta_hover : seta} alt="Mensagens" />
                     <span>Mensagens</span>
-                </button>
-
-                <button className={styles["icon-btn"]}>
-                    <img src={hovered ? lupa_hover : lupa} alt="Pesquisar" />
-                    <span>Pesquisar</span>
                 </button>
 
                 <button onClick={() => navigate('/postar-ideia')} className={styles["icon-btn"]}>

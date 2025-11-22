@@ -2,7 +2,7 @@ package com.olimpo.service;
 
 import com.olimpo.models.Account;
 import com.olimpo.models.Idea;
-import com.olimpo.models.IdeaFile; // <--- IMPORTAÇÃO NECESSÁRIA
+import com.olimpo.models.IdeaFile;
 import com.olimpo.models.Keyword;
 import com.olimpo.repository.KeywordRepository;
 import com.olimpo.repository.UserRepository;
