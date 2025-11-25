@@ -1,6 +1,7 @@
 package com.olimpo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.olimpo.config.TestSecurityConfig;
 import com.olimpo.dto.AuthenticationDTO;
 import com.olimpo.dto.RegisterDTO;
 import com.olimpo.models.Account;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = AuthenticationController.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@Import(TestSecurityConfig.class)
 public class AuthenticationControllerTest {
 
     @Autowired
@@ -49,7 +52,15 @@ public class AuthenticationControllerTest {
     void login_DeveRetornarOk_QuandoCredenciaisCorretas() throws Exception {
         AuthenticationDTO authDTO = new AuthenticationDTO("user@email.com", "123456");
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(authDTO.email(), authDTO.password());
+        Account authenticated = new Account();
+        authenticated.setEmail(authDTO.email());
+        authenticated.setRole("ESTUDANTE");
+
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
+                authenticated,
+                authDTO.password(),
+                authenticated.getAuthorities()
+        );
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authRequest);
 

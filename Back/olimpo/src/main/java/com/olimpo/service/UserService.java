@@ -1,19 +1,27 @@
 package com.olimpo.service;
 
+import com.olimpo.dto.ProfileResponseDTO;
+import com.olimpo.dto.ProfileUpdateDTO;
+import com.olimpo.dto.RegisterDTO;
 import com.olimpo.models.Account;
 import com.olimpo.models.VerificationToken;
+import com.olimpo.repository.UserRepository;
 import com.olimpo.repository.VerificationTokenRepository;
-import com.olimpo.dto.RegisterDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.olimpo.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import jakarta.mail.MessagingException;
 import org.springframework.mail.MailException;
 
-import java.util.UUID;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +31,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final VerificationTokenRepository tokenRepository;
+    private final CloudinaryService cloudinaryService;
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$", Pattern.CASE_INSENSITIVE);
 
     @Value("${app.frontend.url:http://localhost:5173}")
     private String frontendUrl;
@@ -48,6 +59,50 @@ public class UserService {
         sendVerificationEmail(usuarioSalvo);
 
         return usuarioSalvo;
+    }
+
+    public ProfileResponseDTO getProfile(Account authenticatedUser) {
+        if (authenticatedUser == null) {
+            throw new IllegalArgumentException("Usuário não autenticado");
+        }
+
+        Integer userId = requireUserId(authenticatedUser);
+
+        Account freshUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        return new ProfileResponseDTO(freshUser);
+    }
+
+    @Transactional
+    public ProfileResponseDTO updateProfile(Account authenticatedUser, ProfileUpdateDTO data, MultipartFile photo) {
+        if (authenticatedUser == null) {
+            throw new IllegalArgumentException("Usuário não autenticado");
+        }
+        if (data == null) {
+            throw new IllegalArgumentException("Dados do perfil não enviados");
+        }
+
+        Integer userId = requireUserId(authenticatedUser);
+
+        Account managedAccount = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        updateBasicInformation(managedAccount, data);
+        updateDocumentInformation(managedAccount, data);
+
+        boolean emailChanged = maybeUpdateEmail(managedAccount, data.email());
+
+        if (photo != null && !photo.isEmpty()) {
+            updateProfilePicture(managedAccount, photo);
+        }
+
+        Account saved = userRepository.save(Objects.requireNonNull(managedAccount));
+
+        if (emailChanged) {
+            sendVerificationEmail(saved);
+        }
+
+        return new ProfileResponseDTO(saved);
     }
 
     private void sendVerificationEmail(Account user) {
@@ -107,5 +162,116 @@ public class UserService {
 
         sendVerificationEmail(user);
         return true;
+    }
+
+    private void updateBasicInformation(Account account, ProfileUpdateDTO data) {
+        if (data.name() != null) {
+            String sanitizedName = sanitizeMandatory(data.name(), "Nome não pode ser vazio");
+            account.setName(sanitizedName);
+        }
+
+        if (data.estado() != null) {
+            account.setEstado(sanitizeOptional(data.estado()));
+        }
+
+        if (data.faculdade() != null) {
+            account.setFaculdade(sanitizeOptional(data.faculdade()));
+        }
+
+        if (data.curso() != null) {
+            account.setCurso(sanitizeOptional(data.curso()));
+        }
+
+        if (data.bio() != null) {
+            account.setBio(sanitizeOptional(data.bio()));
+        }
+
+        if (data.semestre() != null) {
+            if (data.semestre() < 1) {
+                throw new IllegalArgumentException("Semestre deve ser maior ou igual a 1");
+            }
+            account.setSemestre(data.semestre());
+        }
+    }
+
+    private void updateDocumentInformation(Account account, ProfileUpdateDTO data) {
+        if (data.docType() != null) {
+            String sanitizedDocType = sanitizeMandatory(data.docType(), "Tipo de documento não pode ser vazio");
+            account.setDocType(sanitizedDocType);
+        }
+
+        if (data.docNumber() != null) {
+            String sanitizedDocNumber = sanitizeMandatory(data.docNumber(), "Número do documento não pode ser vazio");
+
+            if (!sanitizedDocNumber.equals(account.getDocNumber()) &&
+                    userRepository.existsByDocNumberAndIdNot(sanitizedDocNumber, account.getId())) {
+                throw new IllegalArgumentException("Documento já está em uso por outro usuário");
+            }
+
+            account.setDocNumber(sanitizedDocNumber);
+        }
+    }
+
+    private boolean maybeUpdateEmail(Account account, String newEmail) {
+        if (newEmail == null) {
+            return false;
+        }
+
+        String sanitizedEmail = sanitizeMandatory(newEmail, "E-mail não pode ser vazio");
+        validateEmailFormat(sanitizedEmail);
+
+        if (sanitizedEmail.equalsIgnoreCase(account.getEmail())) {
+            return false;
+        }
+
+        if (userRepository.existsByEmailIgnoreCaseAndIdNot(sanitizedEmail, account.getId())) {
+            throw new IllegalArgumentException("E-mail já está em uso");
+        }
+
+        account.setEmail(sanitizedEmail);
+        account.setEmailVerified(false);
+        return true;
+    }
+
+    private void updateProfilePicture(Account account, MultipartFile photo) {
+        try {
+            if (account.getPfp() != null && !account.getPfp().isBlank()) {
+                cloudinaryService.deleteFile(account.getPfp());
+            }
+            String pictureUrl = cloudinaryService.uploadProfilePicture(photo, account.getId());
+            account.setPfp(pictureUrl);
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao atualizar foto de perfil", e);
+        }
+    }
+
+    private String sanitizeMandatory(String value, String errorMessage) {
+        String sanitized = sanitizeOptional(value);
+        if (sanitized == null) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+        return sanitized;
+    }
+
+    private String sanitizeOptional(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private void validateEmailFormat(String email) {
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            throw new IllegalArgumentException("E-mail inválido");
+        }
+    }
+
+    private @NonNull Integer requireUserId(Account account) {
+        Integer id = account.getId();
+        if (id == null) {
+            throw new IllegalArgumentException("Usuário sem identificador válido");
+        }
+        return id;
     }
 }
