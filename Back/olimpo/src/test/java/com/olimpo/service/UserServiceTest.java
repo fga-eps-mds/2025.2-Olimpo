@@ -2,6 +2,7 @@ package com.olimpo.service;
 
 import com.olimpo.dto.RegisterDTO;
 import com.olimpo.models.Account;
+import com.olimpo.models.VerificationToken;
 import com.olimpo.models.Enums.Role;
 import com.olimpo.repository.UserRepository;
 import com.olimpo.repository.VerificationTokenRepository;
@@ -17,6 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -109,5 +113,59 @@ public class UserServiceTest {
         assertEquals("E-mail já cadastrado", exception.getMessage());
         verify(passwordEncoder, never()).encode(anyString());
         verify(userRepository, never()).save(any(Account.class));
+    }
+
+    @Test
+    void verifyEmail_DeveRetornarTrueEAtivarUsuario_QuandoTokenValido() {
+        
+        String tokenString = "token-valido-uuid";
+        Account user = new Account();
+        user.setEmail("teste@email.com");
+        user.setEmailVerified(false);
+
+        VerificationToken token = new VerificationToken();
+        token.setToken(tokenString);
+        token.setUser(user);
+ 
+        token.setExpiryDate(java.time.LocalDateTime.now().plusMinutes(15));
+
+        when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
+
+        boolean resultado = userService.verifyEmail(tokenString);
+
+        assertTrue(resultado);
+        assertTrue(user.isEmailVerified());
+        
+        verify(userRepository).save(user);
+        verify(tokenRepository).delete(token);
+    }
+
+    @Test
+    void verifyEmail_DeveRetornarFalse_QuandoTokenNaoExiste() {
+
+        String tokenInvalido = "token-inexistente";
+        when(tokenRepository.findByToken(tokenInvalido)).thenReturn(Optional.empty());
+
+        boolean resultado = userService.verifyEmail(tokenInvalido);
+
+        assertFalse(resultado);
+        verify(userRepository, never()).save(any());
+        verify(tokenRepository, never()).delete(any());
+    }
+
+    @Test
+    void verifyEmail_DeveRetornarFalse_QuandoTokenExpirado() {
+        String tokenExpiradoString = "token-expirado";
+        VerificationToken token = new VerificationToken();
+        token.setToken(tokenExpiradoString);
+        token.setExpiryDate(java.time.LocalDateTime.now().minusMinutes(1));
+
+        when(tokenRepository.findByToken(tokenExpiradoString)).thenReturn(Optional.of(token));
+
+        boolean resultado = userService.verifyEmail(tokenExpiradoString);
+
+        assertFalse(resultado);
+        verify(userRepository, never()).save(any());
+        verify(tokenRepository, never()).delete(any());
     }
 }

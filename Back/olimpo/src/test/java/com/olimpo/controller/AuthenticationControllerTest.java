@@ -5,7 +5,9 @@ import com.olimpo.dto.AuthenticationDTO;
 import com.olimpo.dto.RegisterDTO;
 import com.olimpo.models.Account;
 import com.olimpo.models.Enums.Role;
+import com.olimpo.repository.UserRepository; // IMPORTANTE: Importe o repositório
 import com.olimpo.service.AuthorizationService;
+import com.olimpo.service.TokenService;
 import com.olimpo.service.UserService;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.Test;
@@ -45,18 +47,34 @@ public class AuthenticationControllerTest {
     @MockBean
     private AuthorizationService authorizationService;
 
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserRepository userRepository;
+
     @Test
     void login_DeveRetornarOk_QuandoCredenciaisCorretas() throws Exception {
         AuthenticationDTO authDTO = new AuthenticationDTO("user@email.com", "123456");
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(authDTO.email(), authDTO.password());
+        Account userMock = new Account();
+        userMock.setEmail("user@email.com");
+        userMock.setRole("ESTUDANTE");
+
+        UsernamePasswordAuthenticationToken authResult = 
+                new UsernamePasswordAuthenticationToken(userMock, null, userMock.getAuthorities());
+        
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(authRequest);
+                .thenReturn(authResult);
+
+        String tokenFalso = "token-jwt-mock-123";
+        when(tokenService.generateToken(any(Account.class))).thenReturn(tokenFalso);
 
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authDTO)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value(tokenFalso)); 
     }
 
     @Test
@@ -74,8 +92,8 @@ public class AuthenticationControllerTest {
                 }
         );
         Throwable cause = exception.getCause();
-        assertNotNull(cause, "A exceção aninhada não deve ser nula");
-        assertTrue(cause instanceof BadCredentialsException, "A causa deve ser BadCredentialsException");
+        assertNotNull(cause);
+        assertTrue(cause instanceof BadCredentialsException);
     }
 
     @Test
@@ -93,8 +111,8 @@ public class AuthenticationControllerTest {
                 }
         );
         Throwable cause = exception.getCause();
-        assertNotNull(cause, "A exceção aninhada não deve ser nula");
-        assertTrue(cause instanceof DisabledException, "A causa deve ser DisabledException");
+        assertNotNull(cause);
+        assertTrue(cause instanceof DisabledException);
     }
 
     @Test
