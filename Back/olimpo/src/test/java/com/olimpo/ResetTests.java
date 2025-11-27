@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olimpo.controller.PasswordResetController;
 import com.olimpo.dto.PasswordResetDto;
 import com.olimpo.dto.PasswordResetRequest;
+import com.olimpo.repository.UserRepository;
 import com.olimpo.service.PasswordResetService;
+import com.olimpo.service.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,12 @@ class PasswordResetControllerTest {
 
     @MockBean
     private PasswordResetService passwordResetService;
+    
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     @Autowired
     private ObjectMapper objectMapper;

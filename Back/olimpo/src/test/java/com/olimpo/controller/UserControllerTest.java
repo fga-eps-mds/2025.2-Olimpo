@@ -4,6 +4,7 @@ import com.olimpo.config.SecurityConfig;
 import com.olimpo.models.Account;
 import com.olimpo.repository.UserRepository;
 import com.olimpo.service.AuthorizationService;
+import com.olimpo.service.TokenService; // Import necessário
 import com.olimpo.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class UserControllerTest {
 
     @MockBean
     private AuthorizationService authorizationService;
+
+    @MockBean
+    private TokenService tokenService;
 
     @Test
     void verifyEmail_DeveRetornarFound_QuandoTokenValido() throws Exception {
