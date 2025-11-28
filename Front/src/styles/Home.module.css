@@ -1,0 +1,300 @@
+/* src/styles/Home.module.css */
+
+/* ===== PAGE (fundo geral) ===== */
+.page {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #eef0f4;
+    font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+    color: #222;
+    display: block;
+}
+
+/* ===== SIDEBAR (Estilos removidos pois usamos o componente, mas mantemos o espaço) ===== */
+/* A margem é tratada no container do feed abaixo */
+
+/* ===== FEED CONTAINER ===== */
+.feed-container {
+    margin-left: 110px;
+    width: calc(100% - 110px);
+    min-height: 100vh;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    display: block;
+}
+
+.feed-inner {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 60px;
+}
+
+/* ===== BARRA DE PESQUISA E FILTROS (NOVO) ===== */
+.search-section {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 16px 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.search-input-container {
+    display: flex;
+    align-items: center;
+    background-color: #f0f2f5;
+    border-radius: 8px;
+    padding: 10px 16px;
+    gap: 10px;
+}
+
+.search-icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
+}
+
+.search-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    font-size: 15px;
+    color: #333;
+    outline: none;
+}
+
+.filters-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.filter-dropdown {
+    position: relative;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f0f2f5;
+    border: 1px solid transparent;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    transition: 0.2s;
+}
+
+.filter-btn:hover {
+    background-color: #e4e6eb;
+}
+
+.filter-btn.active {
+    background-color: #22212b;
+    color: #fff;
+}
+
+.filter-btn img {
+    width: 10px;
+    transition: transform 0.2s;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    min-width: 200px;
+    z-index: 50;
+    overflow: hidden;
+    padding: 4px 0;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f6fa;
+}
+
+/* ===== CARD (post) ===== */
+.card {
+    background-color: #fff; /* Mudei para branco para destacar no fundo cinza */
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.userBlock {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #eef2f8;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    font-weight: 700;
+    font-size: 14px;
+    color: #222;
+}
+
+.date {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.segmentBadge {
+    background: #22212b;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.moreDots {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+}
+
+.mediaBox {
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 6px;
+    max-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1f2b36;
+    margin: 0;
+}
+
+.cardText {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.invest {
+    font-weight: 700;
+    font-size: 13px;
+    color: #222;
+}
+
+/* ===== ESTADOS (Loading/Vazio) ===== */
+.noPosts, .loading, .endText {
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+    padding: 20px;
+}
+
+.noPosts {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 820px) {
+    .feed-container {
+        margin-left: 0;
+        width: 100%;
+        height: auto;
+        padding: 20px 16px 100px 16px;
+    }
+
+    /* No mobile, filtros ocupam largura total */
+    .filters-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-btn {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+
+.dropdownMenuPost {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 120px;
+    z-index: 10;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.dropdownItemPost {
+    padding: 10px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: #333;
+    text-align: left;
+}
+
+.dropdownItemPost:hover {
+    background-color: #f5f6fa;
+}

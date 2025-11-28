@@ -1,0 +1,220 @@
+:root {
+    --form-bg: #c9cfdb;
+}
+
+body, #root {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* --- ESTRUTURA PRINCIPAL (Corrigida para Scroll e Sidebar Fixa) --- */
+.container-root {
+    min-height: 100vh; /* Permite crescer */
+    width: 100vw;
+    display: flex;
+    background: #f3f5fa;
+    padding: 0;
+    box-sizing: border-box;
+    /* overflow: hidden; -> REMOVIDO para permitir rolagem */
+}
+
+.main-content {
+    flex: 1;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    width: 100%;
+
+    /* Margem para não ficar embaixo da Sidebar */
+    margin-left: 110px;
+    padding: 40px 20px 80px 20px;
+}
+
+/* --- SEU ESTILO DO FORMULÁRIO (Mantido) --- */
+.form-container {
+    background: #BDC5D5;
+    border-radius: 16px;
+    padding: 32px 32px 34px 32px;
+    max-width: 480px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 6px 24px rgba(30, 30, 40, 0.05);
+}
+
+.post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.label {
+    color: #363940;
+    text-align: left;
+    margin-left: 20px;
+    /* Adicionei font-weight para ficar igual ao PostarIdeia se quiser */
+}
+
+.input {
+    border: none;
+    border-radius: 7px;
+    padding: 10px;
+    margin-top: 4px;
+    font-size: 1rem;
+    background: #f5f6fa;
+    resize: none;
+    width: 100%;
+    box-sizing: border-box;
+    color: #363940;
+    align-self: center;
+    font-family: Arial, Helvetica, sans-serif;
+    outline: none;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%; /* Ajustado para preencher o grid */
+    background: #f5f6fa;
+    padding: 0;
+    border-radius: 12px;
+    margin-top: 2px;
+}
+
+.selecionar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    background: #f5f6fa;
+    color: #363940;
+    font-size: 1rem;
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+}
+
+.seta {
+    margin-left: auto;
+    font-size: 14px;
+    transition: transform 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.lista-selecionar {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    width: 100%;
+    background: #eceef4;
+    border-radius: 12px;
+    z-index: 10;
+    padding: 2px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.lista-itens {
+    font-size: 16px;
+    color: #363940;
+    text-align: center;
+    padding: 8px 0;
+    cursor: pointer;
+    border-radius: 7px;
+    transition: background 0.2s;
+}
+
+.lista-itens:hover {
+    background: #fff;
+}
+
+.input-imagem {
+    border: none;
+    border-radius: 7px;
+    padding: 10px;
+    margin-top: 4px;
+    font-size: 1rem;
+    background: #f5f6fa;
+    resize: none;
+    width: 100%;
+    align-items: center;
+    box-sizing: border-box;
+    color: #363940;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}
+
+.textarea {
+    border: none;
+    border-radius: 7px;
+    padding: 10px;
+    margin-top: 4px;
+    font-size: 1rem;
+    background: #f5f6fa;
+    resize: none;
+    width: 100%;
+    box-sizing: border-box;
+    color: #363940;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 80px;
+    resize: vertical;
+    outline: none;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    text-align: left;
+}
+
+.btn-postar {
+    background: #363940;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 12px;
+    margin-top: 12px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+    min-width: 200px;
+    width: fit-content;
+    align-self: center;
+    transition: background 0.2s
+}
+
+.btn-postar:hover{
+    background: #181a1d;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1100px) {
+    .main-content {
+        margin-left: 96px;
+    }
+}
+
+@media (max-width: 820px) {
+    .container-root {
+        flex-direction: column;
+        height: auto;
+    }
+    .main-content {
+        margin-left: 0;
+        padding-bottom: 100px;
+        padding-top: 40px;
+    }
+    .input-row {
+        grid-template-columns: 1fr;
+    }
+}
