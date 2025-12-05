@@ -7,6 +7,8 @@ import Sidebar from "./components/Sidebar";
 import lupa from './assets/lupa.png';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
+import coracao from './assets/coracao.png';
+import coracaoHover from './assets/coracao_hover.png';
 
 // Função para decodificar o JWT e pegar o email do usuário logado
 const parseJwt = (token) => {
@@ -17,7 +19,7 @@ const parseJwt = (token) => {
     }
 };
 
-function PostCard({ data, currentUserEmail, onDelete, onEdit }) {
+function PostCard({ data, currentUserEmail, onDelete, onEdit, onLike }) {
     const [menuOpen, setMenuOpen] = useState(false);
     // Verifica se o usuário logado é o dono do post
     const isOwner = data.userEmail === currentUserEmail;
@@ -73,9 +75,24 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit }) {
             <h3 className={styles.cardTitle}>{data.title}</h3>
             <p className={styles.cardText}>{data.description}</p>
 
-            <div style={{ marginTop: "8px" }}>
-                <span className={styles.invest}>Investimento: </span>
-                <span>{data.investment}</span>
+            <div style={{ marginTop: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                    <span className={styles.invest}>Investimento: </span>
+                    <span>{data.investment}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                    <button 
+                        onClick={() => onLike(data.id)}
+                        style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center" }}
+                    >
+                        <img 
+                            src={data.isLiked ? coracaoHover : coracao} 
+                            alt="Like" 
+                            style={{ width: "20px", height: "20px" }} 
+                        />
+                    </button>
+                    <span>{data.likeCount}</span>
+                </div>
             </div>
         </article>
     );
@@ -122,6 +139,40 @@ export default function Home() {
         navigate('/editar-ideia', { state: { idea } });
     };
 
+    const handleLike = async (ideaId) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Você precisa estar logado para curtir.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/ideas/${ideaId}/like`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const isLiked = await response.json(); // Retorna true se curtiu, false se descurtiu
+                
+                setPosts(posts.map(post => {
+                    if (post.id === ideaId) {
+                        return {
+                            ...post,
+                            isLiked: isLiked,
+                            likeCount: isLiked ? post.likeCount + 1 : post.likeCount - 1
+                        };
+                    }
+                    return post;
+                }));
+            } else {
+                console.error("Erro ao curtir");
+            }
+        } catch (error) {
+            console.error("Erro na requisição de like:", error);
+        }
+    };
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -161,21 +212,26 @@ export default function Home() {
                 }
 
                 if (response.ok) {
-                    const ideas = await response.json();
+                    const ideasData = await response.json();
 
-                    const mappedPosts = ideas.map(idea => ({
-                        id: idea.id,
-                        userEmail: idea.account.email, // CRUCIAL para identificar o dono
-                        userName: idea.account.name,
-                        avatarUrl: idea.account.pfp,
-                        date: new Date(idea.time).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
-                        segment: idea.keywords && idea.keywords.length > 0 ? idea.keywords[0].name : 'Geral',
-                        title: idea.name,
-                        description: idea.description,
-                        priceRaw: idea.price,
-                        investment: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(idea.price),
-                        mediaUrl: idea.ideaFiles && idea.ideaFiles.length > 0 ? idea.ideaFiles[0].fileUrl : null
-                    }));
+                    const mappedPosts = ideasData.map(item => {
+                        const idea = item.idea;
+                        return {
+                            id: idea.id,
+                            userEmail: idea.account.email, // CRUCIAL para identificar o dono
+                            userName: idea.account.name,
+                            avatarUrl: idea.account.pfp,
+                            date: new Date(idea.time).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
+                            segment: idea.keywords && idea.keywords.length > 0 ? idea.keywords[0].name : 'Geral',
+                            title: idea.name,
+                            description: idea.description,
+                            priceRaw: idea.price,
+                            investment: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(idea.price),
+                            mediaUrl: idea.ideaFiles && idea.ideaFiles.length > 0 ? idea.ideaFiles[0].fileUrl : null,
+                            likeCount: item.likeCount,
+                            isLiked: item.isLiked
+                        };
+                    });
 
                     setPosts(mappedPosts.reverse());
                 }
@@ -292,6 +348,7 @@ export default function Home() {
                                     currentUserEmail={currentUserEmail} // Passamos o email para o card saber se é dono
                                     onDelete={handleDelete}
                                     onEdit={handleEdit}
+                                    onLike={handleLike}
                                 />
                             ))}
                             <div className={styles.endText}>Você viu todas as publicações</div>
