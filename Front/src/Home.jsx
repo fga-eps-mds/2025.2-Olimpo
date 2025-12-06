@@ -12,7 +12,7 @@ import setaCima from './assets/setaCima.png';
 const parseJwt = (token) => {
     try {
         return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
+    } catch {
         return null;
     }
 };
@@ -266,7 +266,7 @@ export default function Home() {
                             {(selectedSegmento || selectedInvestimento || searchTerm) && (
                                 <button
                                     className={styles["filter-btn"]}
-                                    style={{color: '#ff4b4b'}}
+                                    style={{ color: '#ff4b4b' }}
                                     onClick={() => { setSelectedSegmento(""); setSelectedInvestimento(""); setSearchTerm(""); }}
                                 >
                                     Limpar ✕

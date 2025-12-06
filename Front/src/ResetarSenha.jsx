@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './styles/ResetarSenha.css';
 import logo from './assets/logo.png';
 
 function ResetarSenha() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
 
   const [token, setToken] = useState(null);
   const [status, setStatus] = useState('validando');
@@ -36,7 +35,7 @@ function ResetarSenha() {
           setStatus('invalido');
           setMessage('Token inválido ou expirado. Por favor, solicite um novo link.');
         }
-      } catch (error) {
+      } catch {
         setStatus('invalido');
         setMessage('Erro ao validar o token. O servidor pode estar offline.');
       }
@@ -77,7 +76,7 @@ function ResetarSenha() {
     switch (status) {
       case 'validando':
         return <div className="spinner"></div>;
-      
+
       case 'invalido':
         return (
           <>
@@ -128,7 +127,7 @@ function ResetarSenha() {
             <button type="submit" className="botao-reset">Redefinir Senha</button>
           </form>
         );
-      
+
       default:
         return null;
     }
