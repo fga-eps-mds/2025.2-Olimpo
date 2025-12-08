@@ -14,6 +14,9 @@ import org.springframework.mail.MailException;
 
 import java.util.UUID;
 import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
+import com.olimpo.dto.UserProfileDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -107,5 +110,28 @@ public class UserService {
 
         sendVerificationEmail(user);
         return true;
+    }
+
+    public List<UserProfileDTO> searchByName(String name) {
+        var list = userRepository.findByNameContainingIgnoreCase(name == null ? "" : name);
+        return list.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public Optional<UserProfileDTO> getPublicProfile(Integer id) {
+        return userRepository.findById(id).map(this::toDto);
+    }
+
+    private UserProfileDTO toDto(Account a) {
+        return new UserProfileDTO(
+                a.getId(),
+                a.getName(),
+                a.getPfp(),
+                a.getBio(),
+                a.getRole(),
+                a.getFaculdade(),
+                a.getSemestre(),
+                a.getCurso(),
+                a.getEstado()
+        );
     }
 }
