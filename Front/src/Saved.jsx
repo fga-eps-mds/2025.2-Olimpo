@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./styles/Home.module.css";
 import Sidebar from "./components/Sidebar";
 
+// Imagens
 import lupa from './assets/lupa.png';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
@@ -94,7 +95,7 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit, onLike }) {
     );
 }
 
-export default function Home() {
+export default function Saved() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentUserEmail, setCurrentUserEmail] = useState("");
@@ -148,16 +149,20 @@ export default function Home() {
             if (response.ok) {
                 const isLiked = await response.json();
 
-                setPosts(posts.map(post => {
-                    if (post.id === ideaId) {
-                        return {
-                            ...post,
-                            isLiked: isLiked,
-                            likeCount: isLiked ? post.likeCount + 1 : post.likeCount - 1
-                        };
-                    }
-                    return post;
-                }));
+                if (!isLiked) {
+                    setPosts(posts.filter(p => p.id !== ideaId));
+                } else {
+                    setPosts(posts.map(post => {
+                        if (post.id === ideaId) {
+                            return {
+                                ...post,
+                                isLiked: isLiked,
+                                likeCount: isLiked ? post.likeCount + 1 : post.likeCount - 1
+                            };
+                        }
+                        return post;
+                    }));
+                }
             } else {
                 console.error("Erro ao curtir");
             }
@@ -189,7 +194,7 @@ export default function Home() {
             if (userData) setCurrentUserEmail(userData.sub);
 
             try {
-                const response = await fetch('http://localhost:8080/api/ideas', {
+                const response = await fetch('http://localhost:8080/api/ideas/liked', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -259,13 +264,12 @@ export default function Home() {
             <Sidebar />
             <main className={styles["feed-container"]}>
                 <div className={styles["feed-inner"]}>
-
                     <div className={styles["search-section"]} ref={dropdownRef}>
                         <div className={styles["search-input-container"]}>
                             <input
                                 className={styles["search-input"]}
                                 type="text"
-                                placeholder="Pesquisar ideias..."
+                                placeholder="Pesquisar ideias salvas..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -335,11 +339,11 @@ export default function Home() {
                     </div>
 
                     {loading ? (
-                        <div className={styles.loading}>Carregando publicações...</div>
+                        <div className={styles.loading}>Carregando ideias salvas...</div>
                     ) : filteredPosts.length === 0 ? (
                         <div className={styles.noPosts}>
-                            <h3>Nenhum resultado encontrado</h3>
-                            <p>Tente ajustar seus filtros de pesquisa.</p>
+                            <h3>Nenhuma ideia salva encontrada</h3>
+                            <p>Você ainda não curtiu nenhuma ideia.</p>
                         </div>
                     ) : (
                         <>
@@ -353,7 +357,7 @@ export default function Home() {
                                     onLike={handleLike}
                                 />
                             ))}
-                            <div className={styles.endText}>Você viu todas as publicações</div>
+                            <div className={styles.endText}>Você viu todas as suas ideias salvas</div>
                         </>
                     )}
                 </div>
