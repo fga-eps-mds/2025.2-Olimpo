@@ -90,6 +90,18 @@ public class IdeaController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/liked")
+    public ResponseEntity<?> getLikedIdeas(@AuthenticationPrincipal Account user) {
+        java.util.List<Idea> ideas = ideaService.getLikedIdeas(user.getId());
+        java.util.List<IdeaResponseDTO> response = new java.util.ArrayList<>();
+
+        for (Idea idea : ideas) {
+            long likes = likeService.getLikeCount(idea.getId());
+            response.add(new IdeaResponseDTO(idea, likes, true));
+        }
+        return ResponseEntity.ok(response);
+    }
+
     public record IdeaResponseDTO(Idea idea, long likeCount, boolean isLiked) {
     }
 
@@ -159,7 +171,6 @@ public class IdeaController {
         }
     }
 
-    // DTO interno para resposta
     public record LikeStatusDTO(long count, boolean liked) {
     }
 }

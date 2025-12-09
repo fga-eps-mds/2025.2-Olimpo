@@ -31,6 +31,9 @@ public class LikeServiceTest {
     @Mock
     private UserRepository accountRepository;
 
+    @Mock
+    private com.olimpo.repository.NotificationRepository notificationRepository;
+
     @InjectMocks
     private LikeService likeService;
 
@@ -40,14 +43,24 @@ public class LikeServiceTest {
         Integer accountId = 1;
         LikeId likeId = new LikeId(accountId, ideaId);
 
+        Account liker = new Account();
+        liker.setId(accountId);
+
+        Account owner = new Account();
+        owner.setId(2);
+
+        Idea idea = new Idea();
+        idea.setAccount(owner);
+
         when(likeRepository.existsById(likeId)).thenReturn(false);
-        when(accountRepository.findById(accountId)).thenReturn(Optional.of(new Account()));
-        when(ideaRepository.findById(ideaId)).thenReturn(Optional.of(new Idea()));
+        when(accountRepository.findById(accountId)).thenReturn(Optional.of(liker));
+        when(ideaRepository.findById(ideaId)).thenReturn(Optional.of(idea));
 
         boolean result = likeService.toggleLike(ideaId, accountId);
 
         assertTrue(result);
         verify(likeRepository).save(any(Like.class));
+        verify(notificationRepository).save(any(com.olimpo.models.Notification.class));
     }
 
     @Test

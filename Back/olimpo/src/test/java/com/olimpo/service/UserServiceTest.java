@@ -43,7 +43,7 @@ public class UserServiceTest {
 
     @Test
     void cadastrarUsuario_DeveHashearSenhaESalvarUsuario_QuandoDadosValidos() throws MessagingException {
-    
+
         RegisterDTO registerDTO = new RegisterDTO(
                 "teste@123.com",
                 "123456",
@@ -52,11 +52,10 @@ public class UserServiceTest {
                 "12345678900",
                 Role.ESTUDANTE,
                 null,
-                null
-        );
+                null);
 
         String senhaHasheadaEsperada = "$2a$10$algumHashSimulado";
-        
+
         when(userRepository.findByEmail("teste@123.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("123456")).thenReturn(senhaHasheadaEsperada);
 
@@ -65,7 +64,7 @@ public class UserServiceTest {
             accountSalvo.setId(1);
             return accountSalvo;
         });
-        
+
         doNothing().when(tokenRepository).deleteByUser(any(Account.class));
         when(tokenRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString());
@@ -99,10 +98,9 @@ public class UserServiceTest {
 
     @Test
     void cadastrarUsuario_DeveLancarExcecao_QuandoEmailJaExiste() {
-        
+
         RegisterDTO registerDTO = new RegisterDTO(
-            "existente@123.com", "123", "User", "CPF", "111", Role.ESTUDANTE, null, null
-        );
+                "existente@123.com", "123", "User", "CPF", "111", Role.ESTUDANTE, null, null);
 
         when(userRepository.findByEmail("existente@123.com")).thenReturn(Optional.of(new Account()));
 
@@ -117,7 +115,7 @@ public class UserServiceTest {
 
     @Test
     void verifyEmail_DeveRetornarTrueEAtivarUsuario_QuandoTokenValido() {
-        
+
         String tokenString = "token-valido-uuid";
         Account user = new Account();
         user.setEmail("teste@email.com");
@@ -126,7 +124,7 @@ public class UserServiceTest {
         VerificationToken token = new VerificationToken();
         token.setToken(tokenString);
         token.setUser(user);
- 
+
         token.setExpiryDate(java.time.LocalDateTime.now().plusMinutes(15));
 
         when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
@@ -135,7 +133,7 @@ public class UserServiceTest {
 
         assertTrue(resultado);
         assertTrue(user.isEmailVerified());
-        
+
         verify(userRepository).save(user);
         verify(tokenRepository).delete(token);
     }
@@ -167,5 +165,50 @@ public class UserServiceTest {
         assertFalse(resultado);
         verify(userRepository, never()).save(any());
         verify(tokenRepository, never()).delete(any());
+    }
+
+    @Test
+    void resendVerificationCode_ShouldReturnTrue_WhenUserExistsAndNotVerified() throws MessagingException {
+        String email = "test@example.com";
+        Account user = new Account();
+        user.setEmail(email);
+        user.setEmailVerified(false);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+
+        boolean result = userService.resendVerificationCode(email);
+
+        assertTrue(result);
+        verify(tokenRepository).deleteByUser(user);
+        verify(tokenRepository).save(any(VerificationToken.class));
+        verify(emailService).sendEmail(eq(email), anyString(), anyString());
+    }
+
+    @Test
+    void resendVerificationCode_ShouldReturnFalse_WhenUserNotFound() throws MessagingException {
+        String email = "nonexistent@example.com";
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        boolean result = userService.resendVerificationCode(email);
+
+        assertFalse(result);
+        verify(tokenRepository, never()).save(any());
+        verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void resendVerificationCode_ShouldReturnFalse_WhenUserAlreadyVerified() throws MessagingException {
+        String email = "verified@example.com";
+        Account user = new Account();
+        user.setEmail(email);
+        user.setEmailVerified(true);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+
+        boolean result = userService.resendVerificationCode(email);
+
+        assertFalse(result);
+        verify(tokenRepository, never()).save(any());
+        verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
     }
 }

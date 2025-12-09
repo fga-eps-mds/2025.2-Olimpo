@@ -19,8 +19,11 @@ public class DataInitializer {
             "Sustentabilidade",
             "Arte & Cultura",
             "E-commerce",
-            "Impacto Social"
-    );
+            "Impacto Social",
+            "Indústria alimentícia",
+            "Indústria Cinematográfica",
+            "Geral",
+            "Outros");
 
     @Bean
     CommandLineRunner initKeywords(KeywordRepository keywordRepository) {

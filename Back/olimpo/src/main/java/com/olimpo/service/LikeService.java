@@ -23,12 +23,15 @@ public class LikeService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private com.olimpo.repository.NotificationRepository notificationRepository;
+
     @Transactional
     public boolean toggleLike(Integer ideaId, Integer accountId) {
         LikeId id = new LikeId(accountId, ideaId);
         if (likeRepository.existsById(id)) {
             likeRepository.deleteById(id);
-            return false; // Unliked
+            return false;
         } else {
             Account account = userRepository.findById(accountId)
                     .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -37,7 +40,18 @@ public class LikeService {
 
             Like like = new Like(id, account, idea);
             likeRepository.save(like);
-            return true; // Liked
+
+            if (!idea.getAccount().getId().equals(accountId)) {
+                com.olimpo.models.Notification notification = new com.olimpo.models.Notification();
+                notification.setRecipient(idea.getAccount());
+                notification.setSender(account);
+                notification.setIdea(idea);
+                notification.setType("LIKE");
+                notification.setCreatedAt(java.time.LocalDateTime.now());
+                notificationRepository.save(notification);
+            }
+
+            return true;
         }
     }
 

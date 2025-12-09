@@ -12,4 +12,6 @@ public interface LikeRepository extends JpaRepository<Like, LikeId> {
     long countByIdeaId(@Param("ideaId") Integer ideaId);
 
     boolean existsById(LikeId id);
+
+    java.util.List<Like> findByAccountId(Integer accountId);
 }
