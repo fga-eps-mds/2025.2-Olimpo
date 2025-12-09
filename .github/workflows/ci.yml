@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "main", "develpoer", "chore/adicionar-ci" ]
+    branches: [ "main", "developer", "chore/adicionar-ci" ]
   pull_request:
-    branches: [ "main", "develpoer", "chore/adicionar-ci" ]
+    branches: [ "main", "developer", "chore/adicionar-ci" ]
 
 jobs:
   backend-ci:
