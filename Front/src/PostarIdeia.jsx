@@ -93,7 +93,6 @@ export default function PostarIdeia() {
 
     return (
         <div className={styles['container-root']}>
-            {/* Sidebar reutilizável */}
             <Sidebar />
 
             <main className={styles['main-content']}>
@@ -139,7 +138,20 @@ export default function PostarIdeia() {
                                         </button>
                                         {dropdownOpen && (
                                             <div className={styles['lista-selecionar']}>
-                                                {["Educação", "Tecnologia", "Indústria alimentícia", "Indústria Cinematográfica", "Outros"].map((item) => (
+                                                {[
+                                                    "Tecnologia",
+                                                    "Saúde",
+                                                    "Educação",
+                                                    "Finanças",
+                                                    "Sustentabilidade",
+                                                    "Arte & Cultura",
+                                                    "E-commerce",
+                                                    "Impacto Social",
+                                                    "Indústria alimentícia",
+                                                    "Indústria Cinematográfica",
+                                                    "Geral",
+                                                    "Outros"
+                                                ].map((item) => (
                                                     <div
                                                         key={item}
                                                         className={styles['lista-itens']}

@@ -28,14 +28,14 @@ export default function Sidebar() {
                     <span>Início</span>
                 </button>
 
-                <button className={styles["icon-btn"]}>
+                <button onClick={() => navigate('/notificacoes')} className={styles["icon-btn"]}>
                     <img src={hovered ? coracao_hover : coracao} alt="Notificações" />
                     <span>Notificações</span>
                 </button>
 
-                <button className={styles["icon-btn"]}>
-                    <img src={hovered ? seta_hover : seta} alt="Mensagens" />
-                    <span>Mensagens</span>
+                <button onClick={() => navigate('/salvos')} className={styles["icon-btn"]}>
+                    <img src={hovered ? seta_hover : seta} alt="Salvos" />
+                    <span>Salvos</span>
                 </button>
 
                 <button onClick={() => navigate('/postar-ideia')} className={styles["icon-btn"]}>
