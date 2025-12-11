@@ -43,21 +43,12 @@ public class Idea {
     private Integer price = 0;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "KEYWORD_IDEA",
-            joinColumns = @JoinColumn(name = "idea_id"),
-            inverseJoinColumns = @JoinColumn(name = "keyword_id")
-    )
-    @ToString.Exclude // Excluir do toString para evitar LazyInitializationException
+    @JoinTable(name = "KEYWORD_IDEA", joinColumns = @JoinColumn(name = "idea_id"), inverseJoinColumns = @JoinColumn(name = "keyword_id"))
+    @ToString.Exclude
     private Set<Keyword> keywords = new HashSet<>();
 
-    @OneToMany(
-        mappedBy = "idea", 
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    @ToString.Exclude // Excluir também
+    @OneToMany(mappedBy = "idea", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<IdeaFile> ideaFiles = new ArrayList<>();
 
     @PrePersist
@@ -67,8 +58,10 @@ public class Idea {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Idea idea = (Idea) o;
         return Objects.equals(id, idea.id);
     }

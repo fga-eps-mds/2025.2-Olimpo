@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/PostarIdeia.module.css';
+import { SEGMENTS } from './constants';
 import Sidebar from './components/Sidebar';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
@@ -138,20 +139,7 @@ export default function PostarIdeia() {
                                         </button>
                                         {dropdownOpen && (
                                             <div className={styles['lista-selecionar']}>
-                                                {[
-                                                    "Tecnologia",
-                                                    "Saúde",
-                                                    "Educação",
-                                                    "Finanças",
-                                                    "Sustentabilidade",
-                                                    "Arte & Cultura",
-                                                    "E-commerce",
-                                                    "Impacto Social",
-                                                    "Indústria alimentícia",
-                                                    "Indústria Cinematográfica",
-                                                    "Geral",
-                                                    "Outros"
-                                                ].map((item) => (
+                                                {SEGMENTS.map((item) => (
                                                     <div
                                                         key={item}
                                                         className={styles['lista-itens']}

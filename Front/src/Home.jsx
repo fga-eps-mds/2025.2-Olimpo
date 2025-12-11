@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./styles/Home.module.css";
+import { SEGMENTS } from './constants';
 import Sidebar from "./components/Sidebar";
 
 import lupa from './assets/lupa.png';
@@ -284,20 +285,7 @@ export default function Home() {
                                 {segmentoOpen && (
                                     <div className={styles["dropdown-menu"]}>
                                         <div className={styles["dropdown-item"]} onClick={() => { setSelectedSegmento(""); setSegmentoOpen(false); }}>Todos</div>
-                                        {[
-                                            "Tecnologia",
-                                            "Saúde",
-                                            "Educação",
-                                            "Finanças",
-                                            "Sustentabilidade",
-                                            "Arte & Cultura",
-                                            "E-commerce",
-                                            "Impacto Social",
-                                            "Indústria alimentícia",
-                                            "Indústria Cinematográfica",
-                                            "Geral",
-                                            "Outros"
-                                        ].map(opt => (
+                                        {SEGMENTS.map(opt => (
                                             <div key={opt} className={styles["dropdown-item"]} onClick={() => { setSelectedSegmento(opt); setSegmentoOpen(false); }}>{opt}</div>
                                         ))}
                                     </div>
