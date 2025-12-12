@@ -100,22 +100,26 @@ export default function PostarIdeia() {
                 <div className={styles['form-container']}>
                     <form className={styles['post-form']} onSubmit={handleSubmit}>
 
-                        <label className={styles.label}>Imagem</label>
-                        <input
-                            className={styles['input-imagem']}
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setImagem(e.target.files[0])}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Imagem</label>
+                            <input
+                                className={styles['input-imagem']}
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setImagem(e.target.files[0])}
+                            />
+                        </div>
 
-                        <label className={styles.label}>Título</label>
-                        <input
-                            className={styles.input}
-                            type="text"
-                            placeholder="Título"
-                            value={titulo}
-                            onChange={(e) => setTitulo(e.target.value)}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Título</label>
+                            <input
+                                className={styles.input}
+                                type="text"
+                                placeholder="Título"
+                                value={titulo}
+                                onChange={(e) => setTitulo(e.target.value)}
+                            />
+                        </div>
 
                         <div className={styles['input-row']}>
                             <div>
@@ -168,13 +172,15 @@ export default function PostarIdeia() {
                             </div>
                         </div>
 
-                        <label className={styles.label}>Descrição</label>
-                        <textarea
-                            className={styles.textarea}
-                            placeholder="Descrição"
-                            value={descricao}
-                            onChange={(e) => setDescricao(e.target.value)}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Descrição</label>
+                            <textarea
+                                className={styles.textarea}
+                                placeholder="Descrição"
+                                value={descricao}
+                                onChange={(e) => setDescricao(e.target.value)}
+                            />
+                        </div>
                         <button className={styles['btn-postar']} type="submit">
                             Postar
                         </button>
