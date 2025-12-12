@@ -12,6 +12,7 @@ import PostarIdeia from './PostarIdeia.jsx';
 import Home from './Home.jsx';
 import EditarIdeia from './EditarIdeia.jsx';
 import SelecionarPerfil from './SelecionarPerfil.jsx';
+import VisualizarPerfil from './VisualizarPerfil.jsx';
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/postar-ideia" element={<PostarIdeia />} />
             <Route path="/home" element={<Home />} />
             <Route path="/editar-ideia" element={<EditarIdeia />} />
+            <Route path="/perfil" element={<VisualizarPerfil />} />
 
             <Route path="*" element={
                 <div>
