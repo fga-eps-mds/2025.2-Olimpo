@@ -16,9 +16,9 @@ const parseJwt = (token) => {
     }
 };
 
-function PostCard({ data, currentUserId, onDelete, onEdit, onLike, onProfileClick }) {
+function PostCard({ data, currentUserEmail, onDelete, onEdit, onLike, onProfileClick }) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const isOwner = data.userId === currentUserId;
+    const isOwner = data.userEmail === currentUserEmail;
 
     const handleProfileClick = () => {
         onProfileClick(data.userId);
@@ -110,6 +110,7 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentUserId, setCurrentUserId] = useState("");
+    const [currentUserEmail, setCurrentUserEmail] = useState("");
     const navigate = useNavigate();
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -201,7 +202,10 @@ export default function Home() {
             }
 
             const userData = parseJwt(token);
-            if (userData) setCurrentUserId(userData.userId || userData.sub);
+            if (userData) {
+                setCurrentUserId(userData.id || userData.sub);
+                setCurrentUserEmail(userData.sub);
+            }
 
             try {
                 const response = await fetch('http://localhost:8080/api/ideas', {
@@ -385,6 +389,7 @@ export default function Home() {
                                 <PostCard
                                     key={p.id}
                                     data={p}
+                                    currentUserEmail={currentUserEmail}
                                     currentUserId={currentUserId}
                                     onDelete={handleDelete}
                                     onEdit={handleEdit}
