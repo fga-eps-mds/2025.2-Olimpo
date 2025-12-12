@@ -60,6 +60,7 @@ public class UserServiceTest {
                 "12345678900",
                 Role.ESTUDANTE,
                 null,
+                null,
                 null);
 
         String senhaHasheadaEsperada = "$2a$10$algumHashSimulado";
@@ -108,7 +109,7 @@ public class UserServiceTest {
     void cadastrarUsuario_DeveLancarExcecao_QuandoEmailJaExiste() {
 
         RegisterDTO registerDTO = new RegisterDTO(
-                "existente@123.com", "123", "User", "CPF", "111", Role.ESTUDANTE, null, null);
+                "existente@123.com", "123", "User", "CPF", "111", Role.ESTUDANTE, null, null, null);
 
         when(userRepository.findByEmail("existente@123.com")).thenReturn(Optional.of(new Account()));
 

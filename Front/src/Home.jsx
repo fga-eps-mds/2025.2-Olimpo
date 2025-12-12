@@ -27,7 +27,7 @@ function PostCard({ data, currentUserId, onDelete, onEdit, onLike, onProfileClic
     return (
         <article className={styles.card}>
             <header className={styles.cardHeader}>
-                <div 
+                <div
                     className={styles.userBlock}
                     onClick={handleProfileClick}
                     style={{ cursor: 'pointer' }}
@@ -117,6 +117,8 @@ export default function Home() {
     const [selectedSegmento, setSelectedSegmento] = useState("");
     const [investimentoOpen, setInvestimentoOpen] = useState(false);
     const [selectedInvestimento, setSelectedInvestimento] = useState("");
+    const [sortBy, setSortBy] = useState("timestamp");
+    const [sortOpen, setSortOpen] = useState(false);
     const dropdownRef = useRef(null);
 
     const handleDelete = async (ideaId) => {
@@ -183,6 +185,7 @@ export default function Home() {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setSegmentoOpen(false);
                 setInvestimentoOpen(false);
+                setSortOpen(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -273,6 +276,17 @@ export default function Home() {
         }
 
         return matchesSearch && matchesSegment && matchesInvestment;
+    }).sort((a, b) => {
+        if (sortBy === 'likes') {
+            return b.likeCount - a.likeCount;
+        }
+        // Default to timestamp (most recent first)
+        // Assuming higher ID means more recent if date is not precise enough, 
+        // or we can parse the date string if needed. 
+        // But the initial fetch already reverses them, so let's rely on ID for stability or just keep array order if 'timestamp'.
+        // Since we are filtering, the relative order is preserved. 
+        // However, if we want to be explicit:
+        return b.id - a.id;
     });
 
     return (
@@ -339,6 +353,22 @@ export default function Home() {
                                     Limpar ✕
                                 </button>
                             )}
+
+                            <div className={styles["filter-dropdown"]}>
+                                <button
+                                    className={`${styles["filter-btn"]} ${sortBy !== 'timestamp' ? styles.active : ''}`}
+                                    onClick={() => { setSortOpen(!sortOpen); setSegmentoOpen(false); setInvestimentoOpen(false); }}
+                                >
+                                    {sortBy === 'timestamp' ? "Mais Recentes" : "Mais Curtidas"}
+                                    <img src={sortOpen ? setaCima : setaBaixo} alt="seta" />
+                                </button>
+                                {sortOpen && (
+                                    <div className={styles["dropdown-menu"]}>
+                                        <div className={styles["dropdown-item"]} onClick={() => { setSortBy("timestamp"); setSortOpen(false); }}>Mais Recentes</div>
+                                        <div className={styles["dropdown-item"]} onClick={() => { setSortBy("likes"); setSortOpen(false); }}>Mais Curtidas</div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 

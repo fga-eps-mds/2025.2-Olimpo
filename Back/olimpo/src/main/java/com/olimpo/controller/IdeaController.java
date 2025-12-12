@@ -102,6 +102,22 @@ public class IdeaController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/user/{userId}/liked")
+    public ResponseEntity<?> getLikedIdeasForUser(@PathVariable Integer userId, @AuthenticationPrincipal Account user) {
+        java.util.List<Idea> ideas = ideaService.getLikedIdeas(userId);
+        java.util.List<IdeaResponseDTO> response = new java.util.ArrayList<>();
+
+        for (Idea idea : ideas) {
+            long likes = likeService.getLikeCount(idea.getId());
+            boolean liked = false;
+            if (user != null) {
+                liked = likeService.isLikedByAccount(idea.getId(), user.getId());
+            }
+            response.add(new IdeaResponseDTO(idea, likes, liked));
+        }
+        return ResponseEntity.ok(response);
+    }
+
     public record IdeaResponseDTO(Idea idea, long likeCount, boolean isLiked) {
     }
 

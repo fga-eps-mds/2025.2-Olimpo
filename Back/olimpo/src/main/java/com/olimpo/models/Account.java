@@ -58,6 +58,9 @@ public class Account implements UserDetails {
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
 

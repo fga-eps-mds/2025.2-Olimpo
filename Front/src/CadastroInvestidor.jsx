@@ -62,7 +62,8 @@ export default function CadastroInvestidor() {
       password: senha,
       role: "INVESTIDOR",
       docType: empresa ? "CNPJ" : "CPF",
-      docNumber: empresa ? cnpj : cpf
+      docNumber: empresa ? cnpj : cpf,
+      phone: telefone
     };
 
     try {

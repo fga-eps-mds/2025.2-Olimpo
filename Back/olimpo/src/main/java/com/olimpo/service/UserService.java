@@ -57,6 +57,7 @@ public class UserService {
         usuario.setEmailVerified(false);
         usuario.setFaculdade(data.faculdade());
         usuario.setCurso(data.curso());
+        usuario.setPhone(data.phone());
 
         Account usuarioSalvo = userRepository.save(usuario);
 
@@ -187,7 +188,8 @@ public class UserService {
                 a.getFaculdade(),
                 a.getCurso(),
                 a.getEstado(),
-                a.getEmail());
+                a.getEmail(),
+                a.getPhone());
 
     }
 

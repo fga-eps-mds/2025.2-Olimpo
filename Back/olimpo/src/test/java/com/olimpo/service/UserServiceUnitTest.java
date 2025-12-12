@@ -41,7 +41,8 @@ public class UserServiceUnitTest {
 
     @Test
     void cadastrarUsuario_EmailAlreadyExists_Throws() {
-        RegisterDTO dto = new RegisterDTO("test@example.com", "pass", "Name", "CPF", "123", com.olimpo.models.Enums.Role.ESTUDANTE, null, null);
+        RegisterDTO dto = new RegisterDTO("test@example.com", "pass", "Name", "CPF", "123",
+                com.olimpo.models.Enums.Role.ESTUDANTE, null, null, null);
         when(userRepository.findByEmail(dto.email())).thenReturn(Optional.of(new Account()));
 
         assertThrows(RuntimeException.class, () -> userService.cadastrarUsuario(dto));
@@ -52,7 +53,8 @@ public class UserServiceUnitTest {
 
     @Test
     void cadastrarUsuario_Success_SavesAndSendsEmail() throws MessagingException {
-        RegisterDTO dto = new RegisterDTO("new@example.com", "secret", "New", "CPF", "999", com.olimpo.models.Enums.Role.ESTUDANTE, "Fac", "Cur");
+        RegisterDTO dto = new RegisterDTO("new@example.com", "secret", "New", "CPF", "12345678900",
+                com.olimpo.models.Enums.Role.ESTUDANTE, "UnB", "Engenharia", "999999999");
 
         when(userRepository.findByEmail(dto.email())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(dto.password())).thenReturn("encoded-pass");

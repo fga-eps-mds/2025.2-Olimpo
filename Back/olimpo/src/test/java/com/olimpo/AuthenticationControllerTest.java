@@ -56,7 +56,8 @@ public class AuthenticationControllerTest {
                                 "12345678900",
                                 Role.ESTUDANTE,
                                 "Faculdade",
-                                "Curso");
+                                "Curso",
+                                null);
 
                 mockMvc.perform(post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -75,7 +76,8 @@ public class AuthenticationControllerTest {
                                 "12345678900",
                                 Role.ESTUDANTE,
                                 "Faculdade",
-                                "Curso");
+                                "Curso",
+                                null);
 
                 mockMvc.perform(post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)

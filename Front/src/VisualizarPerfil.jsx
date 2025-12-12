@@ -201,33 +201,47 @@ export default function VisualizarPerfil() {
                         faculdade: profile.faculdade || "",
                         role: profile.role || "ESTUDANTE",
                         description: profile.bio || "Descrição",
-                        avatar: profile.pfp || usuario
+                        avatar: profile.pfp || usuario,
+                        phone: profile.phone || ""
                     });
-                }
 
-                // Fetch Ideas
-                const response = await fetch('http://localhost:8080/api/ideas', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                    let ideasData = [];
+
+                    if (profile.role === 'INVESTIDOR') {
+                        const likedResponse = await fetch(`http://localhost:8080/api/ideas/user/${id}/liked`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        if (likedResponse.ok) {
+                            ideasData = await likedResponse.json();
+                        }
+                    } else {
+                        const response = await fetch('http://localhost:8080/api/ideas', {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.status === 403) {
+                            localStorage.removeItem('token');
+                            navigate('/');
+                            return;
+                        }
+
+                        if (response.ok) {
+                            const allIdeas = await response.json();
+                            ideasData = allIdeas.filter(item => {
+                                return item.idea.account.email === userData.sub;
+                            });
+                        }
                     }
-                });
 
-                if (response.status === 403) {
-                    localStorage.removeItem('token');
-                    navigate('/');
-                    return;
-                }
-
-                if (response.ok) {
-                    const ideasData = await response.json();
-
-                    const userIdeas = ideasData.filter(item => {
-                        return item.idea.account.email === userData.sub;
-                    });
-
-                    const mappedPosts = userIdeas.map(item => {
+                    const mappedPosts = ideasData.map(item => {
                         const idea = item.idea;
                         return {
                             id: idea.id,
@@ -280,7 +294,7 @@ export default function VisualizarPerfil() {
                             <div className={styles.nome}>
                                 {profileData.name} - {profileData.role === 'INVESTIDOR' ? 'Investidor' : 'Estudante'}
                             </div>
-                            
+
                             {/* Renderização condicional para curso e faculdade */}
                             {profileData.role !== 'INVESTIDOR' && (
                                 <div className={styles.texto}>
@@ -288,8 +302,9 @@ export default function VisualizarPerfil() {
                                     {profileData.role === 'ESTUDANTE' && profileData.faculdade ? ` | ${profileData.faculdade}` : ''}
                                 </div>
                             )}
-                            
+
                             <div className={styles.texto}>{profileData.email}</div>
+                            {profileData.phone && <div className={styles.texto}>{profileData.phone}</div>}
                             <div className={styles.texto}>{profileData.description}</div>
                         </div>
                     </div>

@@ -14,7 +14,8 @@ public record ProfileResponseDTO(
         String curso,
         String bio,
         String docType,
-        String docNumber) {
+        String docNumber,
+        String phone) {
     public ProfileResponseDTO(Account account) {
         this(
                 account.getId(),
@@ -28,6 +29,7 @@ public record ProfileResponseDTO(
                 account.getCurso(),
                 account.getBio(),
                 account.getDocType(),
-                account.getDocNumber());
+                account.getDocNumber(),
+                account.getPhone());
     }
 }

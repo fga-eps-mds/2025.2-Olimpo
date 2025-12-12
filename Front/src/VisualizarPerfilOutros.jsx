@@ -214,25 +214,38 @@ export default function VisualizarPerfilOutroUsuario() {
                         role: profileInfo.role || "ESTUDANTE",
 
                         description: profileInfo.bio || "Descrição",
-                        avatar: profileInfo.pfp || usuario
+                        avatar: profileInfo.pfp || usuario,
+                        phone: profileInfo.phone || ""
                     });
-                }
 
-                const ideasResponse = await fetch('http://localhost:8080/api/ideas', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                    let ideasData = [];
+
+                    if (profileInfo.role === 'INVESTIDOR') {
+                        const likedResponse = await fetch(`http://localhost:8080/api/ideas/user/${userId}/liked`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        if (likedResponse.ok) {
+                            ideasData = await likedResponse.json();
+                        }
+                    } else {
+                        const ideasResponse = await fetch('http://localhost:8080/api/ideas', {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        if (ideasResponse.ok) {
+                            const allIdeas = await ideasResponse.json();
+                            ideasData = allIdeas.filter(item => item.idea.account.id === parseInt(userId));
+                        }
                     }
-                });
 
-                if (ideasResponse.ok) {
-                    const ideasData = await ideasResponse.json();
-                    const userIdeas = ideasData.filter(item => item.idea.account.id === parseInt(userId));
-
-
-
-                    const mappedPosts = userIdeas.map(item => {
+                    const mappedPosts = ideasData.map(item => {
                         const idea = item.idea;
                         return {
                             id: idea.id,
@@ -295,6 +308,7 @@ export default function VisualizarPerfilOutroUsuario() {
                             )}
 
                             <div className={styles.texto}>{profileData.email}</div>
+                            {profileData.phone && <div className={styles.texto}>{profileData.phone}</div>}
                             <div className={styles.texto}>{profileData.description}</div>
                         </div>
                     </div>

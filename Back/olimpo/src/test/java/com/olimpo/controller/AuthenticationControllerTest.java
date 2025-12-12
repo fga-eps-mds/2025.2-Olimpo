@@ -122,7 +122,7 @@ public class AuthenticationControllerTest {
         @Test
         void register_DeveRetornarOkEUsuario_QuandoDadosValidos() throws Exception {
                 RegisterDTO registerDTO = new RegisterDTO("novo@email.com", "123456", "Novo User", "CPF", "111",
-                                Role.INVESTIDOR, null, null);
+                                Role.INVESTIDOR, null, null, null);
 
                 Account usuarioCriado = new Account();
                 usuarioCriado.setId(10);
@@ -142,7 +142,7 @@ public class AuthenticationControllerTest {
         @Test
         void register_DeveRetornarBadRequest_QuandoEmailJaExiste() throws Exception {
                 RegisterDTO registerDTO = new RegisterDTO("existente@email.com", "123", "User", "CPF", "111",
-                                Role.ESTUDANTE, null, null);
+                                Role.ESTUDANTE, null, null, null);
 
                 when(userService.cadastrarUsuario(any(RegisterDTO.class)))
                                 .thenThrow(new RuntimeException("E-mail já cadastrado"));
