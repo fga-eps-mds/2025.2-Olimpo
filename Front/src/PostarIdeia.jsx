@@ -6,6 +6,14 @@ import Sidebar from './components/Sidebar';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
 
+const parseJwt = (token) => {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch {
+        return null;
+    }
+};
+
 export default function PostarIdeia() {
     const navigate = useNavigate();
 
@@ -24,6 +32,13 @@ export default function PostarIdeia() {
         if (!token) {
             alert("Você precisa estar logado para postar.");
             navigate('/');
+            return;
+        }
+
+        const userData = parseJwt(token);
+        if (userData?.role === 'INVESTIDOR') {
+            navigate('/home');
+            return;
         }
 
         function handleClickOutside(event) {
