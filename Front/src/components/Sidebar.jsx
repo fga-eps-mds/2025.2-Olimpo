@@ -27,6 +27,10 @@ export default function Sidebar() {
     const [hovered, setHovered] = useState(false);
     const navigate = useNavigate();
 
+    const token = localStorage.getItem('token');
+    const userData = token ? parseJwt(token) : null;
+    const isInvestidor = userData?.role === 'INVESTIDOR';
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');

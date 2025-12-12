@@ -7,8 +7,7 @@ import Sidebar from "./components/Sidebar";
 import lupa from './assets/lupa.png';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
-import coracao from './assets/coracao.png';
-import coracaoHover from './assets/coracao_hover.png';
+
 
 const parseJwt = (token) => {
     try {
