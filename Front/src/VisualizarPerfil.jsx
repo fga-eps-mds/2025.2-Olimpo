@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import styles from "./styles/VisualizarPerfil.module.css";
 import Sidebar from "./components/Sidebar";
 
-
 import usuario from './assets/usuario.png'
 
 const parseJwt = (token) => {
@@ -310,10 +309,15 @@ export default function VisualizarPerfil() {
                             <div className={styles.nome}>
                                 {profileData.name} - {profileData.role === 'INVESTIDOR' ? 'Investidor' : 'Estudante'}
                             </div>
-                            <div className={styles.texto}>
-                                {profileData.curso || "Curso não informado"}
-                                {profileData.role === 'ESTUDANTE' && profileData.faculdade ? ` | ${profileData.faculdade}` : ''}
-                            </div>
+                            
+                            {/* Renderização condicional para curso e faculdade */}
+                            {profileData.role !== 'INVESTIDOR' && (
+                                <div className={styles.texto}>
+                                    {profileData.curso || "Curso não informado"}
+                                    {profileData.role === 'ESTUDANTE' && profileData.faculdade ? ` | ${profileData.faculdade}` : ''}
+                                </div>
+                            )}
+                            
                             <div className={styles.texto}>{profileData.email}</div>
                             <div className={styles.texto}>{profileData.description}</div>
                         </div>
