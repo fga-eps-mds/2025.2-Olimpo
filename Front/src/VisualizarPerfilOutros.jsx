@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styles from "./styles/VisualizarPerfilOutros.module.css";
 import Sidebar from "./components/Sidebar";
@@ -105,12 +105,7 @@ export default function VisualizarPerfilOutroUsuario() {
     const { id } = useParams();
     const userId = id;
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [segmentoOpen, setSegmentoOpen] = useState(false);
-    const [selectedSegmento, setSelectedSegmento] = useState("");
-    const [investimentoOpen, setInvestimentoOpen] = useState(false);
-    const [selectedInvestimento, setSelectedInvestimento] = useState("");
-    const dropdownRef = useRef(null);
+
 
     const [profileData, setProfileData] = useState({
         name: "Nome do usuário",
@@ -184,16 +179,7 @@ export default function VisualizarPerfilOutroUsuario() {
         }
     };
 
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setSegmentoOpen(false);
-                setInvestimentoOpen(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -255,12 +241,7 @@ export default function VisualizarPerfilOutroUsuario() {
                     // We need to find *any* idea by this user to get their email
                     const userIdeas = ideasData.filter(item => item.idea.account.id === parseInt(userId));
 
-                    if (userIdeas.length > 0) {
-                        const email = userIdeas[0].idea.account.email;
-                        // setProfileOwnerEmail(email); // Removed
-                        // checkIfFollowing(email); // Removed
 
-                    }
 
                     const mappedPosts = userIdeas.map(item => {
                         const idea = item.idea;
@@ -293,22 +274,7 @@ export default function VisualizarPerfilOutroUsuario() {
         fetchUserProfile();
     }, [navigate, location, userId]);
 
-    const filteredPosts = posts.filter(post => {
-        const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            post.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesSegment = selectedSegmento ? post.segment === selectedSegmento : true;
-
-        let matchesInvestment = true;
-        if (selectedInvestimento) {
-            const price = post.priceRaw;
-            if (selectedInvestimento === 'Até R$ 10.000') matchesInvestment = price <= 10000;
-            else if (selectedInvestimento === 'R$ 10.000 - R$ 50.000') matchesInvestment = price > 10000 && price <= 50000;
-            else if (selectedInvestimento === 'R$ 50.000 - R$ 100.000') matchesInvestment = price > 50000 && price <= 100000;
-            else if (selectedInvestimento === 'Acima de R$ 100.000') matchesInvestment = price > 100000;
-        }
-
-        return matchesSearch && matchesSegment && matchesInvestment;
-    });
+    const filteredPosts = posts;
 
     return (
         <div className={styles.page}>
