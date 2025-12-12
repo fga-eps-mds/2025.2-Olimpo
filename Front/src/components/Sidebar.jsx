@@ -27,15 +27,62 @@ const parseJwt = (token) => {
 
 export default function Sidebar() {
     const [hovered, setHovered] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
     const navigate = useNavigate();
 
     const token = localStorage.getItem('token');
     const userData = token ? parseJwt(token) : null;
     const isInvestidor = userData?.role === 'INVESTIDOR';
 
+    React.useEffect(() => {
+        const loadProfileImage = async () => {
+            // 1. Tenta pegar do localStorage primeiro (mais rápido)
+            const savedData = localStorage.getItem('userProfileData');
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    if (parsed.profileImageUrl || parsed.pfp) {
+                        setProfileImage(parsed.profileImageUrl || parsed.pfp);
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Erro ao ler localStorage", e);
+                }
+            }
+
+            // 2. Se não tiver no localStorage ou não tiver imagem, busca do backend
+            if (userData?.id) {
+                try {
+                    const response = await fetch(`http://localhost:8080/user/${userData.id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.pfp) {
+                            setProfileImage(data.pfp);
+                            // Atualiza localStorage para próxima vez
+                            if (savedData) {
+                                const parsed = JSON.parse(savedData);
+                                parsed.profileImageUrl = data.pfp;
+                                localStorage.setItem('userProfileData', JSON.stringify(parsed));
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar imagem de perfil", error);
+                }
+            }
+        };
+
+        loadProfileImage();
+    }, [userData?.id, token]);
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('userProfileData');
         navigate('/');
     };
 
@@ -80,7 +127,11 @@ export default function Sidebar() {
 
             <div className={styles.profile}>
                 <button className={styles["profile-btn"]} onClick={() => userData && navigate(`/perfil/${userData.id}`)}>
-                    <img src={usuario} alt="Perfil" />
+                    <img
+                        src={profileImage || usuario}
+                        alt="Perfil"
+                        style={{ borderRadius: '50%', objectFit: 'cover' }}
+                    />
                     <span>Perfil</span>
                 </button>
                 <button className={styles["profile-out"]} onClick={handleLogout}>
