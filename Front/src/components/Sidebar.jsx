@@ -12,9 +12,21 @@ import mais from '../assets/mais.png';
 import mais_hover from '../assets/mais_hover.png';
 import usuario from '../assets/usuario.png';
 
+const parseJwt = (token) => {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch {
+        return null;
+    }
+};
+
 export default function Sidebar() {
     const [hovered, setHovered] = useState(false);
     const navigate = useNavigate();
+
+    const token = localStorage.getItem('token');
+    const userData = token ? parseJwt(token) : null;
+    const isInvestidor = userData?.role === 'INVESTIDOR';
 
     return (
         <aside
@@ -38,10 +50,12 @@ export default function Sidebar() {
                     <span>Salvos</span>
                 </button>
 
-                <button onClick={() => navigate('/postar-ideia')} className={styles["icon-btn"]}>
-                    <img src={hovered ? mais_hover : mais} alt="Postar" />
-                    <span>Postar</span>
-                </button>
+                {!isInvestidor && (
+                    <button onClick={() => navigate('/postar-ideia')} className={styles["icon-btn"]}>
+                        <img src={hovered ? mais_hover : mais} alt="Postar" />
+                        <span>Postar</span>
+                    </button>
+                )}
             </nav>
 
             <div className={styles.profile}>
