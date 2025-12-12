@@ -113,8 +113,8 @@ export default function Sidebar() {
                 </button>
 
                 <button onClick={() => navigate('/perfil/search')} className={styles["icon-btn"]}>
-                    <img src={hovered ? lupa_hover : lupa} alt="Buscar" />
-                    <span>Buscar</span>
+                    <img src={hovered ? lupa_hover : lupa} alt="Usuários" />
+                    <span>Usuários</span>
                 </button>
 
                 {!isInvestidor && (

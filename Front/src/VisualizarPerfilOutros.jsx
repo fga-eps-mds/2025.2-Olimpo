@@ -3,8 +3,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styles from "./styles/VisualizarPerfilOutros.module.css";
 import Sidebar from "./components/Sidebar";
 
-import coracao from './assets/coracao.png';
-import coracaoHover from './assets/coracao_hover.png';
+
 import usuario from './assets/usuario.png'
 
 const parseJwt = (token) => {
@@ -77,13 +76,17 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit, onLike }) {
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                     <button
                         onClick={() => onLike(data.id)}
-                        style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center" }}
+                        className={styles.likeBtn}
                     >
-                        <img
-                            src={data.isLiked ? coracaoHover : coracao}
-                            alt="Like"
-                            style={{ width: "20px", height: "20px" }}
-                        />
+                        <svg
+                            viewBox="0 0 24 24"
+                            className={`${styles.heart} ${data.isLiked ? styles.liked : ""}`}
+                        >
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                            2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 
+                            14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+                            11.54L12 21.35z"/>
+                        </svg>
                     </button>
                     <span>{data.likeCount}</span>
                 </div>
@@ -96,11 +99,11 @@ export default function VisualizarPerfilOutroUsuario() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentUserEmail, setCurrentUserEmail] = useState("");
-    const [profileOwnerEmail, setProfileOwnerEmail] = useState("");
-    const [isFollowing, setIsFollowing] = useState(false);
+
     const navigate = useNavigate();
     const location = useLocation();
-    const { userId } = useParams();
+    const { id } = useParams();
+    const userId = id;
 
     const [searchTerm, setSearchTerm] = useState("");
     const [segmentoOpen, setSegmentoOpen] = useState(false);
@@ -111,65 +114,16 @@ export default function VisualizarPerfilOutroUsuario() {
 
     const [profileData, setProfileData] = useState({
         name: "Nome do usuário",
-        fullName: "Nome completo",
-        followers: 0,
+        email: "email@exemplo.com",
+        curso: "Curso",
+        faculdade: "",
+        role: "ESTUDANTE",
         following: false,
         description: "Descrição",
         avatar: usuario
     });
 
-    const checkIfFollowing = async (targetEmail) => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch(`http://localhost:8080/api/follow/check?targetEmail=${targetEmail}`, {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                setIsFollowing(data.following);
-            }
-        } catch (error) {
-            console.error("Erro ao verificar seguidor:", error);
-        }
-    };
 
-    const handleFollow = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert("Você precisa estar logado para seguir usuários.");
-            return;
-        }
-
-        try {
-            const endpoint = isFollowing ? 'unfollow' : 'follow';
-            const response = await fetch(`http://localhost:8080/api/follow/${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ targetEmail: profileOwnerEmail })
-            });
-
-            if (response.ok) {
-                setIsFollowing(!isFollowing);
-                setProfileData(prev => ({
-                    ...prev,
-                    followers: isFollowing ? prev.followers - 1 : prev.followers + 1
-                }));
-            } else {
-                alert("Erro ao atualizar status de seguir.");
-            }
-        } catch (error) {
-            console.error("Erro na requisição de follow:", error);
-        }
-    };
-
-    const handleMessage = () => {
-        navigate('/chat', { state: { recipientEmail: profileOwnerEmail, recipientName: profileData.name } });
-    };
 
     const handleDelete = async (ideaId) => {
         if (!window.confirm("Tem certeza que deseja excluir esta ideia?")) return;
@@ -253,38 +207,39 @@ export default function VisualizarPerfilOutroUsuario() {
             if (userData) setCurrentUserEmail(userData.sub);
 
             try {
-                let targetEmail = location.state?.userEmail || userId;
-                
-                if (!targetEmail) {
-                    targetEmail = new URLSearchParams(location.search).get('email');
-                }
-                
-                if (!targetEmail) {
-                    console.error("Email do usuário não especificado");
+                // Use userId from params directly
+                if (!userId) {
+                    console.error("ID do usuário não especificado");
                     navigate(-1);
                     return;
                 }
-                
-                setProfileOwnerEmail(targetEmail);
 
-                const profileResponse = await fetch(`http://localhost:8080/api/users/profile?email=${targetEmail}`, {
+                const profileResponse = await fetch(`http://localhost:8080/user/${userId}`, {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (profileResponse.ok) {
                     const profileInfo = await profileResponse.json();
+                    // Store email if available (UserProfileDTO might not have it, but we need it for follow/message)
+                    // If UserProfileDTO doesn't have email, we might have a problem for follow/message features which rely on email.
+                    // However, let's assume for now we use what we have. 
+                    // Note: UserProfileDTO in backend DOES NOT have email.
+                    // We might need to fetch ideas to get the email if it's not in the public profile.
+
                     setProfileData({
                         name: profileInfo.name || "Nome do usuário",
-                        fullName: profileInfo.fullName || profileInfo.name || "Nome completo",
-                        followers: profileInfo.followersCount || 0,
+                        email: profileInfo.email || "Email não disponível",
+                        curso: profileInfo.curso || "",
+                        faculdade: profileInfo.faculdade || "",
+                        role: profileInfo.role || "ESTUDANTE",
+
                         description: profileInfo.bio || "Descrição",
                         avatar: profileInfo.pfp || usuario
                     });
                 }
 
-                checkIfFollowing(targetEmail);
-
+                // Fetch Ideas to get email (workaround since public profile doesn't have email)
                 const ideasResponse = await fetch('http://localhost:8080/api/ideas', {
                     method: 'GET',
                     headers: {
@@ -293,18 +248,19 @@ export default function VisualizarPerfilOutroUsuario() {
                     }
                 });
 
-                if (ideasResponse.status === 403) {
-                    localStorage.removeItem('token');
-                    navigate('/');
-                    return;
-                }
-
                 if (ideasResponse.ok) {
                     const ideasData = await ideasResponse.json();
 
-                    const userIdeas = ideasData.filter(item => {
-                        return item.idea.account.email === targetEmail;
-                    });
+                    // Filter ideas by user ID (assuming we can match by ID, but ideas have account object)
+                    // We need to find *any* idea by this user to get their email
+                    const userIdeas = ideasData.filter(item => item.idea.account.id === parseInt(userId));
+
+                    if (userIdeas.length > 0) {
+                        const email = userIdeas[0].idea.account.email;
+                        // setProfileOwnerEmail(email); // Removed
+                        // checkIfFollowing(email); // Removed
+
+                    }
 
                     const mappedPosts = userIdeas.map(item => {
                         const idea = item.idea;
@@ -359,7 +315,7 @@ export default function VisualizarPerfilOutroUsuario() {
             <Sidebar />
             <main className={styles["feed-container"]}>
                 <div className={styles["feed-inner"]}>
-                    
+
                     <div className={styles.container}>
                         <div className={styles.imagem}>
                             {profileData.avatar && profileData.avatar !== usuario ? (
@@ -371,28 +327,20 @@ export default function VisualizarPerfilOutroUsuario() {
                             )}
                         </div>
                         <div className={styles.container2}>
-                            <div className={styles.nome}>{profileData.name}</div>
-                            <div className={styles.texto}>{profileData.fullName}</div>
-                            <div className={styles.texto}>{profileData.followers} seguidores</div>
+                            <div className={styles.nome}>
+                                {profileData.name} - {profileData.role === 'INVESTIDOR' ? 'Investidor' : 'Estudante'}
+                            </div>
+                            <div className={styles.texto}>
+                                {profileData.curso || "Curso não informado"}
+                                {profileData.role === 'ESTUDANTE' && profileData.faculdade ? ` | ${profileData.faculdade}` : ''}
+                            </div>
+                            <div className={styles.texto}>{profileData.email}</div>
                             <div className={styles.texto}>{profileData.description}</div>
                         </div>
                     </div>
-                    
-                    <div className={styles.buttonContainer}>
-                        <button 
-                            className={`${styles.actionButton} ${isFollowing ? styles.unfollowButton : styles.followButton}`}
-                            onClick={handleFollow}
-                        >
-                            {isFollowing ? 'Deixar de Seguir' : 'Seguir'}
-                        </button>
-                        <button 
-                            className={`${styles.actionButton} ${styles.messageButton}`}
-                            onClick={handleMessage}
-                        >
-                            Mensagem
-                        </button>
-                    </div>
-                    
+
+
+
 
                     {loading ? (
                         <div className={styles.loading}>Carregando publicações...</div>
@@ -417,7 +365,7 @@ export default function VisualizarPerfilOutroUsuario() {
                         </>
                     )}
                 </div>
-                
+
             </main>
         </div>
     );

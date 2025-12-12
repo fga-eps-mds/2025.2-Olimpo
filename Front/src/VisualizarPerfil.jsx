@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./styles/VisualizarPerfil.module.css";
 import Sidebar from "./components/Sidebar";
 
-import coracao from './assets/coracao.png';
-import coracaoHover from './assets/coracao_hover.png';
+
 import usuario from './assets/usuario.png'
 
 const parseJwt = (token) => {
@@ -77,13 +76,17 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit, onLike }) {
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                     <button
                         onClick={() => onLike(data.id)}
-                        style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center" }}
+                        className={styles.likeBtn}
                     >
-                        <img
-                            src={data.isLiked ? coracaoHover : coracao}
-                            alt="Like"
-                            style={{ width: "20px", height: "20px" }}
-                        />
+                        <svg
+                            viewBox="0 0 24 24"
+                            className={`${styles.heart} ${data.isLiked ? styles.liked : ""}`}
+                        >
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                            2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 
+                            14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+                            11.54L12 21.35z"/>
+                        </svg>
                     </button>
                     <span>{data.likeCount}</span>
                 </div>
@@ -107,8 +110,10 @@ export default function VisualizarPerfil() {
 
     const [profileData, setProfileData] = useState({
         name: "Nome do usuário",
-        fullName: "Nome completo",
-        followers: 0,
+        email: "email@exemplo.com",
+        curso: "Curso",
+        faculdade: "",
+        role: "ESTUDANTE",
         description: "Descrição",
         avatar: usuario
     });
@@ -183,8 +188,10 @@ export default function VisualizarPerfil() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    const { id } = useParams();
+
     useEffect(() => {
-        const fetchIdeas = async () => {
+        const fetchIdeasAndProfile = async () => {
             const token = localStorage.getItem('token');
             if (!token) {
                 navigate('/');
@@ -195,6 +202,25 @@ export default function VisualizarPerfil() {
             if (userData) setCurrentUserEmail(userData.sub);
 
             try {
+                // Fetch Profile Data
+                const profileResponse = await fetch(`http://localhost:8080/user/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (profileResponse.ok) {
+                    const profile = await profileResponse.json();
+                    setProfileData({
+                        name: profile.name || "Nome do usuário",
+                        email: profile.email || "Email não disponível",
+                        curso: profile.curso || "",
+                        faculdade: profile.faculdade || "",
+                        role: profile.role || "ESTUDANTE",
+                        description: profile.bio || "Descrição",
+                        avatar: profile.pfp || usuario
+                    });
+                }
+
+                // Fetch Ideas
                 const response = await fetch('http://localhost:8080/api/ideas', {
                     method: 'GET',
                     headers: {
@@ -236,23 +262,6 @@ export default function VisualizarPerfil() {
                     });
 
                     setPosts(mappedPosts.reverse());
-                    
-                    if (userIdeas.length > 0) {
-    const firstIdea = userIdeas[0].idea;
-    console.log("Dados do usuário da primeira ideia:", {
-        name: firstIdea.account.name,
-        pfp: firstIdea.account.pfp,
-        email: firstIdea.account.email
-    });
-    
-    setProfileData({
-        name: firstIdea.account.name || "Nome do usuário",
-        fullName: firstIdea.account.name || "Nome completo",
-        followers: 0,
-        description: "Descrição",
-        avatar: firstIdea.account.pfp || usuario
-    });
-}
                 }
             } catch (err) {
                 console.error('Erro:', err);
@@ -261,8 +270,8 @@ export default function VisualizarPerfil() {
             }
         };
 
-        fetchIdeas();
-    }, [navigate]);
+        fetchIdeasAndProfile();
+    }, [navigate, id]);
 
     const filteredPosts = posts.filter(post => {
         const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -286,7 +295,7 @@ export default function VisualizarPerfil() {
             <Sidebar />
             <main className={styles["feed-container"]}>
                 <div className={styles["feed-inner"]}>
-                    
+
                     <div className={styles.container}>
                         <div className={styles.imagem}>
                             {profileData.avatar && profileData.avatar !== usuario ? (
@@ -298,18 +307,23 @@ export default function VisualizarPerfil() {
                             )}
                         </div>
                         <div className={styles.container2}>
-                            <div className={styles.nome}>{profileData.name}</div>
-                            <div className={styles.texto}>{profileData.fullName}</div>
-                            <div className={styles.texto}>{profileData.followers} seguidores</div>
+                            <div className={styles.nome}>
+                                {profileData.name} - {profileData.role === 'INVESTIDOR' ? 'Investidor' : 'Estudante'}
+                            </div>
+                            <div className={styles.texto}>
+                                {profileData.curso || "Curso não informado"}
+                                {profileData.role === 'ESTUDANTE' && profileData.faculdade ? ` | ${profileData.faculdade}` : ''}
+                            </div>
+                            <div className={styles.texto}>{profileData.email}</div>
                             <div className={styles.texto}>{profileData.description}</div>
                         </div>
                     </div>
                     <div className={styles.buttonContainer}>
-                        <button className={styles.editar} type="submit">
+                        <button className={styles.editar} onClick={() => navigate('/editar-perfil')}>
                             Editar perfil
                         </button>
                     </div>
-                    
+
 
                     {loading ? (
                         <div className={styles.loading}>Carregando publicações...</div>
@@ -334,7 +348,7 @@ export default function VisualizarPerfil() {
                         </>
                     )}
                 </div>
-                
+
             </main>
         </div>
     );

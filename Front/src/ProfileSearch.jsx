@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import styles from './styles/Home.module.css';
 import lupa from './assets/lupa.png';
+import usuario from './assets/usuario.png';
+
 
 function ProfileSearch() {
     const [query, setQuery] = useState('');
@@ -74,7 +76,7 @@ function ProfileSearch() {
                                 <div key={r.id} className={styles.card} style={{ marginBottom: '16px', cursor: 'pointer' }} onClick={() => navigate(`/perfil/${r.id}`)}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                         <img
-                                            src={r.pfp || '/public/avatar.png'}
+                                            src={r.pfp || usuario}
                                             alt="pfp"
                                             style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover' }}
                                         />

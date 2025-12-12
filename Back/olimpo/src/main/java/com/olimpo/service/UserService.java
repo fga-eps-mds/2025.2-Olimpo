@@ -186,7 +186,8 @@ public class UserService {
                 a.getRole(),
                 a.getFaculdade(),
                 a.getCurso(),
-                a.getEstado());
+                a.getEstado(),
+                a.getEmail());
 
     }
 
