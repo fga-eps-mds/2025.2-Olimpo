@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./styles/VisualizarPerfil.module.css";
 import Sidebar from "./components/Sidebar";
@@ -100,12 +100,7 @@ export default function VisualizarPerfil() {
     const [currentUserEmail, setCurrentUserEmail] = useState("");
     const navigate = useNavigate();
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [segmentoOpen, setSegmentoOpen] = useState(false);
-    const [selectedSegmento, setSelectedSegmento] = useState("");
-    const [investimentoOpen, setInvestimentoOpen] = useState(false);
-    const [selectedInvestimento, setSelectedInvestimento] = useState("");
-    const dropdownRef = useRef(null);
+
 
     const [profileData, setProfileData] = useState({
         name: "Nome do usuário",
@@ -176,16 +171,7 @@ export default function VisualizarPerfil() {
         }
     };
 
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setSegmentoOpen(false);
-                setInvestimentoOpen(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+
 
     const { id } = useParams();
 
@@ -272,22 +258,7 @@ export default function VisualizarPerfil() {
         fetchIdeasAndProfile();
     }, [navigate, id]);
 
-    const filteredPosts = posts.filter(post => {
-        const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            post.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesSegment = selectedSegmento ? post.segment === selectedSegmento : true;
 
-        let matchesInvestment = true;
-        if (selectedInvestimento) {
-            const price = post.priceRaw;
-            if (selectedInvestimento === 'Até R$ 10.000') matchesInvestment = price <= 10000;
-            else if (selectedInvestimento === 'R$ 10.000 - R$ 50.000') matchesInvestment = price > 10000 && price <= 50000;
-            else if (selectedInvestimento === 'R$ 50.000 - R$ 100.000') matchesInvestment = price > 50000 && price <= 100000;
-            else if (selectedInvestimento === 'Acima de R$ 100.000') matchesInvestment = price > 100000;
-        }
-
-        return matchesSearch && matchesSegment && matchesInvestment;
-    });
 
     return (
         <div className={styles.page}>
@@ -331,14 +302,14 @@ export default function VisualizarPerfil() {
 
                     {loading ? (
                         <div className={styles.loading}>Carregando publicações...</div>
-                    ) : filteredPosts.length === 0 ? (
+                    ) : posts.length === 0 ? (
                         <div className={styles.noPosts}>
                             <h3>Nenhuma publicação encontrada</h3>
                             <p>Você ainda não fez nenhuma publicação.</p>
                         </div>
                     ) : (
                         <>
-                            {filteredPosts.map((p) => (
+                            {posts.map((p) => (
                                 <PostCard
                                     key={p.id}
                                     data={p}
