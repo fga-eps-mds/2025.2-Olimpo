@@ -1,6 +1,7 @@
 package com.olimpo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.olimpo.config.TestSecurityConfig;
 import com.olimpo.controller.PasswordResetController;
 import com.olimpo.dto.PasswordResetDto;
 import com.olimpo.dto.PasswordResetRequest;
@@ -14,6 +15,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.*;
@@ -21,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = PasswordResetController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@Import(TestSecurityConfig.class)
 class PasswordResetControllerTest {
 
     @Autowired

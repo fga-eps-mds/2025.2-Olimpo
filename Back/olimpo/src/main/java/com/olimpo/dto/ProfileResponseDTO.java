@@ -1,0 +1,37 @@
+package com.olimpo.dto;
+
+import com.olimpo.models.Account;
+
+public record ProfileResponseDTO(
+        Integer id,
+        String name,
+        String email,
+        boolean emailVerified,
+        String pfp,
+        String role,
+        String estado,
+        String faculdade,
+        Integer semestre,
+        String curso,
+        String bio,
+        String docType,
+        String docNumber
+) {
+    public ProfileResponseDTO(Account account) {
+        this(
+                account.getId(),
+                account.getName(),
+                account.getEmail(),
+                account.isEmailVerified(),
+                account.getPfp(),
+                account.getRole(),
+                account.getEstado(),
+                account.getFaculdade(),
+                account.getSemestre(),
+                account.getCurso(),
+                account.getBio(),
+                account.getDocType(),
+                account.getDocNumber()
+        );
+    }
+}

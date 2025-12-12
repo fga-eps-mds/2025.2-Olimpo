@@ -1,5 +1,7 @@
 package com.olimpo.service;
 
+import com.olimpo.dto.ProfileResponseDTO;
+import com.olimpo.dto.ProfileUpdateDTO;
 import com.olimpo.dto.RegisterDTO;
 import com.olimpo.models.Account;
 import com.olimpo.models.VerificationToken;
@@ -13,8 +15,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +28,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@SuppressWarnings("null")
 public class UserServiceTest {
 
     @Mock
@@ -37,6 +42,9 @@ public class UserServiceTest {
 
     @Mock
     private VerificationTokenRepository tokenRepository;
+
+    @Mock
+    private CloudinaryService cloudinaryService;
 
     @InjectMocks
     private UserService userService;
@@ -210,5 +218,87 @@ public class UserServiceTest {
         assertFalse(result);
         verify(tokenRepository, never()).save(any());
         verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
+
+    }
+
+    @Test
+    void updateProfile_DeveAtualizarCamposBasicos_QuandoDadosValidos() {
+        Account authenticated = createAccount();
+        ProfileUpdateDTO updateDTO = new ProfileUpdateDTO(
+                "Novo Nome",
+                null,
+                "DF",
+                "UnB",
+                5,
+                "Engenharia",
+                "Bio",
+                null,
+                null);
+
+        when(userRepository.findById(authenticated.getId())).thenReturn(Optional.of(authenticated));
+        when(userRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ProfileResponseDTO responseDTO = userService.updateProfile(authenticated, updateDTO, null);
+
+        assertEquals("Novo Nome", responseDTO.name());
+        assertEquals("DF", responseDTO.estado());
+        assertEquals("Engenharia", responseDTO.curso());
+        assertEquals(5, responseDTO.semestre());
+        verify(userRepository).save(authenticated);
+        verifyNoInteractions(cloudinaryService);
+    }
+
+    @Test
+    void updateProfile_DeveLancarErro_QuandoEmailDuplicado() {
+        Account authenticated = createAccount();
+        ProfileUpdateDTO updateDTO = new ProfileUpdateDTO(
+                null,
+                "duplicado@email.com",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        when(userRepository.findById(authenticated.getId())).thenReturn(Optional.of(authenticated));
+        when(userRepository.existsByEmailIgnoreCaseAndIdNot("duplicado@email.com", authenticated.getId()))
+                .thenReturn(true);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> userService.updateProfile(authenticated, updateDTO, null));
+
+        assertEquals("E-mail já está em uso", exception.getMessage());
+        verify(userRepository, never()).save(any(Account.class));
+    }
+
+    @Test
+    void updateProfile_DeveAtualizarFotoDePerfil_QuandoArquivoInformado() throws IOException {
+        Account authenticated = createAccount();
+        ProfileUpdateDTO updateDTO = new ProfileUpdateDTO(null, null, null, null, null, null, null, null, null);
+        MockMultipartFile photo = new MockMultipartFile("photo", "pfp.png", "image/png", "img".getBytes());
+
+        when(userRepository.findById(authenticated.getId())).thenReturn(Optional.of(authenticated));
+        when(userRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(cloudinaryService.uploadProfilePicture(photo, authenticated.getId())).thenReturn("https://cdn/pfp.png");
+
+        ProfileResponseDTO responseDTO = userService.updateProfile(authenticated, updateDTO, photo);
+
+        assertEquals("https://cdn/pfp.png", responseDTO.pfp());
+        verify(cloudinaryService).uploadProfilePicture(photo, authenticated.getId());
+        verify(userRepository).save(authenticated);
+    }
+
+    private Account createAccount() {
+        Account account = new Account();
+        account.setId(1);
+        account.setName("Usuário");
+        account.setEmail("original@email.com");
+        account.setRole("ESTUDANTE");
+        account.setDocType("CPF");
+        account.setDocNumber("12345678900");
+        account.setEmailVerified(true);
+        return account;
     }
 }

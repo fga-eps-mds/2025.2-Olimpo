@@ -11,7 +11,7 @@ RUN mvn dependency:go-offline
 
 # Copia o resto do código-fonte e compila a aplicação
 COPY src ./src
-RUN mvn package -DskipTests
+RUN mvn package -DskipTests -Dmaven.wagon.http.retryHandler.count=5
 
 # --- Estágio 2: Run (Execução) ---
 # Altere a versão aqui para uma imagem JRE (Java Runtime) 21

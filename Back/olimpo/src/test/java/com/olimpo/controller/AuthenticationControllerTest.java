@@ -1,6 +1,7 @@
 package com.olimpo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.olimpo.config.TestSecurityConfig;
 import com.olimpo.dto.AuthenticationDTO;
 import com.olimpo.dto.RegisterDTO;
 import com.olimpo.models.Account;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +53,11 @@ public class AuthenticationControllerTest {
 
         @MockBean
         private UserRepository userRepository;
+
+        @org.junit.jupiter.api.BeforeEach
+        void setUp() {
+                // Setup default behavior if needed, or remove if specific tests handle it
+        }
 
         @Test
         void login_DeveRetornarOk_QuandoCredenciaisCorretas() throws Exception {
