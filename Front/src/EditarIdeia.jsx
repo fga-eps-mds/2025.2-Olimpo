@@ -102,29 +102,33 @@ export default function EditarIdeia() {
 
                     <form className={styles['post-form']} onSubmit={handleSubmit}>
 
-                        <label className={styles.label}>Imagem</label>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <input
-                                className={styles['input-imagem']}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => setImagem(e.target.files[0])}
-                            />
-                            {!imagem && ideaToEdit?.mediaUrl && (
-                                <span style={{ fontSize: '12px', color: '#666', marginLeft: '20px' }}>
-                                    Imagem atual mantida. Escolha outra para alterar.
-                                </span>
-                            )}
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Imagem</label>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                <input
+                                    className={styles['input-imagem']}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setImagem(e.target.files[0])}
+                                />
+                                {!imagem && ideaToEdit?.mediaUrl && (
+                                    <span style={{ fontSize: '12px', color: '#666', marginLeft: '20px' }}>
+                                        Imagem atual mantida. Escolha outra para alterar.
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
-                        <label className={styles.label}>Título</label>
-                        <input
-                            className={styles.input}
-                            type="text"
-                            placeholder="Título da ideia"
-                            value={titulo}
-                            onChange={(e) => setTitulo(e.target.value)}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Título</label>
+                            <input
+                                className={styles.input}
+                                type="text"
+                                placeholder="Título da ideia"
+                                value={titulo}
+                                onChange={(e) => setTitulo(e.target.value)}
+                            />
+                        </div>
 
                         <div className={styles['input-row']}>
                             <div>
@@ -163,13 +167,16 @@ export default function EditarIdeia() {
                             </div>
                         </div>
 
-                        <label className={styles.label}>Descrição</label>
-                        <textarea
-                            className={styles.textarea}
-                            placeholder="Descreva sua ideia..."
-                            value={descricao}
-                            onChange={(e) => setDescricao(e.target.value)}
-                        />
+
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Descrição</label>
+                            <textarea
+                                className={styles.textarea}
+                                placeholder="Descreva sua ideia..."
+                                value={descricao}
+                                onChange={(e) => setDescricao(e.target.value)}
+                            />
+                        </div>
 
                         <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
                             <button

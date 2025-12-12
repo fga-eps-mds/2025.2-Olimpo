@@ -101,7 +101,6 @@ body, #root {
   margin-top: 12px;
   font-size: 16px;
   color: #EAECF1;
-
 }
 
 .sidebar:hover .menu-icons span,
@@ -139,7 +138,9 @@ body, #root {
 .label {
   color: #363940;
   text-align: left;
-  margin-left: 20px;
+  margin-left: 10px;
+  margin-bottom: 7px;
+  font-size: 0.95rem;
 }
 
 .input {
@@ -147,7 +148,7 @@ body, #root {
   border-radius: 7px;
   padding: 10px;
   margin-top: 4px;
-  font-size: 1rem;
+  font-size: 0.8rem;
   background: #f5f6fa;
   resize: none;
   width: 100%;
@@ -178,9 +179,10 @@ body, #root {
   width: 240px;
   background: #f5f6fa;
   color: #363940;
-  font-size: 1rem;
+  font-size: 0.8rem;
   padding: 8px 14px;
   border-radius: 12px;
+  border: none;
 }
 
 .seta {
@@ -191,7 +193,7 @@ body, #root {
 
 .lista-selecionar {
   position: absolute;
-  top: 50px;
+  top: 40px;
   left: 0;
   width: 100%;
   background: #eceef4;
@@ -201,7 +203,7 @@ body, #root {
 }
 
 .lista-itens {
-  font-size: 16px;
+  font-size: 0.8rem;
   color: #363940;
   text-align: center;
   padding: 6px 0;
@@ -219,7 +221,7 @@ body, #root {
   border-radius: 7px;
   padding: 10px;
   margin-top: 4px;
-  font-size: 1rem;
+  font-size: 0.8rem;
   background: #f5f6fa;
   resize: none;
   width: 100%;
@@ -234,7 +236,7 @@ body, #root {
   border-radius: 7px;
   padding: 10px;
   margin-top: 4px;
-  font-size: 1rem;
+  font-size: 0.8rem;
   background: #f5f6fa;
   resize: none;
   width: 100%;
@@ -260,11 +262,11 @@ body, #root {
   color: #fff;
   border: none;
   border-radius: 7px;
-  padding: 12px;
+  padding: 12px 28px;
   margin-top: 12px;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 500;
   min-width: 200px;
   width: fit-content;
   align-self: center;
