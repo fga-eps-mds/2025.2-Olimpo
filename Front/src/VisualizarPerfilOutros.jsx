@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styles from "./styles/VisualizarPerfilOutros.module.css";
 import Sidebar from "./components/Sidebar";
@@ -104,7 +104,12 @@ export default function VisualizarPerfilOutroUsuario() {
     const { id } = useParams();
     const userId = id;
 
-
+    const [searchTerm, setSearchTerm] = useState("");
+    const [segmentoOpen, setSegmentoOpen] = useState(false);
+    const [selectedSegmento, setSelectedSegmento] = useState("");
+    const [investimentoOpen, setInvestimentoOpen] = useState(false);
+    const [selectedInvestimento, setSelectedInvestimento] = useState("");
+    const dropdownRef = useRef(null);
 
     const [profileData, setProfileData] = useState({
         name: "Nome do usuário",
@@ -178,7 +183,16 @@ export default function VisualizarPerfilOutroUsuario() {
         }
     };
 
-
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setSegmentoOpen(false);
+                setInvestimentoOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -192,6 +206,7 @@ export default function VisualizarPerfilOutroUsuario() {
             if (userData) setCurrentUserEmail(userData.sub);
 
             try {
+                // Use userId from params directly
                 if (!userId) {
                     console.error("ID do usuário não especificado");
                     navigate(-1);
@@ -205,6 +220,11 @@ export default function VisualizarPerfilOutroUsuario() {
 
                 if (profileResponse.ok) {
                     const profileInfo = await profileResponse.json();
+                    // Store email if available (UserProfileDTO might not have it, but we need it for follow/message)
+                    // If UserProfileDTO doesn't have email, we might have a problem for follow/message features which rely on email.
+                    // However, let's assume for now we use what we have. 
+                    // Note: UserProfileDTO in backend DOES NOT have email.
+                    // We might need to fetch ideas to get the email if it's not in the public profile.
 
                     setProfileData({
                         name: profileInfo.name || "Nome do usuário",
@@ -218,6 +238,7 @@ export default function VisualizarPerfilOutroUsuario() {
                     });
                 }
 
+                // Fetch Ideas to get email (workaround since public profile doesn't have email)
                 const ideasResponse = await fetch('http://localhost:8080/api/ideas', {
                     method: 'GET',
                     headers: {
@@ -228,11 +249,17 @@ export default function VisualizarPerfilOutroUsuario() {
 
                 if (ideasResponse.ok) {
                     const ideasData = await ideasResponse.json();
+
+                    // Filter ideas by user ID (assuming we can match by ID, but ideas have account object)
+                    // We need to find *any* idea by this user to get their email
                     const userIdeas = ideasData.filter(item => item.idea.account.id === parseInt(userId));
 
                     if (userIdeas.length > 0) {
                         const email = userIdeas[0].idea.account.email;
+                        // setProfileOwnerEmail(email); // Removed
+                        // checkIfFollowing(email); // Removed
 
+                    }
 
                     const mappedPosts = userIdeas.map(item => {
                         const idea = item.idea;
@@ -265,7 +292,22 @@ export default function VisualizarPerfilOutroUsuario() {
         fetchUserProfile();
     }, [navigate, location, userId]);
 
-    const filteredPosts = posts;
+    const filteredPosts = posts.filter(post => {
+        const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSegment = selectedSegmento ? post.segment === selectedSegmento : true;
+
+        let matchesInvestment = true;
+        if (selectedInvestimento) {
+            const price = post.priceRaw;
+            if (selectedInvestimento === 'Até R$ 10.000') matchesInvestment = price <= 10000;
+            else if (selectedInvestimento === 'R$ 10.000 - R$ 50.000') matchesInvestment = price > 10000 && price <= 50000;
+            else if (selectedInvestimento === 'R$ 50.000 - R$ 100.000') matchesInvestment = price > 50000 && price <= 100000;
+            else if (selectedInvestimento === 'Acima de R$ 100.000') matchesInvestment = price > 100000;
+        }
+
+        return matchesSearch && matchesSegment && matchesInvestment;
+    });
 
     return (
         <div className={styles.page}>
