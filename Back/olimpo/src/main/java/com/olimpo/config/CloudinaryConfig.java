@@ -26,38 +26,30 @@ public class CloudinaryConfig {
     @Bean
     public Cloudinary cloudinary() {
         Map<String, String> config = new HashMap<>();
-
-        String cleanCloudName = stripQuotes(cloudName.trim());
-        String cleanApiKey = stripQuotes(apiKey.trim());
-        String cleanApiSecret = stripQuotes(apiSecret.trim());
+        String cleanCloudName = cloudName == null ? "" : cloudName.replace("=", "").trim();
+        String cleanApiKey = apiKey == null ? "" : apiKey.replace("=", "").trim();
+        String cleanApiSecret = apiSecret == null ? "" : apiSecret.replace("=", "").trim();
 
         System.out.println("========================================");
         System.out.println("CONFIGURAÇÃO CLOUDINARY CARREGADA:");
         System.out.println("Cloud Name: '" + cleanCloudName + "'");
         System.out.println("API Key:    '" + cleanApiKey + "'");
-        // Não imprima o segredo inteiro por segurança
-        System.out.println(
-                "API Secret: '" + (cleanApiSecret != null ? cleanApiSecret.substring(0, 3) + "..." : "null") + "'");
-        System.out.println("Secret Length: " + (cleanApiSecret != null ? cleanApiSecret.length() : "null"));
+        if (cleanApiSecret != null && cleanApiSecret.length() > 3) {
+            System.out.println("API Secret: '" + cleanApiSecret.substring(0, 3) + "...'");
+        } else {
+            System.out.println("API Secret: '"
+                    + (cleanApiSecret == null || cleanApiSecret.isEmpty() ? "(not set)" : cleanApiSecret) + "'");
+        }
         System.out.println("========================================");
 
-        config.put("cloud_name", cleanCloudName);
-        config.put("api_key", cleanApiKey);
-        config.put("api_secret", cleanApiSecret);
+        if (!cleanCloudName.isEmpty())
+            config.put("cloud_name", cleanCloudName);
+        if (!cleanApiKey.isEmpty())
+            config.put("api_key", cleanApiKey);
+        if (!cleanApiSecret.isEmpty())
+            config.put("api_secret", cleanApiSecret);
         config.put("secure", "true");
 
         return new Cloudinary(config);
-    }
-
-    private String stripQuotes(String value) {
-        if (value == null)
-            return null;
-        if (value.startsWith("\"") && value.endsWith("\"")) {
-            return value.substring(1, value.length() - 1);
-        }
-        if (value.startsWith("'") && value.endsWith("'")) {
-            return value.substring(1, value.length() - 1);
-        }
-        return value;
     }
 }

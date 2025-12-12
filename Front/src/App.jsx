@@ -14,6 +14,8 @@ import EditarIdeia from './EditarIdeia.jsx';
 import SelecionarPerfil from './SelecionarPerfil.jsx';
 import Saved from './Saved.jsx';
 import Notifications from './Notifications.jsx';
+import ProfileSearch from './ProfileSearch.jsx';
+import ProfilePage from './ProfilePage.jsx';
 
 function App() {
     return (
@@ -34,6 +36,8 @@ function App() {
             <Route path="/editar-ideia" element={<EditarIdeia />} />
             <Route path="/salvos" element={<Saved />} />
             <Route path="/notificacoes" element={<Notifications />} />
+            <Route path="/perfil/search" element={<ProfileSearch />} />
+            <Route path="/perfil/:id" element={<ProfilePage />} />
 
             <Route path="*" element={
                 <div>

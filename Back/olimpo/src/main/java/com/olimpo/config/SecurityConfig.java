@@ -82,6 +82,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/user/verify-email").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/resend-code").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/*").permitAll()
 
                         .requestMatchers("/api/password/**").permitAll()
                         .requestMatchers("/api/ideas/**").authenticated()

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Optional;
+import java.util.List;
+import com.olimpo.dto.UserProfileDTO;
 
 @RestController
 @RequestMapping("/user")
@@ -59,6 +61,18 @@ public class UserController {
         } else {
             return ResponseEntity.badRequest().body("Falha ao reenviar o código.");
         }
+    }
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<UserProfileDTO>> searchByName(@RequestParam String name) {
+        List<UserProfileDTO> results = userService.searchByName(name);
+        return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserProfileDTO> getProfile(@PathVariable Integer id) {
+        Optional<UserProfileDTO> dto = userService.getPublicProfile(id);
+        return dto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     
 }
