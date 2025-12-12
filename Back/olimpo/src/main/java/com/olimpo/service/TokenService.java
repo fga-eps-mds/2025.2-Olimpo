@@ -25,6 +25,7 @@ public class TokenService {
                     .withIssuer("auth-api")
                     .withSubject(user.getEmail())
                     .withClaim("role", user.getRole())
+                    .withClaim("id", user.getId())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;

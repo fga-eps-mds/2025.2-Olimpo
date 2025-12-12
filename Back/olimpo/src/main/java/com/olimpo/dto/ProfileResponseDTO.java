@@ -11,12 +11,10 @@ public record ProfileResponseDTO(
         String role,
         String estado,
         String faculdade,
-        Integer semestre,
         String curso,
         String bio,
         String docType,
-        String docNumber
-) {
+        String docNumber) {
     public ProfileResponseDTO(Account account) {
         this(
                 account.getId(),
@@ -27,11 +25,9 @@ public record ProfileResponseDTO(
                 account.getRole(),
                 account.getEstado(),
                 account.getFaculdade(),
-                account.getSemestre(),
                 account.getCurso(),
                 account.getBio(),
                 account.getDocType(),
-                account.getDocNumber()
-        );
+                account.getDocNumber());
     }
 }

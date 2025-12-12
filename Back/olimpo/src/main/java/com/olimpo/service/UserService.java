@@ -185,7 +185,6 @@ public class UserService {
                 a.getBio(),
                 a.getRole(),
                 a.getFaculdade(),
-                a.getSemestre(),
                 a.getCurso(),
                 a.getEstado());
 
@@ -213,12 +212,6 @@ public class UserService {
             account.setBio(sanitizeOptional(data.bio()));
         }
 
-        if (data.semestre() != null) {
-            if (data.semestre() < 1) {
-                throw new IllegalArgumentException("Semestre deve ser maior ou igual a 1");
-            }
-            account.setSemestre(data.semestre());
-        }
     }
 
     private void updateDocumentInformation(Account account, ProfileUpdateDTO data) {

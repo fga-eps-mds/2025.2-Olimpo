@@ -8,6 +8,8 @@ import coracao from '../assets/coracao.png';
 import coracao_hover from '../assets/coracao_hover.png';
 import salvo from '../assets/salvo.png';
 import salvo_hover from '../assets/salvo_hover.png';
+import lupa from '../assets/lupa.png';
+import lupa_hover from '../assets/lupa_hover.png';
 import mais from '../assets/mais.png';
 import mais_hover from '../assets/mais_hover.png';
 import usuario from '../assets/usuario.png';
@@ -63,6 +65,11 @@ export default function Sidebar() {
                     <span>Salvos</span>
                 </button>
 
+                <button onClick={() => navigate('/perfil/search')} className={styles["icon-btn"]}>
+                    <img src={hovered ? lupa_hover : lupa} alt="Buscar" />
+                    <span>Buscar</span>
+                </button>
+
                 {!isInvestidor && (
                     <button onClick={() => navigate('/postar-ideia')} className={styles["icon-btn"]}>
                         <img src={hovered ? mais_hover : mais} alt="Postar" />
@@ -72,7 +79,7 @@ export default function Sidebar() {
             </nav>
 
             <div className={styles.profile}>
-                <button className={styles["profile-btn"]}>
+                <button className={styles["profile-btn"]} onClick={() => userData && navigate(`/perfil/${userData.id}`)}>
                     <img src={usuario} alt="Perfil" />
                     <span>Perfil</span>
                 </button>

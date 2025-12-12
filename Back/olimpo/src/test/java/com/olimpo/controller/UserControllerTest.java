@@ -162,7 +162,6 @@ public class UserControllerTest {
                 "novo@email.com",
                 "DF",
                 "UnB",
-                5,
                 "Engenharia",
                 "Nova bio",
                 "CPF",
@@ -186,7 +185,6 @@ public class UserControllerTest {
         updatedAccount.setEstado("DF");
         updatedAccount.setFaculdade("UnB");
         updatedAccount.setCurso("Engenharia");
-        updatedAccount.setSemestre(5);
         updatedAccount.setBio("Nova bio");
         updatedAccount.setDocNumber("12345678900");
 
@@ -213,7 +211,6 @@ public class UserControllerTest {
 
         ProfileUpdateDTO updateDTO = new ProfileUpdateDTO(
                 "",
-                null,
                 null,
                 null,
                 null,

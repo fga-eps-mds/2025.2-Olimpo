@@ -16,6 +16,7 @@ import Saved from './Saved.jsx';
 import Notifications from './Notifications.jsx';
 import ProfileSearch from './ProfileSearch.jsx';
 import ProfilePage from './ProfilePage.jsx';
+import EditarPerfil from './EditarPerfil.jsx';
 
 function App() {
     return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="/notificacoes" element={<Notifications />} />
             <Route path="/perfil/search" element={<ProfileSearch />} />
             <Route path="/perfil/:id" element={<ProfilePage />} />
+            <Route path="/editar-perfil" element={<EditarPerfil />} />
 
             <Route path="*" element={
                 <div>

@@ -229,7 +229,6 @@ public class UserServiceTest {
                 null,
                 "DF",
                 "UnB",
-                5,
                 "Engenharia",
                 "Bio",
                 null,
@@ -243,7 +242,6 @@ public class UserServiceTest {
         assertEquals("Novo Nome", responseDTO.name());
         assertEquals("DF", responseDTO.estado());
         assertEquals("Engenharia", responseDTO.curso());
-        assertEquals(5, responseDTO.semestre());
         verify(userRepository).save(authenticated);
         verifyNoInteractions(cloudinaryService);
     }
@@ -254,7 +252,6 @@ public class UserServiceTest {
         ProfileUpdateDTO updateDTO = new ProfileUpdateDTO(
                 null,
                 "duplicado@email.com",
-                null,
                 null,
                 null,
                 null,
@@ -276,7 +273,7 @@ public class UserServiceTest {
     @Test
     void updateProfile_DeveAtualizarFotoDePerfil_QuandoArquivoInformado() throws IOException {
         Account authenticated = createAccount();
-        ProfileUpdateDTO updateDTO = new ProfileUpdateDTO(null, null, null, null, null, null, null, null, null);
+        ProfileUpdateDTO updateDTO = new ProfileUpdateDTO(null, null, null, null, null, null, null, null);
         MockMultipartFile photo = new MockMultipartFile("photo", "pfp.png", "image/png", "img".getBytes());
 
         when(userRepository.findById(authenticated.getId())).thenReturn(Optional.of(authenticated));
@@ -300,5 +297,21 @@ public class UserServiceTest {
         account.setDocNumber("12345678900");
         account.setEmailVerified(true);
         return account;
+    }
+
+    @Test
+    void searchByName_DeveRetornarListaDeUsuarios_QuandoEncontrado() {
+        String query = "Usuário";
+        Account account = createAccount();
+        java.util.List<Account> accounts = java.util.List.of(account);
+
+        when(userRepository.findByNameContainingIgnoreCase(query)).thenReturn(accounts);
+
+        java.util.List<com.olimpo.dto.UserProfileDTO> results = userService.searchByName(query);
+
+        assertFalse(results.isEmpty());
+        assertEquals(1, results.size());
+        assertEquals("Usuário", results.get(0).name());
+        verify(userRepository).findByNameContainingIgnoreCase(query);
     }
 }
