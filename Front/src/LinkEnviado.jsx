@@ -51,9 +51,7 @@ function LinkEnviado() {
           <a href="#" className={styles.voltar}><VscArrowLeft /> Voltar</a>
           <div className={styles["conteudo-card-direito"]}>
             <div className={styles["link-recuperacao"]}>Link de recuperação enviado!</div>
-            <div className={styles['texto']}>Enviamos um link para recuperação de senha para o seu email<br />
-              <span className={styles.email}>seu.email@gmail.com</span>       
-            </div>
+            <div className={styles['texto']}>Enviamos um link para recuperação de senha para o seu email</div>
             <div>
               Não recebeu o e-mail?
               <a href="#" className={styles["link-reenviar"]}> Clique aqui para reenviar</a>
