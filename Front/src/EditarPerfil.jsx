@@ -175,7 +175,7 @@ export default function EditarPerfil() {
         }
 
 
-    }, [navigate]);
+    }, [navigate, userEmail, username]);
 
 
 
