@@ -206,7 +206,6 @@ export default function VisualizarPerfilOutroUsuario() {
             if (userData) setCurrentUserEmail(userData.sub);
 
             try {
-                // Use userId from params directly
                 if (!userId) {
                     console.error("ID do usuário não especificado");
                     navigate(-1);
@@ -220,11 +219,6 @@ export default function VisualizarPerfilOutroUsuario() {
 
                 if (profileResponse.ok) {
                     const profileInfo = await profileResponse.json();
-                    // Store email if available (UserProfileDTO might not have it, but we need it for follow/message)
-                    // If UserProfileDTO doesn't have email, we might have a problem for follow/message features which rely on email.
-                    // However, let's assume for now we use what we have. 
-                    // Note: UserProfileDTO in backend DOES NOT have email.
-                    // We might need to fetch ideas to get the email if it's not in the public profile.
 
                     setProfileData({
                         name: profileInfo.name || "Nome do usuário",
@@ -238,7 +232,6 @@ export default function VisualizarPerfilOutroUsuario() {
                     });
                 }
 
-                // Fetch Ideas to get email (workaround since public profile doesn't have email)
                 const ideasResponse = await fetch('http://localhost:8080/api/ideas', {
                     method: 'GET',
                     headers: {
@@ -249,15 +242,10 @@ export default function VisualizarPerfilOutroUsuario() {
 
                 if (ideasResponse.ok) {
                     const ideasData = await ideasResponse.json();
-
-                    // Filter ideas by user ID (assuming we can match by ID, but ideas have account object)
-                    // We need to find *any* idea by this user to get their email
                     const userIdeas = ideasData.filter(item => item.idea.account.id === parseInt(userId));
 
                     if (userIdeas.length > 0) {
                         const email = userIdeas[0].idea.account.email;
-                        // setProfileOwnerEmail(email); // Removed
-                        // checkIfFollowing(email); // Removed
 
                     }
 

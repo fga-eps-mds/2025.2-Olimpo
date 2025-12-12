@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styles from "./styles/Home.module.css";
 import Sidebar from "./components/Sidebar";
 
-// Imagens
 import lupa from './assets/lupa.png';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
-
 
 const parseJwt = (token) => {
     try {
@@ -17,14 +15,22 @@ const parseJwt = (token) => {
     }
 };
 
-function PostCard({ data, currentUserEmail, onDelete, onEdit, onLike }) {
+function PostCard({ data, currentUserId, onDelete, onEdit, onLike, onProfileClick }) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const isOwner = data.userEmail === currentUserEmail;
+    const isOwner = data.userId === currentUserId;
+
+    const handleProfileClick = () => {
+        onProfileClick(data.userId);
+    };
 
     return (
         <article className={styles.card}>
             <header className={styles.cardHeader}>
-                <div className={styles.userBlock}>
+                <div 
+                    className={styles.userBlock}
+                    onClick={handleProfileClick}
+                    style={{ cursor: 'pointer' }}
+                >
                     <div className={styles.avatar}>
                         {data.avatarUrl ? (
                             <img src={data.avatarUrl} alt={data.userName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
@@ -101,7 +107,7 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit, onLike }) {
 export default function Saved() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [currentUserEmail, setCurrentUserEmail] = useState("");
+    const [currentUserId, setCurrentUserId] = useState("");
     const navigate = useNavigate();
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -194,7 +200,7 @@ export default function Saved() {
             }
 
             const userData = parseJwt(token);
-            if (userData) setCurrentUserEmail(userData.sub);
+            if (userData) setCurrentUserId(userData.userId || userData.sub);
 
             try {
                 const response = await fetch('http://localhost:8080/api/ideas/liked', {
@@ -218,6 +224,7 @@ export default function Saved() {
                         const idea = item.idea;
                         return {
                             id: idea.id,
+                            userId: idea.account.id,
                             userEmail: idea.account.email,
                             userName: idea.account.name,
                             avatarUrl: idea.account.pfp,
@@ -245,6 +252,14 @@ export default function Saved() {
         fetchIdeas();
     }, [navigate]);
 
+    const handleProfileClick = (userId) => {
+        navigate(`/perfil/${userId}`);
+    };
+
+    const goToMyProfile = () => {
+        navigate(`/perfil/${currentUserId}`);
+    };
+
     const filteredPosts = posts.filter(post => {
         const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             post.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -264,7 +279,7 @@ export default function Saved() {
 
     return (
         <div className={styles.page}>
-            <Sidebar />
+            <Sidebar onProfileClick={goToMyProfile} />
             <main className={styles["feed-container"]}>
                 <div className={styles["feed-inner"]}>
                     <div className={styles["search-section"]} ref={dropdownRef}>
@@ -354,10 +369,11 @@ export default function Saved() {
                                 <PostCard
                                     key={p.id}
                                     data={p}
-                                    currentUserEmail={currentUserEmail}
+                                    currentUserId={currentUserId}
                                     onDelete={handleDelete}
                                     onEdit={handleEdit}
                                     onLike={handleLike}
+                                    onProfileClick={handleProfileClick}
                                 />
                             ))}
                             <div className={styles.endText}>Você viu todas as suas ideias salvas</div>
