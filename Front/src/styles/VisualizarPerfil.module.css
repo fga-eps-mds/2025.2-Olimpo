@@ -25,11 +25,10 @@
 
 .buttonContainer {
     width: 100%;
-    display: center;
+    display: flex;
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
-    margin-left: 200px;
 }
 
 .texto {
@@ -277,11 +276,10 @@
 
     .buttonContainer {
         width: 100%;
-        display: center;
+        display: flex;
         justify-content: center;
         margin-top: 20px;
         margin-bottom: 20px;
-        margin-left: 170px;
     }
 
     .imagem {

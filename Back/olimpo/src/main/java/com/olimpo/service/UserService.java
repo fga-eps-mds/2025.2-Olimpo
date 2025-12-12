@@ -7,6 +7,7 @@ import com.olimpo.models.Account;
 import com.olimpo.models.VerificationToken;
 import com.olimpo.repository.UserRepository;
 import com.olimpo.repository.VerificationTokenRepository;
+import com.olimpo.repository.IdeaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -35,6 +36,8 @@ public class UserService {
     private final EmailService emailService;
     private final VerificationTokenRepository tokenRepository;
     private final CloudinaryService cloudinaryService;
+    private final IdeaRepository ideaRepository;
+    private final com.olimpo.repository.LikeRepository likeRepository;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$",
             Pattern.CASE_INSENSITIVE);
@@ -296,5 +299,55 @@ public class UserService {
             throw new IllegalArgumentException("Usuário sem identificador válido");
         }
         return id;
+    }
+
+    @Transactional
+    public void deleteUser(Account authenticatedUser) {
+        if (authenticatedUser == null) {
+            throw new IllegalArgumentException("Usuário não autenticado");
+        }
+
+        Integer userId = requireUserId(authenticatedUser);
+        Account user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        // 1. Remove likes given by the user
+        likeRepository.deleteByAccountId(userId);
+
+        // 2. Remove user's ideas (and likes received on them)
+        List<com.olimpo.models.Idea> userIdeas = ideaRepository.findByAccountId(userId);
+        for (com.olimpo.models.Idea idea : userIdeas) {
+            // Remove likes on this idea
+            likeRepository.deleteByIdIdeaId(idea.getId());
+
+            // Delete idea files from Cloudinary
+            if (idea.getIdeaFiles() != null) {
+                for (com.olimpo.models.IdeaFile file : idea.getIdeaFiles()) {
+                    try {
+                        cloudinaryService.deleteFile(file.getFileUrl());
+                    } catch (IOException e) {
+                        System.err.println("Erro ao deletar arquivo da ideia: " + e.getMessage());
+                    }
+                }
+            }
+
+            // Delete idea (cascades to files and keywords associations)
+            ideaRepository.delete(idea);
+        }
+
+        // 3. Remove profile picture from Cloudinary
+        if (user.getPfp() != null && !user.getPfp().isBlank()) {
+            try {
+                cloudinaryService.deleteFile(user.getPfp());
+            } catch (IOException e) {
+                System.err.println("Erro ao deletar foto de perfil: " + e.getMessage());
+            }
+        }
+
+        // 4. Remove verification tokens
+        tokenRepository.deleteByUser(user);
+
+        // 5. Remove user
+        userRepository.delete(user);
     }
 }

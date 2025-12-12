@@ -171,6 +171,32 @@ export default function VisualizarPerfil() {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        if (!window.confirm("Tem certeza que deseja excluir sua conta? Esta ação é irreversível e todos os seus dados serão perdidos.")) {
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('http://localhost:8080/user/profile', {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                alert("Conta excluída com sucesso.");
+                localStorage.removeItem('token');
+                navigate('/');
+            } else {
+                const errorMsg = await response.text();
+                alert(`Erro ao excluir conta: ${errorMsg}`);
+            }
+        } catch (error) {
+            console.error("Erro ao excluir conta:", error);
+            alert("Erro ao excluir conta. Tente novamente mais tarde.");
+        }
+    };
+
 
 
     const { id } = useParams();
@@ -337,6 +363,22 @@ export default function VisualizarPerfil() {
                             <div className={styles.endText}>Você viu todas as suas publicações.</div>
                         </>
                     )}
+                    <div style={{ marginTop: '30px', marginBottom: '30px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                        <button
+                            onClick={handleDeleteAccount}
+                            style={{
+                                backgroundColor: 'transparent',
+                                color: '#ff4d4d',
+                                border: '1px solid #ff4d4d',
+                                padding: '10px 20px',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Excluir conta
+                        </button>
+                    </div>
                 </div>
 
             </main>

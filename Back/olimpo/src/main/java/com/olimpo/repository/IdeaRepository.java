@@ -14,4 +14,6 @@ public interface IdeaRepository extends JpaRepository<Idea, Integer> {
     @Query("SELECT DISTINCT i FROM Idea i LEFT JOIN FETCH i.keywords LEFT JOIN FETCH i.ideaFiles")
     List<Idea> findAllWithDetails();
 
+    List<Idea> findByAccountId(Integer accountId);
+
 }

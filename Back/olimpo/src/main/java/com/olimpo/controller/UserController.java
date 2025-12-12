@@ -113,4 +113,19 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/profile")
+    public ResponseEntity<?> deleteProfile(@AuthenticationPrincipal Account user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        try {
+            userService.deleteUser(user);
+            return ResponseEntity.ok("Conta excluída com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao excluir a conta: " + e.getMessage());
+        }
+    }
+
 }
