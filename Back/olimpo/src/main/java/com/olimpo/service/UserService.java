@@ -38,6 +38,7 @@ public class UserService {
     private final CloudinaryService cloudinaryService;
     private final IdeaRepository ideaRepository;
     private final com.olimpo.repository.LikeRepository likeRepository;
+    private final com.olimpo.repository.NotificationRepository notificationRepository;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$",
             Pattern.CASE_INSENSITIVE);
@@ -347,7 +348,11 @@ public class UserService {
         // 4. Remove verification tokens
         tokenRepository.deleteByUser(user);
 
-        // 5. Remove user
+        // 5. Remove notifications
+        notificationRepository.deleteByRecipientId(userId);
+        notificationRepository.deleteBySenderId(userId);
+
+        // 6. Remove user
         userRepository.delete(user);
     }
 }

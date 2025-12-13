@@ -48,6 +48,19 @@ export default function EditarPerfil() {
 
     const [errorMessage, setErrorMessage] = useState("");
 
+    const [userRole, setUserRole] = useState(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return payload.role || "";
+            } catch {
+                return "";
+            }
+        }
+        return "";
+    });
+
 
 
 
@@ -158,6 +171,9 @@ export default function EditarPerfil() {
 
 
                     }
+                    if (!userRole) {
+                        setUserRole(payload.role);
+                    }
 
 
                 }
@@ -175,7 +191,7 @@ export default function EditarPerfil() {
         }
 
 
-    }, [navigate, userEmail, username]);
+    }, [navigate, userEmail, username, userRole]);
 
 
 
@@ -536,79 +552,81 @@ export default function EditarPerfil() {
 
 
 
-                        <div className={styles["input-row"]}>
+                        {userRole !== 'INVESTIDOR' && (
+                            <div className={styles["input-row"]}>
 
 
-                            <div style={{ width: "100%" }}>
+                                <div style={{ width: "100%" }}>
 
 
-                                <label className={styles.label}>Curso</label>
+                                    <label className={styles.label}>Curso</label>
 
 
-                                <input
+                                    <input
 
 
-                                    className={styles.input}
+                                        className={styles.input}
 
 
-                                    type="text"
+                                        type="text"
 
 
-                                    placeholder="Ex: Ciência da Computação"
+                                        placeholder="Ex: Ciência da Computação"
 
 
-                                    value={curso}
+                                        value={curso}
 
 
-                                    onChange={(e) => setCurso(e.target.value)}
+                                        onChange={(e) => setCurso(e.target.value)}
 
 
-                                    disabled={loading}
+                                        disabled={loading}
 
 
-                                />
+                                    />
+
+
+                                </div>
+
+
+
+
+
+                                <div style={{ width: "100%" }}>
+
+
+                                    <label className={styles.label}>Faculdade</label>
+
+
+                                    <input
+
+
+                                        className={styles.input}
+
+
+                                        type="text"
+
+
+                                        placeholder="Ex: Universidade Federal"
+
+
+                                        value={faculdade}
+
+
+                                        onChange={(e) => setFaculdade(e.target.value)}
+
+
+                                        disabled={loading}
+
+
+                                    />
+
+
+                                </div>
 
 
                             </div>
-
-
-
-
-
-                            <div style={{ width: "100%" }}>
-
-
-                                <label className={styles.label}>Faculdade</label>
-
-
-                                <input
-
-
-                                    className={styles.input}
-
-
-                                    type="text"
-
-
-                                    placeholder="Ex: Universidade Federal"
-
-
-                                    value={faculdade}
-
-
-                                    onChange={(e) => setFaculdade(e.target.value)}
-
-
-                                    disabled={loading}
-
-
-                                />
-
-
-                            </div>
-
-
-                        </div>
+                        )}
 
 
 

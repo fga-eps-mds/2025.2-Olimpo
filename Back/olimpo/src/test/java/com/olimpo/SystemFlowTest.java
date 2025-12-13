@@ -74,16 +74,13 @@ public class SystemFlowTest {
                 baseUrl = "http://localhost:" + port;
                 userRepository.deleteAll();
 
-                // Ensure keywords exist
                 if (keywordRepository.findByName("Tecnologia").isEmpty()) {
                         keywordRepository.save(new Keyword("Tecnologia"));
                 }
 
-                // Mock MimeMessage creation
                 MimeMessage mimeMessage = mock(MimeMessage.class);
                 when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
 
-                // Mock Cloudinary upload
                 IdeaFile dummyFile = new IdeaFile();
                 dummyFile.setFileUrl("http://cloudinary.com/dummy.jpg");
                 when(cloudinaryService.uploadFile(any(), any())).thenReturn(dummyFile);
@@ -91,11 +88,9 @@ public class SystemFlowTest {
 
         @Test
         void testFullUserLifecycle() throws Exception {
-                // 1. Verify Ports
                 assertTrue(port > 0, "Server should be running on a random port > 0");
                 System.out.println("System Test running on port: " + port);
 
-                // 2. Register User
                 RegisterDTO registerDTO = new RegisterDTO(
                                 "systemtest@user.com",
                                 "Password123!",
@@ -116,12 +111,10 @@ public class SystemFlowTest {
                 }
                 assertEquals(HttpStatus.OK, registerResponse.getStatusCode(), "Registration should succeed");
 
-                // Manually verify email to allow login
                 Account user = userRepository.findByEmail("systemtest@user.com").orElseThrow();
                 user.setEmailVerified(true);
                 userRepository.save(user);
 
-                // 3. Login
                 AuthenticationDTO loginDTO = new AuthenticationDTO("systemtest@user.com", "Password123!");
                 ResponseEntity<String> loginResponse = restTemplate.postForEntity(
                                 baseUrl + "/auth/login",
@@ -138,8 +131,6 @@ public class SystemFlowTest {
                 headers.setBearerAuth(token);
                 headers.setContentType(MediaType.APPLICATION_JSON);
 
-                // 4. Create Idea
-                // Controller expects Multipart with "data" part containing JSON
                 com.olimpo.dto.IdeaRequestDTO ideaDTO = new com.olimpo.dto.IdeaRequestDTO(
                                 "System Test Idea",
                                 "Created during system test",
@@ -153,7 +144,6 @@ public class SystemFlowTest {
                 org.springframework.util.LinkedMultiValueMap<String, Object> createIdeaBody = new org.springframework.util.LinkedMultiValueMap<>();
                 createIdeaBody.add("data", objectMapper.writeValueAsString(ideaDTO));
 
-                // Add file
                 ByteArrayResource fileResource = new ByteArrayResource("fake image content".getBytes()) {
                         @Override
                         public String getFilename() {
@@ -181,10 +171,8 @@ public class SystemFlowTest {
                 assertTrue(createdIdeaId > 0);
                 assertEquals("System Test Idea", createdIdeaNode.path("name").asText());
 
-                // Verify Cloudinary was called
                 verify(cloudinaryService).uploadFile(any(), any());
 
-                // 5. Edit Idea
                 com.olimpo.dto.IdeaRequestDTO updateIdeaDTO = new com.olimpo.dto.IdeaRequestDTO(
                                 "Updated System Test Idea",
                                 "Created during system test",
@@ -206,8 +194,6 @@ public class SystemFlowTest {
                 JsonNode updatedIdeaNode = objectMapper.readTree(updateIdeaResponse.getBody());
                 assertEquals("Updated System Test Idea", updatedIdeaNode.path("name").asText());
 
-                // 6. Edit Profile
-
                 ProfileUpdateDTO profileUpdateDTO = new ProfileUpdateDTO(
                                 "Updated System User",
                                 "systemtest@user.com",
@@ -218,13 +204,8 @@ public class SystemFlowTest {
                                 "CPF",
                                 "12345678900");
 
-                // Reuse multipartHeaders (already has token and multipart type)
-
-                // We need to build a proper multipart request
-                // Using Spring's LinkedMultiValueMap
                 org.springframework.util.LinkedMultiValueMap<String, Object> body = new org.springframework.util.LinkedMultiValueMap<>();
                 body.add("data", objectMapper.writeValueAsString(profileUpdateDTO));
-                // We can omit photo as it is optional
 
                 HttpEntity<org.springframework.util.LinkedMultiValueMap<String, Object>> updateProfileRequest = new HttpEntity<>(
                                 body, multipartHeaders);
@@ -236,7 +217,6 @@ public class SystemFlowTest {
                                 String.class);
                 assertEquals(HttpStatus.OK, updateProfileResponse.getStatusCode(), "Profile update should succeed");
 
-                // Verify update
                 ResponseEntity<String> getProfileResponse = restTemplate.exchange(
                                 baseUrl + "/user/profile",
                                 HttpMethod.GET,
@@ -246,7 +226,6 @@ public class SystemFlowTest {
                 assertEquals("Updated System User", profileNode.path("name").asText());
                 assertEquals("Software Engineering", profileNode.path("curso").asText());
 
-                // 7. Delete Account
                 ResponseEntity<String> deleteResponse = restTemplate.exchange(
                                 baseUrl + "/user/profile",
                                 HttpMethod.DELETE,
@@ -255,12 +234,6 @@ public class SystemFlowTest {
                 assertEquals(HttpStatus.OK, deleteResponse.getStatusCode(), "Account deletion should succeed");
                 assertEquals("Conta excluída com sucesso.", deleteResponse.getBody());
 
-                // 8. Verify Deletion (Login should fail)
-                // Note: Login might return 403 or 401 depending on implementation when user not
-                // found or bad credentials
-                // Actually, if user is deleted, findByEmail returns empty, so login throws
-                // exception or returns 403/401.
-                // Let's check repository directly to be sure
                 assertTrue(userRepository.findByEmail("systemtest@user.com").isEmpty(),
                                 "User should be deleted from database");
         }
