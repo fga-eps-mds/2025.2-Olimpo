@@ -1,0 +1,49 @@
+package com.olimpo.controller;
+
+import com.olimpo.dto.AuthenticationDTO;
+import com.olimpo.dto.RegisterDTO;
+import com.olimpo.models.Account;
+import com.olimpo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.*;
+import com.olimpo.service.TokenService;
+import com.olimpo.dto.LoginResponseDTO;
+import com.olimpo.models.Account;
+
+@RestController
+@RequestMapping("auth")
+public class AuthenticationController {
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserService userService;
+
+
+    @Autowired
+    private TokenService tokenService; // Injete o service
+
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody AuthenticationDTO data) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+        var auth = this.authenticationManager.authenticate(usernamePassword);
+
+        var token = tokenService.generateToken((Account) auth.getPrincipal());
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterDTO data) {
+        try {
+            Account novoUsuario = userService.cadastrarUsuario(data);
+            return ResponseEntity.ok(novoUsuario);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+}
