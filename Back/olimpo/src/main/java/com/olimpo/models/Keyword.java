@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "KEYWORDS")
 @Getter
 @Setter
-@ToString // Adicione o ToString explicitamente para poder configurar
+@ToString
 @NoArgsConstructor
 public class Keyword {
 
@@ -29,18 +29,19 @@ public class Keyword {
 
     @ManyToMany(mappedBy = "keywords", fetch = FetchType.LAZY)
     @JsonIgnore
-    @ToString.Exclude // IMPORTANTE: Impede o erro no log/console
+    @ToString.Exclude
     private Set<Idea> ideas = new HashSet<>();
 
     public Keyword(String name) {
         this.name = name;
     }
 
-    // IMPORTANTE: Implementação correta de equals/hashCode para JPA (evita loops e erros)
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Keyword keyword = (Keyword) o;
         return Objects.equals(id, keyword.id);
     }

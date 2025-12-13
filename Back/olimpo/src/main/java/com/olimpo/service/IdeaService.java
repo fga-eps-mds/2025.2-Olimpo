@@ -26,15 +26,34 @@ public class IdeaService {
     private final KeywordRepository keywordRepository;
     private final CloudinaryService cloudinaryService;
 
+    private final com.olimpo.repository.LikeRepository likeRepository;
+
     @Autowired
     public IdeaService(IdeaRepository ideaRepository,
-                       UserRepository accountRepository,
-                       KeywordRepository keywordRepository,
-                       CloudinaryService cloudinaryService) {
+            UserRepository accountRepository,
+            KeywordRepository keywordRepository,
+            CloudinaryService cloudinaryService,
+            com.olimpo.repository.LikeRepository likeRepository) {
         this.ideaRepository = ideaRepository;
         this.accountRepository = accountRepository;
         this.keywordRepository = keywordRepository;
         this.cloudinaryService = cloudinaryService;
+        this.likeRepository = likeRepository;
+    }
+
+    @Transactional
+    public List<Idea> getLikedIdeas(Integer accountId) {
+        List<com.olimpo.models.Like> likes = likeRepository.findByAccountId(accountId);
+        List<Idea> ideas = likes.stream().map(com.olimpo.models.Like::getIdea).collect(Collectors.toList());
+
+        for (Idea idea : ideas) {
+            if (idea.getKeywords() != null)
+                idea.getKeywords().size();
+            if (idea.getIdeaFiles() != null)
+                idea.getIdeaFiles().size();
+        }
+
+        return ideas;
     }
 
     @Transactional
@@ -53,9 +72,10 @@ public class IdeaService {
 
         Idea savedIdea = ideaRepository.save(idea);
 
-        // Inicializa coleções para evitar erro no retorno JSON
-        if(savedIdea.getKeywords() != null) savedIdea.getKeywords().size();
-        if(savedIdea.getIdeaFiles() != null) savedIdea.getIdeaFiles().size();
+        if (savedIdea.getKeywords() != null)
+            savedIdea.getKeywords().size();
+        if (savedIdea.getIdeaFiles() != null)
+            savedIdea.getIdeaFiles().size();
 
         return savedIdea;
     }
@@ -73,12 +93,10 @@ public class IdeaService {
     public Idea updateIdea(Integer id, Idea ideaDetails, MultipartFile newFile) throws IOException {
         Idea existingIdea = getIdeaById(id);
 
-        // Atualiza campos de texto
         existingIdea.setName(ideaDetails.getName());
         existingIdea.setDescription(ideaDetails.getDescription());
         existingIdea.setPrice(ideaDetails.getPrice());
 
-        // Atualiza Keywords
         if (ideaDetails.getKeywords() != null) {
             Set<Integer> keywordIds = ideaDetails.getKeywords().stream()
                     .map(Keyword::getId)
@@ -89,14 +107,11 @@ public class IdeaService {
             existingIdea.setKeywords(new HashSet<>());
         }
 
-        // Inicializa a lista de arquivos atual (Resolve o erro de "Lazy" ao editar só texto)
         if (existingIdea.getIdeaFiles() != null) {
             existingIdea.getIdeaFiles().size();
         }
 
-        // Lógica de troca de imagem
         if (newFile != null && !newFile.isEmpty()) {
-            // 1. Remove imagens antigas do Cloudinary e da lista
             if (existingIdea.getIdeaFiles() != null && !existingIdea.getIdeaFiles().isEmpty()) {
                 for (var oldFile : existingIdea.getIdeaFiles()) {
                     cloudinaryService.deleteFile(oldFile.getFileUrl());
@@ -104,8 +119,6 @@ public class IdeaService {
                 existingIdea.getIdeaFiles().clear();
             }
 
-            // 2. Upload da nova e ATUALIZAÇÃO DA LISTA em memória
-            // Isso garante que o Hibernate salve a relação corretamente
             IdeaFile newIdeaFile = cloudinaryService.uploadFile(newFile, existingIdea);
             existingIdea.getIdeaFiles().add(newIdeaFile);
         }

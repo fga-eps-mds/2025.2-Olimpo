@@ -1,0 +1,6 @@
+{
+    "conventionalCommits.scopes": [
+        "habilitar edição de perfil e configurar Cloudinary",
+        "profile"
+    ]
+}

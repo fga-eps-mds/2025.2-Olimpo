@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/PostarIdeia.module.css';
+import { SEGMENTS } from './constants';
 import Sidebar from './components/Sidebar';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
+
+const parseJwt = (token) => {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch {
+        return null;
+    }
+};
 
 export default function PostarIdeia() {
     const navigate = useNavigate();
@@ -23,6 +32,13 @@ export default function PostarIdeia() {
         if (!token) {
             alert("Você precisa estar logado para postar.");
             navigate('/');
+            return;
+        }
+
+        const userData = parseJwt(token);
+        if (userData?.role === 'INVESTIDOR') {
+            navigate('/home');
+            return;
         }
 
         function handleClickOutside(event) {
@@ -93,29 +109,32 @@ export default function PostarIdeia() {
 
     return (
         <div className={styles['container-root']}>
-            {/* Sidebar reutilizável */}
             <Sidebar />
 
             <main className={styles['main-content']}>
                 <div className={styles['form-container']}>
                     <form className={styles['post-form']} onSubmit={handleSubmit}>
 
-                        <label className={styles.label}>Imagem</label>
-                        <input
-                            className={styles['input-imagem']}
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setImagem(e.target.files[0])}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Imagem</label>
+                            <input
+                                className={styles['input-imagem']}
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setImagem(e.target.files[0])}
+                            />
+                        </div>
 
-                        <label className={styles.label}>Título</label>
-                        <input
-                            className={styles.input}
-                            type="text"
-                            placeholder="Título"
-                            value={titulo}
-                            onChange={(e) => setTitulo(e.target.value)}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Título</label>
+                            <input
+                                className={styles.input}
+                                type="text"
+                                placeholder="Título"
+                                value={titulo}
+                                onChange={(e) => setTitulo(e.target.value)}
+                            />
+                        </div>
 
                         <div className={styles['input-row']}>
                             <div>
@@ -139,7 +158,7 @@ export default function PostarIdeia() {
                                         </button>
                                         {dropdownOpen && (
                                             <div className={styles['lista-selecionar']}>
-                                                {["Educação", "Tecnologia", "Indústria alimentícia", "Indústria Cinematográfica", "Outros"].map((item) => (
+                                                {SEGMENTS.map((item) => (
                                                     <div
                                                         key={item}
                                                         className={styles['lista-itens']}
@@ -168,13 +187,15 @@ export default function PostarIdeia() {
                             </div>
                         </div>
 
-                        <label className={styles.label}>Descrição</label>
-                        <textarea
-                            className={styles.textarea}
-                            placeholder="Descrição"
-                            value={descricao}
-                            onChange={(e) => setDescricao(e.target.value)}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Descrição</label>
+                            <textarea
+                                className={styles.textarea}
+                                placeholder="Descrição"
+                                value={descricao}
+                                onChange={(e) => setDescricao(e.target.value)}
+                            />
+                        </div>
                         <button className={styles['btn-postar']} type="submit">
                             Postar
                         </button>

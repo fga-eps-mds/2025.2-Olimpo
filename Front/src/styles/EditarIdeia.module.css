@@ -8,15 +8,13 @@ body, #root {
     box-sizing: border-box;
 }
 
-/* --- ESTRUTURA PRINCIPAL (Corrigida para Scroll e Sidebar Fixa) --- */
 .container-root {
-    min-height: 100vh; /* Permite crescer */
+    min-height: 100vh;
     width: 100vw;
     display: flex;
     background: #f3f5fa;
     padding: 0;
     box-sizing: border-box;
-    /* overflow: hidden; -> REMOVIDO para permitir rolagem */
 }
 
 .main-content {
@@ -29,12 +27,10 @@ body, #root {
     min-width: 0;
     width: 100%;
 
-    /* Margem para não ficar embaixo da Sidebar */
     margin-left: 110px;
     padding: 40px 20px 80px 20px;
 }
 
-/* --- SEU ESTILO DO FORMULÁRIO (Mantido) --- */
 .form-container {
     background: #BDC5D5;
     border-radius: 16px;
@@ -55,8 +51,9 @@ body, #root {
 .label {
     color: #363940;
     text-align: left;
-    margin-left: 20px;
-    /* Adicionei font-weight para ficar igual ao PostarIdeia se quiser */
+    margin-left: 10px;
+    margin-bottom: 7px;
+    font-size: 0.95rem;
 }
 
 .input {
@@ -64,7 +61,7 @@ body, #root {
     border-radius: 7px;
     padding: 10px;
     margin-top: 4px;
-    font-size: 1rem;
+    font-size: 0.8rem;
     background: #f5f6fa;
     resize: none;
     width: 100%;
@@ -80,7 +77,7 @@ body, #root {
     flex-direction: column;
     align-items: center;
     position: relative;
-    width: 100%; /* Ajustado para preencher o grid */
+    width: 100%;
     background: #f5f6fa;
     padding: 0;
     border-radius: 12px;
@@ -96,7 +93,7 @@ body, #root {
     width: 100%;
     background: #f5f6fa;
     color: #363940;
-    font-size: 1rem;
+    font-size: 0.8rem;
     padding: 8px 14px;
     border-radius: 12px;
     border: none;
@@ -113,7 +110,7 @@ body, #root {
 
 .lista-selecionar {
     position: absolute;
-    top: 105%;
+    top: 40px;
     left: 0;
     width: 100%;
     background: #eceef4;
@@ -124,7 +121,7 @@ body, #root {
 }
 
 .lista-itens {
-    font-size: 16px;
+    font-size: 0.8rem;
     color: #363940;
     text-align: center;
     padding: 8px 0;
@@ -142,7 +139,7 @@ body, #root {
     border-radius: 7px;
     padding: 10px;
     margin-top: 4px;
-    font-size: 1rem;
+    font-size: 0.8rem;
     background: #f5f6fa;
     resize: none;
     width: 100%;
@@ -158,7 +155,7 @@ body, #root {
     border-radius: 7px;
     padding: 10px;
     margin-top: 4px;
-    font-size: 1rem;
+    font-size: 0.8rem;
     background: #f5f6fa;
     resize: none;
     width: 100%;
@@ -182,11 +179,11 @@ body, #root {
     color: #fff;
     border: none;
     border-radius: 7px;
-    padding: 12px;
+    padding: 12px 28px;
     margin-top: 12px;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 500;
     min-width: 200px;
     width: fit-content;
     align-self: center;
@@ -197,7 +194,6 @@ body, #root {
     background: #181a1d;
 }
 
-/* RESPONSIVIDADE */
 @media (max-width: 1100px) {
     .main-content {
         margin-left: 96px;

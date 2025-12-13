@@ -23,9 +23,8 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-
     @Autowired
-    private TokenService tokenService; // Injete o service
+    private TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody AuthenticationDTO data) {

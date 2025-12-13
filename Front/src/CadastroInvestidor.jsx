@@ -62,11 +62,12 @@ export default function CadastroInvestidor() {
       password: senha,
       role: "INVESTIDOR",
       docType: empresa ? "CNPJ" : "CPF",
-      docNumber: empresa ? cnpj : cpf
+      docNumber: empresa ? cnpj : cpf,
+      phone: telefone
     };
 
     try {
-        await axios.post('http://localhost:8080/auth/register', payload);
+      await axios.post('http://localhost:8080/auth/register', payload);
       alert('Cadastro de investidor realizado com sucesso!');
       navigate('/');
     } catch (error) {
@@ -95,9 +96,7 @@ export default function CadastroInvestidor() {
             <label className={styles["cadastro-label"]}>E-mail</label>
             <input type="email" className={styles.input} placeholder="Digite seu e-mail" autoComplete="email"
               value={email} onChange={e => setEmail(e.target.value)} required />
-            <label className={styles["cadastro-label"]}>CPF</label>
-            <input type="text" className={styles.input} placeholder="Digite seu CPF" autoComplete="cpf"
-              value={cpf} onChange={e => setCpf(e.target.value)} required />
+
             <label className={styles["cadastro-label"]}>Telefone</label>
             <input type="text" className={styles.input} placeholder="Digite seu telefone" autoComplete="tel"
               value={telefone} onChange={e => setTelefone(e.target.value)} required />
@@ -124,6 +123,14 @@ export default function CadastroInvestidor() {
               </>
             )}
 
+            {empresa === false && (
+              <>
+                <label className={styles["cadastro-label"]}>CPF</label>
+                <input type="text" className={styles.input} placeholder="Digite seu CPF" autoComplete="cpf"
+                  value={cpf} onChange={e => setCpf(e.target.value)} required />
+              </>
+            )}
+
             <label className={styles["cadastro-label"]}>Senha</label>
             <input
               type="password"
@@ -134,11 +141,11 @@ export default function CadastroInvestidor() {
               onChange={e => setSenha(e.target.value)}
               required
             />
-            <div className={styles["senha-requisitos"]} style={{marginBottom: 15}}>
+            <div className={styles["senha-requisitos"]} style={{ marginBottom: 15 }}>
               {rules.map(rule => {
                 const passed = rule.check(senha);
                 return (
-                  <div key={rule.label} style={{display: 'flex', alignItems: 'center', marginBottom: 5, marginLeft: 16}}>
+                  <div key={rule.label} style={{ display: 'flex', alignItems: 'center', marginBottom: 5, marginLeft: 16 }}>
                     {passed ?
                       <CiCircleCheck size={18} color="#FDC700" /> :
                       <CiCircleRemove size={18} color="#fff" />
@@ -162,7 +169,7 @@ export default function CadastroInvestidor() {
               required
             />
 
-            <div style={{display: 'flex', alignItems: 'center', marginBottom: 15, marginLeft: 16}}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 15, marginLeft: 16 }}>
               {senha && confirmaSenha && senha === confirmaSenha ?
                 <CiCircleCheck size={18} color="#FDC700" /> :
                 <CiCircleRemove size={18} color="#fff" />
@@ -171,7 +178,7 @@ export default function CadastroInvestidor() {
                 As senhas coincidem
               </span>
             </div>
-            
+
             {errorMessage && (
               <p style={{ color: '#FDC700', fontSize: '0.9rem', textAlign: 'center' }}>
                 {errorMessage}

@@ -1,31 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./styles/Home.module.css";
+import { SEGMENTS } from './constants';
 import Sidebar from "./components/Sidebar";
 
-// Imagens
 import lupa from './assets/lupa.png';
 import setaBaixo from './assets/setaBaixo.png';
 import setaCima from './assets/setaCima.png';
 
-// Função para decodificar o JWT e pegar o email do usuário logado
 const parseJwt = (token) => {
     try {
         return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
+    } catch {
         return null;
     }
 };
 
-function PostCard({ data, currentUserEmail, onDelete, onEdit }) {
+function PostCard({ data, currentUserEmail, onDelete, onEdit, onLike, onProfileClick }) {
     const [menuOpen, setMenuOpen] = useState(false);
-    // Verifica se o usuário logado é o dono do post
     const isOwner = data.userEmail === currentUserEmail;
+
+    const handleProfileClick = () => {
+        onProfileClick(data.userId);
+    };
 
     return (
         <article className={styles.card}>
             <header className={styles.cardHeader}>
-                <div className={styles.userBlock}>
+                <div
+                    className={styles.userBlock}
+                    onClick={handleProfileClick}
+                    style={{ cursor: 'pointer' }}
+                >
                     <div className={styles.avatar}>
                         {data.avatarUrl ? (
                             <img src={data.avatarUrl} alt={data.userName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
@@ -44,7 +50,6 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit }) {
                 <div className={styles.headerActions}>
                     <div className={styles.segmentBadge}>{data.segment}</div>
 
-                    {/* SÓ MOSTRA O BOTÃO SE FOR O DONO */}
                     {isOwner && (
                         <div style={{ position: 'relative' }}>
                             <button
@@ -54,7 +59,7 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit }) {
                                 ⋮
                             </button>
                             {menuOpen && (
-                                <div className={styles.dropdownMenuPost}> {/* CSS novo aqui */}
+                                <div className={styles.dropdownMenuPost}>
                                     <div className={styles.dropdownItemPost} onClick={() => onEdit(data)}>Editar</div>
                                     <div className={styles.dropdownItemPost} onClick={() => onDelete(data.id)} style={{ color: 'red' }}>Excluir</div>
                                 </div>
@@ -73,9 +78,29 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit }) {
             <h3 className={styles.cardTitle}>{data.title}</h3>
             <p className={styles.cardText}>{data.description}</p>
 
-            <div style={{ marginTop: "8px" }}>
-                <span className={styles.invest}>Investimento: </span>
-                <span>{data.investment}</span>
+            <div style={{ marginTop: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                    <span className={styles.invest}>Investimento: </span>
+                    <span>{data.investment}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                    <button
+                        onClick={() => onLike(data.id)}
+                        className={styles.likeBtn}
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            className={`${styles.heart} ${data.isLiked ? styles.liked : ""}`}
+                        >
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                            2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 
+                            14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+                            11.54L12 21.35z"/>
+                        </svg>
+                    </button>
+                    <span>{data.likeCount}</span>
+                </div>
+
             </div>
         </article>
     );
@@ -84,18 +109,19 @@ function PostCard({ data, currentUserEmail, onDelete, onEdit }) {
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentUserId, setCurrentUserId] = useState("");
     const [currentUserEmail, setCurrentUserEmail] = useState("");
     const navigate = useNavigate();
 
-    // Estados de Filtro
     const [searchTerm, setSearchTerm] = useState("");
     const [segmentoOpen, setSegmentoOpen] = useState(false);
     const [selectedSegmento, setSelectedSegmento] = useState("");
     const [investimentoOpen, setInvestimentoOpen] = useState(false);
     const [selectedInvestimento, setSelectedInvestimento] = useState("");
+    const [sortBy, setSortBy] = useState("timestamp");
+    const [sortOpen, setSortOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    // Função de Deletar
     const handleDelete = async (ideaId) => {
         if (!window.confirm("Tem certeza que deseja excluir esta ideia?")) return;
 
@@ -117,9 +143,42 @@ export default function Home() {
         }
     };
 
-    // Função de Editar (Redireciona com dados)
     const handleEdit = (idea) => {
         navigate('/editar-ideia', { state: { idea } });
+    };
+
+    const handleLike = async (ideaId) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Você precisa estar logado para curtir.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/ideas/${ideaId}/like`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const isLiked = await response.json();
+
+                setPosts(posts.map(post => {
+                    if (post.id === ideaId) {
+                        return {
+                            ...post,
+                            isLiked: isLiked,
+                            likeCount: isLiked ? post.likeCount + 1 : post.likeCount - 1
+                        };
+                    }
+                    return post;
+                }));
+            } else {
+                console.error("Erro ao curtir");
+            }
+        } catch (error) {
+            console.error("Erro na requisição de like:", error);
+        }
     };
 
     useEffect(() => {
@@ -127,6 +186,7 @@ export default function Home() {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setSegmentoOpen(false);
                 setInvestimentoOpen(false);
+                setSortOpen(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -141,9 +201,11 @@ export default function Home() {
                 return;
             }
 
-            // Pega o email do usuário logado
             const userData = parseJwt(token);
-            if (userData) setCurrentUserEmail(userData.sub);
+            if (userData) {
+                setCurrentUserId(userData.id || userData.sub);
+                setCurrentUserEmail(userData.sub);
+            }
 
             try {
                 const response = await fetch('http://localhost:8080/api/ideas', {
@@ -161,21 +223,27 @@ export default function Home() {
                 }
 
                 if (response.ok) {
-                    const ideas = await response.json();
+                    const ideasData = await response.json();
 
-                    const mappedPosts = ideas.map(idea => ({
-                        id: idea.id,
-                        userEmail: idea.account.email, // CRUCIAL para identificar o dono
-                        userName: idea.account.name,
-                        avatarUrl: idea.account.pfp,
-                        date: new Date(idea.time).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
-                        segment: idea.keywords && idea.keywords.length > 0 ? idea.keywords[0].name : 'Geral',
-                        title: idea.name,
-                        description: idea.description,
-                        priceRaw: idea.price,
-                        investment: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(idea.price),
-                        mediaUrl: idea.ideaFiles && idea.ideaFiles.length > 0 ? idea.ideaFiles[0].fileUrl : null
-                    }));
+                    const mappedPosts = ideasData.map(item => {
+                        const idea = item.idea;
+                        return {
+                            id: idea.id,
+                            userId: idea.account.id,
+                            userEmail: idea.account.email,
+                            userName: idea.account.name,
+                            avatarUrl: idea.account.pfp,
+                            date: new Date(idea.time).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
+                            segment: idea.keywords && idea.keywords.length > 0 ? idea.keywords[0].name : 'Geral',
+                            title: idea.name,
+                            description: idea.description,
+                            priceRaw: idea.price,
+                            investment: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(idea.price),
+                            mediaUrl: idea.ideaFiles && idea.ideaFiles.length > 0 ? idea.ideaFiles[0].fileUrl : null,
+                            likeCount: item.likeCount,
+                            isLiked: item.isLiked
+                        };
+                    });
 
                     setPosts(mappedPosts.reverse());
                 }
@@ -189,7 +257,14 @@ export default function Home() {
         fetchIdeas();
     }, [navigate]);
 
-    // Filtros
+    const handleProfileClick = (userId) => {
+        navigate(`/perfil/${userId}`);
+    };
+
+    const goToMyProfile = () => {
+        navigate(`/perfil/${currentUserId}`);
+    };
+
     const filteredPosts = posts.filter(post => {
         const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             post.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -205,15 +280,25 @@ export default function Home() {
         }
 
         return matchesSearch && matchesSegment && matchesInvestment;
+    }).sort((a, b) => {
+        if (sortBy === 'likes') {
+            return b.likeCount - a.likeCount;
+        }
+        // Default to timestamp (most recent first)
+        // Assuming higher ID means more recent if date is not precise enough, 
+        // or we can parse the date string if needed. 
+        // But the initial fetch already reverses them, so let's rely on ID for stability or just keep array order if 'timestamp'.
+        // Since we are filtering, the relative order is preserved. 
+        // However, if we want to be explicit:
+        return b.id - a.id;
     });
 
     return (
         <div className={styles.page}>
-            <Sidebar />
+            <Sidebar onProfileClick={goToMyProfile} />
             <main className={styles["feed-container"]}>
                 <div className={styles["feed-inner"]}>
 
-                    {/* BARRA DE BUSCA */}
                     <div className={styles["search-section"]} ref={dropdownRef}>
                         <div className={styles["search-input-container"]}>
                             <input
@@ -238,7 +323,7 @@ export default function Home() {
                                 {segmentoOpen && (
                                     <div className={styles["dropdown-menu"]}>
                                         <div className={styles["dropdown-item"]} onClick={() => { setSelectedSegmento(""); setSegmentoOpen(false); }}>Todos</div>
-                                        {["Educação", "Tecnologia", "Indústria alimentícia", "Indústria Cinematográfica", "Outros"].map(opt => (
+                                        {SEGMENTS.map(opt => (
                                             <div key={opt} className={styles["dropdown-item"]} onClick={() => { setSelectedSegmento(opt); setSegmentoOpen(false); }}>{opt}</div>
                                         ))}
                                     </div>
@@ -266,16 +351,31 @@ export default function Home() {
                             {(selectedSegmento || selectedInvestimento || searchTerm) && (
                                 <button
                                     className={styles["filter-btn"]}
-                                    style={{color: '#ff4b4b'}}
+                                    style={{ color: '#ff4b4b' }}
                                     onClick={() => { setSelectedSegmento(""); setSelectedInvestimento(""); setSearchTerm(""); }}
                                 >
                                     Limpar ✕
                                 </button>
                             )}
+
+                            <div className={styles["filter-dropdown"]}>
+                                <button
+                                    className={`${styles["filter-btn"]} ${sortBy !== 'timestamp' ? styles.active : ''}`}
+                                    onClick={() => { setSortOpen(!sortOpen); setSegmentoOpen(false); setInvestimentoOpen(false); }}
+                                >
+                                    {sortBy === 'timestamp' ? "Mais Recentes" : "Mais Curtidas"}
+                                    <img src={sortOpen ? setaCima : setaBaixo} alt="seta" />
+                                </button>
+                                {sortOpen && (
+                                    <div className={styles["dropdown-menu"]}>
+                                        <div className={styles["dropdown-item"]} onClick={() => { setSortBy("timestamp"); setSortOpen(false); }}>Mais Recentes</div>
+                                        <div className={styles["dropdown-item"]} onClick={() => { setSortBy("likes"); setSortOpen(false); }}>Mais Curtidas</div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    {/* LISTA DE POSTS */}
                     {loading ? (
                         <div className={styles.loading}>Carregando publicações...</div>
                     ) : filteredPosts.length === 0 ? (
@@ -289,9 +389,12 @@ export default function Home() {
                                 <PostCard
                                     key={p.id}
                                     data={p}
-                                    currentUserEmail={currentUserEmail} // Passamos o email para o card saber se é dono
+                                    currentUserEmail={currentUserEmail}
+                                    currentUserId={currentUserId}
                                     onDelete={handleDelete}
                                     onEdit={handleEdit}
+                                    onLike={handleLike}
+                                    onProfileClick={handleProfileClick}
                                 />
                             ))}
                             <div className={styles.endText}>Você viu todas as publicações</div>

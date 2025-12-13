@@ -46,9 +46,6 @@ public class Account implements UserDetails {
     @Column(name = "faculdade")
     private String faculdade;
 
-    @Column(name = "semestre")
-    private Integer semestre;
-
     @Column(name = "curso")
     private String curso;
 
@@ -61,6 +58,9 @@ public class Account implements UserDetails {
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
 
@@ -68,7 +68,6 @@ public class Account implements UserDetails {
     protected void onCreate() {
         createdAt = OffsetDateTime.now();
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

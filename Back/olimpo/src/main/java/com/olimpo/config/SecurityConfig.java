@@ -55,7 +55,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -74,23 +74,22 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authenticationProvider(authenticationProvider())
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                // LIBERA O OPTIONS GLOBALMENTE (Correção do erro 403)
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
-                                .requestMatchers(HttpMethod.GET, "/user/verify-email").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/user/resend-code").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/verify-email").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/resend-code").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
 
-                                .requestMatchers("/api/password/**").permitAll()
-                                .requestMatchers("/api/ideas/**").authenticated()
+                        .requestMatchers("/api/password/**").permitAll()
+                        .requestMatchers("/api/ideas/**").authenticated()
 
-                                .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }}
+    }
+}

@@ -61,11 +61,12 @@ export default function CadastroEstudante() {
       curso: curso,
       docType: "CPF",
       docNumber: cpf,
-      role: "ESTUDANTE"
+      role: "ESTUDANTE",
+      phone: telefone
     };
 
     try {
-        await axios.post('http://localhost:8080/auth/register', payload);
+      await axios.post('http://localhost:8080/auth/register', payload);
       alert('Cadastro realizado com sucesso!');
       navigate('/');
     } catch (error) {
@@ -117,7 +118,7 @@ export default function CadastroEstudante() {
               onChange={e => setSenha(e.target.value)}
               required
             />
-            <div className={styles["senha-requisitos"]} style={{marginBottom: 10, marginLeft: 16}}>
+            <div className={styles["senha-requisitos"]} style={{ marginBottom: 10, marginLeft: 16 }}>
               {rules.map(rule => {
                 const passed = rule.check(senha);
                 return (
@@ -141,9 +142,9 @@ export default function CadastroEstudante() {
               onChange={e => setConfirmaSenha(e.target.value)}
               required
             />
-            <div style={{display: 'flex', alignItems: 'center', marginBottom: 15, marginLeft: 16}}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 15, marginLeft: 16 }}>
               {senha && confirmaSenha && senha === confirmaSenha ? <CiCircleCheck size={18} color="#FDC700" /> : <CiCircleRemove size={18} color="#fff" />}
-              <span style={{marginLeft: 8, color: senha && confirmaSenha && senha === confirmaSenha ? '#FDC700' : '#fff', fontWeight: senha && confirmaSenha && senha === confirmaSenha ? 'bold' : 'normal', fontSize: 14}}>
+              <span style={{ marginLeft: 8, color: senha && confirmaSenha && senha === confirmaSenha ? '#FDC700' : '#fff', fontWeight: senha && confirmaSenha && senha === confirmaSenha ? 'bold' : 'normal', fontSize: 14 }}>
                 As senhas coincidem
               </span>
             </div>

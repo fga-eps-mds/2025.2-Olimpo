@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styles from './styles/EditarIdeia.module.css'; // Usando seu CSS dedicado
+import styles from './styles/EditarIdeia.module.css';
+import { SEGMENTS } from './constants';
 import Sidebar from './components/Sidebar';
 
 import setaBaixo from './assets/setaBaixo.png';
@@ -11,25 +12,21 @@ export default function EditarIdeia() {
     const location = useLocation();
     const ideaToEdit = location.state?.idea;
 
-    // Estados
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selected, setSelected] = useState("");
     const [titulo, setTitulo] = useState("");
     const [investimento, setInvestimento] = useState("");
     const [descricao, setDescricao] = useState("");
 
-    // Estado para nova imagem
     const [imagem, setImagem] = useState(null);
 
     const dropdownRef = useRef(null);
 
-    // Preenche dados ao carregar
     useEffect(() => {
         if (ideaToEdit) {
             setTitulo(ideaToEdit.title);
             setDescricao(ideaToEdit.description);
-            // Extrai apenas números do preço
-            const valor = ideaToEdit.priceRaw || String(ideaToEdit.investment).replace(/\D/g, '')/100;
+            const valor = ideaToEdit.priceRaw || String(ideaToEdit.investment).replace(/\D/g, '') / 100;
             setInvestimento(valor);
             setSelected(ideaToEdit.segment);
         } else {
@@ -38,7 +35,6 @@ export default function EditarIdeia() {
         }
     }, [ideaToEdit, navigate]);
 
-    // Fecha dropdown ao clicar fora
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -59,7 +55,6 @@ export default function EditarIdeia() {
 
         const token = localStorage.getItem('token');
 
-        // Usamos FormData para poder enviar Arquivo + JSON
         const formData = new FormData();
 
         const ideaData = {
@@ -69,22 +64,19 @@ export default function EditarIdeia() {
             keywords: [selected]
         };
 
-        // 1. Adiciona o JSON como string na parte "data"
         formData.append('data', new Blob([JSON.stringify(ideaData)], {
             type: 'application/json'
         }));
 
-        // 2. Adiciona o arquivo APENAS se o usuário selecionou um novo
         if (imagem) {
             formData.append('file', imagem);
         }
 
         try {
             const response = await fetch(`http://localhost:8080/api/ideas/${ideaToEdit.id}`, {
-                method: 'PUT', // Agora o PUT aceita Multipart
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`
-                    // NÃO coloque Content-Type aqui, o navegador define boundary automático para multipart
                 },
                 body: formData
             });
@@ -110,30 +102,33 @@ export default function EditarIdeia() {
 
                     <form className={styles['post-form']} onSubmit={handleSubmit}>
 
-                        <label className={styles.label}>Imagem</label>
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
-                            <input
-                                className={styles['input-imagem']}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => setImagem(e.target.files[0])}
-                            />
-                            {/* Mostra aviso se já tem imagem, mas não mudou */}
-                            {!imagem && ideaToEdit?.mediaUrl && (
-                                <span style={{fontSize: '12px', color: '#666', marginLeft: '20px'}}>
-                        Imagem atual mantida. Escolha outra para alterar.
-                    </span>
-                            )}
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Imagem</label>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                <input
+                                    className={styles['input-imagem']}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setImagem(e.target.files[0])}
+                                />
+                                {!imagem && ideaToEdit?.mediaUrl && (
+                                    <span style={{ fontSize: '12px', color: '#666', marginLeft: '20px' }}>
+                                        Imagem atual mantida. Escolha outra para alterar.
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
-                        <label className={styles.label}>Título</label>
-                        <input
-                            className={styles.input}
-                            type="text"
-                            placeholder="Título da ideia"
-                            value={titulo}
-                            onChange={(e) => setTitulo(e.target.value)}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Título</label>
+                            <input
+                                className={styles.input}
+                                type="text"
+                                placeholder="Título da ideia"
+                                value={titulo}
+                                onChange={(e) => setTitulo(e.target.value)}
+                            />
+                        </div>
 
                         <div className={styles['input-row']}>
                             <div>
@@ -147,13 +142,13 @@ export default function EditarIdeia() {
                                         >
                                             {selected || "Selecione"}
                                             <span className={styles.seta}>
-                        <img src={dropdownOpen ? setaCima : setaBaixo} alt="seta" width={14} />
-                      </span>
+                                                <img src={dropdownOpen ? setaCima : setaBaixo} alt="seta" width={14} />
+                                            </span>
                                         </button>
                                         {dropdownOpen && (
                                             <div className={styles['lista-selecionar']}>
-                                                {["Educação", "Tecnologia", "Indústria alimentícia", "Indústria Cinematográfica", "Outros"].map(opt => (
-                                                    <div key={opt} className={styles['lista-itens']} onClick={() => {setSelected(opt); setDropdownOpen(false)}}>{opt}</div>
+                                                {SEGMENTS.map(opt => (
+                                                    <div key={opt} className={styles['lista-itens']} onClick={() => { setSelected(opt); setDropdownOpen(false) }}>{opt}</div>
                                                 ))}
                                             </div>
                                         )}
@@ -172,19 +167,22 @@ export default function EditarIdeia() {
                             </div>
                         </div>
 
-                        <label className={styles.label}>Descrição</label>
-                        <textarea
-                            className={styles.textarea}
-                            placeholder="Descreva sua ideia..."
-                            value={descricao}
-                            onChange={(e) => setDescricao(e.target.value)}
-                        />
+
+                        <div style={{ width: "100%" }}>
+                            <label className={styles.label}>Descrição</label>
+                            <textarea
+                                className={styles.textarea}
+                                placeholder="Descreva sua ideia..."
+                                value={descricao}
+                                onChange={(e) => setDescricao(e.target.value)}
+                            />
+                        </div>
 
                         <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
                             <button
                                 type="button"
                                 className={styles['btn-postar']}
-                                style={{background: '#b0b8c9', color: '#333'}}
+                                style={{ background: '#b0b8c9', color: '#333' }}
                                 onClick={() => navigate('/home')}
                             >
                                 Cancelar
